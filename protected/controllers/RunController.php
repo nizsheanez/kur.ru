@@ -72,6 +72,7 @@ class RunController extends BaseController
             if (!isset($this->edges[$k->node_id][$k->target_node_id]) &&
                 !isset($this->edges[$k->target_node_id][$k->node_id])
             )
+
 //            if (!isset($this->edges[$n->id][$k->id]) && !isset($this->edges[$k->id][$n->id]))
             {
 //                $this->edges[$k->node_id][$k->target_node_id] = $this->edges[$k->target_node_id][$k->node_id] = 1;
