@@ -1,0 +1,136 @@
+@import "../less/variables.less";
+@import "../less/mixins.less";
+@import "../less/my_lib.less";
+
+@toolbarWidht: 242px;
+
+body{
+    overflow: hidden;
+}
+
+svg{
+    overflow: scroll;
+
+    a{
+        font-size: 20px;
+        cursor:    pointer;
+
+        &:hover{
+            color: red;
+        }
+    }
+}
+
+//SVG ELEMENTS
+marker#licensing{
+    fill: green;
+}
+
+circle{
+    fill:         #ccc;
+    stroke:       #333;
+    stroke-width: 1.5px;
+}
+
+text{
+    font:           10px sans-serif;
+    pointer-events: none;
+}
+
+//LINKS
+path.link{
+    fill:         none;
+    stroke:       #666;
+    stroke-width: 1.5px;
+
+    &.associate{
+        stroke-dasharray: 0, 2 1;
+    }
+    &.english{
+    }
+    &.sinonim{
+        stroke: @blueDark;
+    }
+    &.subclass_of{
+        stroke: @pink;
+    }
+    &.is_a{
+        stroke: @green;
+    }
+}
+
+//TOOLBAR
+.toolbar-place(@height: 40%, @width: @toolbarWidht - 20){
+    .center-block();
+    .round();
+    .size(@height, @width);
+    border:   1px solid #ccc;
+    padding:  10px 5px;
+    overflow: auto;
+    .resizable()
+}
+.toolbar-sidebar{
+    position: absolute;
+    #gradient > .vertical(@grayLight, lighten(@gray, 5%));
+    right:    5px;
+    margin:   2% 0;
+    .size(90%, @toolbarWidht);
+    .round();
+    .transition();
+    .box-shadow(0 2px 4px rgba(0, 0, 0, .35));
+    .nodes-holder{
+        .toolbar-place();
+    }
+    .links-holder{
+        .toolbar-place();
+    }
+}
+.toolbar-top{
+    width:50%;
+    .center-block();
+    margin:  10px auto 0;
+    .navbar-inner{
+        .round();
+        .box-shadow(0 1px 5px rgba(0,0,0,.55));
+        #gradient > .vertical(@grayLighter, lighten(@gray, 5%));
+    }
+}
+.well{
+    padding: 5px;
+
+}
+.btn{
+    .round();
+}
+.progress{
+    .round();
+    width: 240px;
+    margin: 5px 0 0 0;
+}
+form{
+    margin: 0;
+}
+.navbar .btn{
+    margin: 0
+}
+
+//AUTOCOMPLETE
+.ac_results{
+    .size(auto, 280px);
+    border: #aaa 1px solid;
+    margin: 0 0 0 14px;
+
+    .ac_even{
+        background: #eee;
+    }
+
+    .ac_odd{
+        background: #ccc;
+    }
+
+    .ac_over{
+        background: @primaryButtonBackground;
+        color:      @white;
+    }
+}
+
