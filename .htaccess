@@ -1,0 +1,187 @@
+AddDefaultCharset utf-8
+
+SetEnv APP_ENV development
+#SetEnv APP_ENV production
+
+Options +FollowSymLinks
+IndexIgnore */*
+RewriteEngine on
+
+# If a directory or a file exists, use it directly.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Otherwise forward it to index.php.
+RewriteRule . index.php
+
+
+
+
+
+
+
+# Не даем IE войти в режим совместимости с IE7, даже когда он сам этого хочет
+# github.com/rails/rails/commit/b25#commitcomment-20
+# Use ChromeFrame if it's installed for a better experience for the poor IE folk
+<IfModule mod_setenvif.c>
+  <IfModule mod_headers.c>
+    BrowserMatch MSIE ie
+    Header set X-UA-Compatible "IE=Edge,chrome=1" env=ie
+  </IfModule>
+</IfModule>
+
+<IfModule mod_headers.c>
+#
+# Because X-UA-Compatible isn't sent to non-IE (to save header bytes),
+# We need to inform proxies that content changes based on UA
+#
+  Header append Vary User-Agent
+# Cache control is set only if mod_headers is enabled, so that's unncessary to declare
+</IfModule>
+
+# hacks.mozilla.org//07/cross-site-xmlhttprequest-with-cors/
+# Раскомментируйте, чтобы разрешить кросс-доменные Ajax запросы
+#<IfModule mod_headers.c>
+#  Header set Access-Control-Allow-Origin "*"
+#</IfModule>
+
+#
+# allow access from all domains for webfonts
+# alternatively you could only whitelist
+# your subdomains like "sub.domain.com"
+#
+<FilesMatch "\.(ttf|otf|eot|woff|font.css)$">
+  <IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+  </IfModule>
+</FilesMatch>
+
+
+# видео
+AddType video/ogg                      ogg ogv
+AddType video/mp4                      mp4
+AddType video/webm                     webm
+
+# Правильный формат для svg. Необходимо для работы svg шрифтов в iPad Safari
+#   twitter.com/FontSquirrel/status/545
+AddType     image/svg+xml              svg svgz
+AddEncoding gzip                       svgz
+
+# веб-шрифты
+AddType application/vnd.ms-fontobject  eot
+AddType font/truetype                  ttf
+AddType font/opentype                  otf
+AddType font/woff                      woff
+
+# другие форматы
+AddType image/vnd.microsoft.icon       ico
+AddType image/webp                     webp
+AddType text/cache-manifest            manifest
+AddType text/x-component               htc
+AddType application/x-chrome-extension crx
+
+# gzip сжатие.
+<IfModule mod_deflate.c>
+
+# html, txt, css, js, json, xml, htc:
+  AddOutputFilterByType DEFLATE text/html text/plain text/css application/json
+  AddOutputFilterByType DEFLATE text/javascript application/javascript application/x-javascript
+  AddOutputFilterByType DEFLATE text/xml application/xml text/x-component
+
+# веб-шрифты и svg:
+  <FilesMatch "\.(ttf|otf|eot|svg)$" >
+    SetOutputFilter DEFLATE
+  </FilesMatch>
+</IfModule>
+
+#
+# these are pretty far-future expires headers
+# they assume you control versioning with cachebusting query params like
+#
+#   <script src="application.js?">
+#
+# additionally, consider that outdated proxies may miscache
+#
+#   www.stevesouders.com/blog//08/23/revving-filenames-dont-use-querystring/
+
+#
+# if you don't use filenames to version, lower the css and js to something like
+# "access plus 1 week" or so
+#
+
+<IfModule mod_expires.c>
+  Header set Cache-Control "public"
+  ExpiresActive on
+
+# Может лучше явно указать, какие правила протухания кеша нам нужны?
+  ExpiresDefault                          "access plus 1 month"
+
+# cache.manifest требует доп. запросов в FF 3.6 (спасибо Remy ~Introducing HTML5)
+  ExpiresByType text/cache-manifest       "access plus 0 seconds"
+
+# html вашего сайта
+  ExpiresByType text/html                 "access plus 0 seconds"
+
+# дата
+  ExpiresByType text/xml                  "access plus 0 seconds"
+  ExpiresByType application/xml           "access plus 0 seconds"
+  ExpiresByType application/json          "access plus 0 seconds"
+
+
+# rss поток
+  ExpiresByType application/rss+xml       "access plus 1 hour"
+
+# фавикон (переименовывать нельзя)
+  ExpiresByType image/vnd.microsoft.icon  "access plus 1 week"
+
+# медиа: картинки, видео, аудио
+  ExpiresByType image/gif                 "access plus 1 month"
+  ExpiresByType image/png                 "access plus 1 month"
+  ExpiresByType image/jpg                 "access plus 1 month"
+  ExpiresByType image/jpeg                "access plus 1 month"
+  ExpiresByType video/ogg                 "access plus 1 month"
+  ExpiresByType audio/ogg                 "access plus 1 month"
+  ExpiresByType video/mp4                 "access plus 1 month"
+  ExpiresByType video/webm                "access plus 1 month"
+
+# веб-шрифты
+  ExpiresByType font/truetype             "access plus 1 month"
+  ExpiresByType font/opentype             "access plus 1 month"
+  ExpiresByType font/woff                 "access plus 1 month"
+  ExpiresByType image/svg+xml             "access plus 1 month"
+  ExpiresByType application/vnd.ms-fontobject "access plus 1 month"
+
+# css и javascript
+  ExpiresByType text/css                  "access plus 1 month"
+  ExpiresByType application/javascript    "access plus 1 month"
+  ExpiresByType text/javascript           "access plus 1 month"
+</IfModule>
+
+#
+# Since we're sending far-future expires, we don't need ETags for
+# static content.
+#
+#   developer.yahoo.com/performance/rules.html#etags
+FileETag None
+# Разрешаем IE сохранять куки из айфреймов.
+# Если необходимо, раскоментируйте и укажите путь или регульярное выражние в директиве Location
+
+# <IfModule mod_headers.c>
+#   <Location />
+#     Header set P3P "policyref=\"/w3c/p3p.xml\", CP=\"IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT\""
+#   </Location>
+# </IfModule>
+
+
+# www.example.com должен направлять пользователей на example.com.
+#   no-www.org/faq.php?q=class_b
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  RewriteRule ^(.*)$ http://%1/$1 [R=L]
+</IfModule>
+
+
+# We don't need to tell everyone we're apache.
+ServerSignature Off
