@@ -1,10 +1,6 @@
 <?php
 class Node extends ActiveRecordModel
 {
-    const PAGE_SIZE   = 10;
-    const PHOTOS_DIR  = 'upload/producers';
-    const LOGO_HEIGHT = 84;
-
 
     public static function model($className = __CLASS__)
     {
@@ -143,47 +139,4 @@ class Node extends ActiveRecordModel
         }
     }
 
-
-
-
-
-    public function scopes()
-    {
-        $alias = $this->getTableAlias();
-        return array(
-            'hasImage' => array(
-                'condition' => "$alias.logo!=NULL AND $alias.logo!=''"
-            ),
-            'ordered'  => array(
-                'order' => "$alias.order DESC"
-            )
-        );
-    }
-
-
-    public function uploadFiles()
-    {
-        return array( //            'logo' => array('dir' => self::PHOTOS_DIR)
-        );
-    }
-
-
-    public function beforeSave()
-    {
-        if (parent::beforeSave())
-        {
-            return true;
-        }
-        return false;
-    }
-
-
-    public function beforeDelete()
-    {
-        if (parent::beforeSave())
-        {
-            return true;
-        }
-        return false;
-    }
 }
