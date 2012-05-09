@@ -80,6 +80,7 @@ class RunController extends BaseController
                     'source'=> (int)$k->source,
                     'target'=> (int)$k->target,
                     'type'  => $k->edge,
+                    'id' => $k->id
 //                $res['links'][] = array(
 //                    'source'=> (int)$n->id,
 //                    'target'=> (int)$k->id,
@@ -117,7 +118,7 @@ class RunController extends BaseController
     public function actionGet($id)
     {
         $nodes = Node::model()->findAllByPk($id);
-        $this->actionRunn($nodes);
+        $this->actionSearch($nodes);
     }
 
 
@@ -135,7 +136,7 @@ class RunController extends BaseController
         }
     }
 
-    public function actionSearch()
+    public function actionSearch($models = null)
     {
         try
         {
@@ -146,7 +147,7 @@ class RunController extends BaseController
 //            }
 //            $models = Node::model()->in('id', $data)->findAll();
             $phrase = Yii::app()->request->getParam('search');
-            $models = Node::model()->findAllByAttributes(array('title'=>$phrase));
+            $models = $models ? $models : Node::model()->findAllByAttributes(array('title'=>$phrase));
             $res = array(
                 'nodes'=> array(),
                 'links'=> array()
@@ -161,6 +162,7 @@ class RunController extends BaseController
                 $res['nodes'][] = array(
                     'name'   => $n->id,
                     'title'  => $n->title,
+                    'e_count'  => $n->edges_count,
                     'visible_edge_count' => 0,
                 );
                 $this->addNodes($n, $res, 0);

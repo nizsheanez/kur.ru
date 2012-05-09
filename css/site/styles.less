@@ -51,7 +51,7 @@ text{
     display:     none;
 }
 //LINKS
-line.link{
+path.link, line.link{
     fill:         none;
     stroke:       #666;
     stroke-width: 1.5px;
@@ -99,13 +99,27 @@ line.link{
     }
 }
 .toolbar-top{
-    width:  50%;
-    .center-block();
-    margin: 10px auto 0;
+    .nav-collapse{
+        margin-top: -1px;
+    };
+    width:  18.7%;
+    left: 30%;
+    margin: 10px 0 0;
+    input{
+        height: 11px;
+    };
+    button{
+        height: 20px;
+        line-height: 11px;
+    };
     .navbar-inner{
         .round();
         .box-shadow(0 1px 5px rgba(0, 0, 0, .55));
         #gradient > .vertical(@grayLighter, lighten(@gray, 5%));
+    }
+    &.bottom{
+        left: 50%;
+        width:  18.7%;
     }
 }
 .well{

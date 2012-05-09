@@ -9,10 +9,10 @@ Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap.css
 Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap-responsive.css');
 ?>
 
-<div class="toolbar-sidebar well">
-    <div class="nodes-holder"></div>
-    <div class="links-holder"></div>
-</div>
+<!--<div class="toolbar-sidebar well">-->
+<!--    <div class="nodes-holder"></div>-->
+<!--    <div class="links-holder"></div>-->
+<!--</div>-->
 <div class="navbar navbar-fixed-top toolbar-top">
     <div class="navbar-inner">
         <div class="container">
@@ -34,12 +34,23 @@ Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap-res
                         </form>
                     </li>
                 </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="navbar navbar-fixed-top toolbar-top bottom">
+    <div class="navbar-inner">
+        <div class="container">
+            <div class="nav-collapse">
                 <ul class="nav">
                     <li>
-                        <div class="btn" id="closer"><i class="icon-plus-sign"></i></div>
+                        <div class="btn btn-mini" id="download"><i class="icon-download"></i></div>
                     </li>
                     <li>
-                        <div class="btn" id="further"><i class="icon-minus-sign"></i></div>
+                        <div class="btn btn-mini" id="closer"><i class="icon-plus-sign"></i></div>
+                    </li>
+                    <li>
+                        <div class="btn btn-mini" id="further"><i class="icon-minus-sign"></i></div>
                     </li>
                 </ul>
             </div>
@@ -60,72 +71,57 @@ var svg = d3.select("body").append("svg:svg")
 
 var chart = svg.attr("pointer-events", "all")
     .append('svg:g')
-    .call(d3.behavior.zoom().on("zoom", function()
+    /*.call(d3.behavior.zoom().on("zoom", function()
 {
     chart.attr("transform",
         "translate(" + d3.event.translate + ")"
             + " scale(" + d3.event.scale + ")"
     );
-}));
+}))
+*/
+;
 
 var force = d3.layout.force()
     .gravity(.15)
-    .linkDistance(70)
-    .charge(-600)
-    .theta(-9.9)
+    .friction(.6)
+    .linkDistance(50)
+    .charge(-1200)
+    .theta(0)
     .size([w, h]);
 
 var circle, path, text, plus, cancel;
 var nodes = [];
 var links = [];
 
+var visNodes = [];
+var visLinks = [];
+
 // Use elliptical arc path segments to doubly-encode directionality.
 var tick = function()
 {
-    !path || path.attr("d", function(d)
+    if ($('#use_path').selected())
     {
-        //            if (d.type == 'sinonim')
-        //            {
-        //                d.target.px = d.target.x = d.source.x;
-        //                d.target.py = d.target.y = d.source.y + 15;
-        //            }
-        //            if (d.type == 'english')
-        //            {
-        //                d.target.px = d.target.x =  d.source.x;
-        //                d.target.py = d.target.y =  d.source.y - 20;
-        //            }
-
-        //        var dx = d.target.x - d.source.x,
-        //            dy = d.target.y - d.source.y,
-        //            dr = Math.sqrt(dx * dx + dy * dy);
-        //        return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
-    })
-        .attr("x1", function(d)
+    path
+        .attr("d", function(d)
         {
-            return d.source.x;
+            var dx = d.target.x - d.source.x,
+                dy = d.target.y - d.source.y,
+                dr = Math.sqrt(dx * dx + dy * dy);
+            return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
         })
-        .attr("y1", function(d)
-        {
-            return d.source.y;
-        })
-        .attr("x2", function(d)
-        {
-            return d.target.x;
-        })
-        .attr("y2", function(d)
-        {
-            return d.target.y;
-        })
-    ;
+    }
+    else
+    {
+        path
+            .attr("x1", function(d) { return d.source.x; })
+            .attr("y1", function(d) { return d.source.y; })
+            .attr("x2", function(d) { return d.target.x; })
+            .attr("y2", function(d) { return d.target.y; });
+    }
 
     g.attr("transform", function(d)
     {
-        if (d == undefined)
-        {
-            return false;
-        }
-        var y = d.y > 0 ? d.y : d.y / 5;
-        return "translate(" + d.x + "," + y + ")";
+        return "translate(" + d.x + "," + d.y + ")";
     });
 };
 
@@ -136,8 +132,6 @@ var nodesShow = function(g)
         .attr("r", 6)
         .on('click', function()
         {
-            alert(3);
-            $(this).remove();
             d3.json('/run/get/id/' + $(this).parent().data('id'), update);
         });
 
@@ -175,29 +169,28 @@ var nodesShow = function(g)
 var addNodesLinks = function(json)
 {
     // Compute the distinct nodes from the links.
-    json.nodes.forEach(function(node)
-    {
-        nodes[node.name] || (nodes[node.name] = node);
+    $.each(json.nodes, function(i, node) {
+        if (!visNodes[node.name])
+        {
+            visNodes[node.name] = node;
+            nodes.push(node);
+        }
     });
 
-    json.links.forEach(function(link)
-    {
-        link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
-        link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
-
-        var add = true;
-        links.forEach(function(link2)
+    $.each(json.links, function(i, link) {
+        if (!visLinks[link.id])
         {
-            if (link2.source == link.source && link2.target == link.target)
-            {
-                add = false;
-            }
-        });
-        if (add)
-        {
+            visLinks[link.id] = link;
+            link.source = visNodes[link.source];
+            link.target = visNodes[link.target];
             links.push(link);
         }
     });
+
+    force
+        .nodes(nodes)
+        .links(links);
+
 };
 
 var update = function(json)
@@ -217,13 +210,10 @@ var update = function(json)
     });
     */
 
-    force
-        .nodes(d3.values(nodes))
-        .links(links);
 
     // Update the paths…
-    path = chart.selectAll("line.link").data(force.links());
-    path.enter().append("line")
+    path = chart.selectAll("path.link").data(force.links());
+    path.enter().append("svg:path")
         .attr("class", function(d)
         {
             return "link " + d.type;
@@ -243,34 +233,32 @@ var update = function(json)
 
     // Update the nodes…
     g = chart.selectAll("g").data(force.nodes());
-    g.enter().append("svg:g")
+    var a = g.enter().append("svg:g")
         .attr("class", "node")
         .attr("data-id", function(d)
         {
             return d.name
         });
+    nodesShow(a);
+//    g = chart.selectAll("g").data(force.nodes());
     g.exit().remove();
-    nodesShow(g);
 
-
+    force.stop();
+    force.start();
 };
 
-var progressBar = $('<div class="progress progress-striped progress-info active"><div class="bar" style="width: 100%;"></div></div>');
 $('#search-form').submit(function()
 {
     var self = $(this);
-    var pb = progressBar.clone().insertAfter(self);
+    var input = self.find('input');
     $.get('/run/search', $(this).serialize(),
         function(data)
         {
-            self.show();
-            pb.remove();
+            input.removeClass('ac_loading');
             update(data);
-            force.start();
         }, 'json');
 
-    self.hide();
-    pb.show();
+    input.addClass('ac_loading');
     return false;
 });
 
