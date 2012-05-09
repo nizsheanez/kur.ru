@@ -28,10 +28,7 @@ class Edge extends ActiveRecordModel
     {
         return array(
             array(
-                'node_id, target_node_id', 'safe'
-            ), array(
-                'id, title, show_in_index, logo, order', 'safe',
-                'on' => 'search'
+                'source, target, edge', 'safe'
             ),
         );
     }
@@ -41,10 +38,10 @@ class Edge extends ActiveRecordModel
     {
         return array(
             'target_node' => array(
-                self::BELONGS_TO, 'Node', 'target_node_id'
+                self::BELONGS_TO, 'Node', 'target'
             ),
             'source_node' => array(
-                self::BELONGS_TO, 'Node', 'node_id'
+                self::BELONGS_TO, 'Node', 'source'
             ),
         );
     }

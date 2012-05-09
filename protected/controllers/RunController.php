@@ -25,8 +25,8 @@ class RunController extends BaseController
 
         foreach ($data as $item)
         {
-            $i         = (int)$item['node_id'];
-            $j         = (int)$item['target_node_id'];
+            $i         = (int)$item['source'];
+            $j         = (int)$item['target'];
             $W[$i][$j] = $W[$j][$i] = 1;
             if (++$k > 100)
             {
@@ -67,19 +67,18 @@ class RunController extends BaseController
 
     public function addNodes($n, &$res, $count = 5)
     {
-        foreach ($n->with('target_node')->edges as $k)
+        foreach ($n->with('target_node', 'source_node')->getAllEdges() as $k)
         {
-            if (!isset($this->edges[$k->node_id][$k->target_node_id]) &&
-                !isset($this->edges[$k->target_node_id][$k->node_id])
+            if (!isset($this->edges[$k->source][$k->target]) &&
+                !isset($this->edges[$k->target][$k->source])
             )
-
 //            if (!isset($this->edges[$n->id][$k->id]) && !isset($this->edges[$k->id][$n->id]))
             {
-//                $this->edges[$k->node_id][$k->target_node_id] = $this->edges[$k->target_node_id][$k->node_id] = 1;
-                $this->edges[$k->node_id][$k->target_node_id] = $this->edges[$k->target_node_id][$k->node_id] = true;
+//                $this->edges[$k->source][$k->target] = $this->edges[$k->target][$k->source] = 1;
+                $this->edges[$k->source][$k->target] = $this->edges[$k->target][$k->source] = true;
                 $res['links'][]              = array(
-                    'source'=> (int)$k->node_id,
-                    'target'=> (int)$k->target_node_id,
+                    'source'=> (int)$k->source,
+                    'target'=> (int)$k->target,
                     'type'  => $k->edge,
 //                $res['links'][] = array(
 //                    'source'=> (int)$n->id,
@@ -87,13 +86,10 @@ class RunController extends BaseController
 //                    'type'  => 'associate',
                 );
             }
-            $node = $k->target_node;
+
+            $node = $k->source == $n->id ? $k->target_node : $k->source_node;
 //            $node           = $k;
-            if ($node->id == $n->id)
-            {
-                $node = $k->source_node;
-            }
-//
+
             if (isset($this->nodes[$node->id]))
             {
                 continue;
@@ -104,15 +100,13 @@ class RunController extends BaseController
                 'name'    => $node->id,
                 'title'   => $node->title,
                 'e_count' => $node->edges_count,
-                'weight'  => 2,
-                'group'   => 1,
+                'visible_edge_count' => 0,
             );
             if ($count && $node)
             {
                 $this->addNodes($node, $res, $count - 1);
             }
         }
-
     }
 
 
@@ -143,33 +137,20 @@ class RunController extends BaseController
 
     public function actionSearch()
     {
-        $phrase = Yii::app()->request->getPost('search');
-        $nodes = Node::model()->findAllByAttributes(array('title'=>$phrase));
-        $this->actionRunn($nodes);
-    }
-
-    public function actionRunn($models = null)
-    {
-
         try
         {
-            $data = array();
+//            $data = array();
 //            for ($i = 0; $i < 6; $i++)
 //            {
 //                $data[] = rand(1, 80000);
 //            }
 //            $models = Node::model()->in('id', $data)->findAll();
-            if ($models == null)
-            {
-                $cr = new CDbCriteria();
-                $cr->compare('t.title', $phrase, true);
-                $models = Node::model()->limit(1)->findAll($cr);
-            }
+            $phrase = Yii::app()->request->getParam('search');
+            $models = Node::model()->findAllByAttributes(array('title'=>$phrase));
             $res = array(
                 'nodes'=> array(),
                 'links'=> array()
             );
-            $i   = 0;
             foreach ($models as $n)
             {
                 if (isset($this->nodes[$n->id]))
@@ -180,13 +161,13 @@ class RunController extends BaseController
                 $res['nodes'][] = array(
                     'name'   => $n->id,
                     'title'  => $n->title,
-                    'weight' => 2,
-                    'group'  => 1
+                    'visible_edge_count' => 0,
                 );
                 $this->addNodes($n, $res, 0);
             }
             echo CJSON::encode($res);
-        } catch (Exception $e)
+        }
+        catch (Exception $e)
         {
             Yii::app()->handleException($e);
         }
@@ -253,11 +234,11 @@ class RunController extends BaseController
         $models = $model->findAllRaw();
         foreach ($models as $model)
         {
-            if (!($n1 = Node::model()->findByPk($model['node_id'])))
+            if (!($n1 = Node::model()->findByPk($model['source'])))
             {
                 continue;
             }
-            if (!($n2 = Node::model()->findByPk($model['target_node_id'])))
+            if (!($n2 = Node::model()->findByPk($model['target'])))
             {
                 continue;
             }
@@ -272,5 +253,20 @@ class RunController extends BaseController
         }
     }
 
+
+    public function actionEcountCalc()
+    {
+        set_time_limit(0);
+        $count = Yii::app()->db->createCommand('SELECT COUNT(*) FROM node')->queryScalar();
+        $dp = new CSqlDataProvider('select node.id, (select count(*) from edge_copy b where (b.source=node.id) or (b.target=node.id)) as e_count from node');
+        $dp->totalItemCount = $count;
+        $command = Yii::app()->db->createCommand('UPDATE node SET edges_count=:edges_count WHERE id=:id');
+        $iterator = new DataProviderIterator($dp, 10);
+
+        foreach($iterator as $data)
+        {
+            $command->execute(array('edges_count' => $data['e_count'], 'id' => $data['id']));
+        }
+    }
 }
 
