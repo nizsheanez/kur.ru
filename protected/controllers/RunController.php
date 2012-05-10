@@ -67,7 +67,7 @@ class RunController extends BaseController
 
     public function addNodes($n, &$res, $count = 5)
     {
-        foreach ($n->with('target_node', 'source_node')->getAllEdges() as $k)
+        foreach ($n->getAllEdges() as $k)
         {
             if (!isset($this->edges[$k->source][$k->target]) &&
                 !isset($this->edges[$k->target][$k->source])
@@ -208,6 +208,58 @@ class RunController extends BaseController
         $ser = ARC2::getRDFXMLSerializer($conf);
         $doc = $ser->getSerializedIndex($triples);
         dump($doc);
+    }
+
+    public function actionDo()
+    {
+        set_time_limit(0);
+        $ids = array();
+        for ($i = 0; $i < 1000; $i++)
+        {
+            $ids[] = rand(0, 80000);
+        }
+
+        for ( $i = 0; $i < 100; $i++)
+        {
+            $model = new Node;
+            //all nodes
+            Yii::beginProfile('Node::model()->findAllRaw()');
+            $model->findAllRaw();
+            Yii::endProfile('Node::model()->findAllRaw()');
+
+            $model = new Node;
+            //all edges
+            Yii::beginProfile('Edge::model()->findAllRaw()');
+            $model->findAllRaw();
+            Yii::endProfile('Edge::model()->findAllRaw()');
+
+            $model = new Node;
+            //related records
+            Yii::beginProfile("Node::model()->with('edges')->findByPk(11408)");
+            $model->with('edges', 'in_edges')->findByPk(11408);
+            Yii::endProfile("Node::model()->with('edges')->findByPk(11408)");
+
+            $model = new Node;
+            //save testing
+            Yii::beginProfile("Node::model()->in('id', \$ids)->findAllRaw()");
+            $model->in('id', $ids)->findAllRaw();
+            Yii::endProfile("Node::model()->in('id', \$ids)->findAllRaw()");
+
+            $model = new Node;
+            //get 5 level of nodes
+            Yii::beginProfile("Recursion");
+            $node = $model->findByPk(11408);
+            $this->nodes[$node->id] = true;
+            $res['nodes'][]         = array(
+                'name'    => $node->id,
+                'title'   => $node->title,
+                'e_count' => $node->edges_count,
+                'visible_edge_count' => 0,
+            );
+            $this->addNodes($node, $res, 5);
+            Yii::endProfile("Recursion");
+        }
+
     }
 
 }

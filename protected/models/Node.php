@@ -80,7 +80,7 @@ class Node extends ActiveRecordModel
         ));
         $model = Edge::model();
         $model->getDbCriteria()->mergeWith($criteria);
-        return $model->findAll();
+        return $model->with('target_node', 'source_node')->findAll();
     }
 
     public function getAttributes()
@@ -88,16 +88,6 @@ class Node extends ActiveRecordModel
         return array_merge(parent::getAttributes(), array(
             'alpha'=> 1,
             'color'=> "red"
-        ));
-    }
-
-
-    public function behaviors()
-    {
-        return CMap::mergeArray(parent::behaviors(),array(
-            'withRelated'                  => array(
-                'class'=> 'application.components.activeRecordBehaviors.WithRelatedBehavior',
-            ),
         ));
     }
 
@@ -117,20 +107,6 @@ class Node extends ActiveRecordModel
     {
         return 'UPDATE node SET edges_count = (select count(*) from edge b where (b.source=node.id) or (b.target=node.id))';
     }
-
-    public function scopes()
-    {
-        $alias = $this->getTableAlias();
-        return array(
-            'hasImage' => array(
-                'condition' => "$alias.logo!=NULL AND $alias.logo!=''"
-            ),
-            'ordered'  => array(
-                'order' => "$alias.order DESC"
-            )
-        );
-    }
-
 
     public function toTriplet()
     {
