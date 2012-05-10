@@ -76,7 +76,7 @@ var w = $(document).width(),
 var svg = d3.select("body").append("svg:svg")
     .attr("width", w)
     .attr("height", h);
-
+var opacityBlack = .75;
 var chart = svg.attr("pointer-events", "all")
     .append('svg:g')
     /*.call(d3.behavior.zoom().on("zoom", function()
@@ -91,9 +91,9 @@ var chart = svg.attr("pointer-events", "all")
 
 var force = d3.layout.force()
     .gravity(.14)
-    .friction(.3)
-    .linkDistance(50)
-    .charge(-1400)
+    .friction(.03)
+    .linkDistance(130)
+    .charge(-19200)
     .theta(.9)
     .size([w, h]);
 
@@ -107,6 +107,9 @@ var visLinks = [];
 var use_path = $('#use_path');
 
 var linkedByIndex = {};
+
+var curNode = {x:200,y:200};
+
 
 function isNodeConnected(a, b) {
     return linkedByIndex[a.name + "," + b.name] || linkedByIndex[b.name + "," + a.name] || a.name == b.name;
@@ -122,8 +125,9 @@ function fade(opacity, showText) {
             if (!isNodeConnectedBool) {
                 $(this).parent().children().attr('style', "stroke-opacity:"+opacity+";fill-opacity:"+opacity+";");
             } else {
+                $(this).parent().children().attr('style', "stroke-opacity:1;fill-opacity:1;");
 //                labels.push(o);
-                if (o == d) selectedLabelData = o;
+//                if (o == d) selectedLabelData = o;
             }
             return thisOpacity;
         });
@@ -137,9 +141,9 @@ function fade(opacity, showText) {
 function normalizeNodesAndRemoveLabels() {
     return function(d, i) {
         selectedLabelIndex = null;
-        chart.selectAll("line").style("stroke-opacity", 1);
-        chart.selectAll("circle").style("stroke-opacity", 1).style("fill-opacity", 1);//.style("stroke-width", 1);
-        chart.selectAll("text").style("stroke-opacity", 1).style("fill-opacity", 1);//.style("stroke-width", 1);
+        chart.selectAll(".link").style("stroke-opacity", opacityBlack);
+        chart.selectAll("circle").style("stroke-opacity",opacityBlack).style("fill-opacity", opacityBlack);//.style("stroke-width", 1);
+        chart.selectAll("text").style("stroke-opacity", opacityBlack).style("fill-opacity", opacityBlack);//.style("stroke-width", 1);
 //        chart.selectAll(".nodetext").remove();
     }
 }
@@ -164,18 +168,18 @@ function doFps(){
 // Use elliptical arc path segments to doubly-encode directionality.
 var tick = function()
 {
-    /*
+//    /*
     path
         .attr("d", function(d)
         {
             var
-//                dx = d.target.x - d.source.x,
-//                dy = d.target.y - d.source.y,
-//                dr = use_path.prop('checked') ? Math.sqrt(dx * dx + dy * dy) : 0;
-                dr = 0;
+                dx = d.target.x - d.source.x,
+                dy = d.target.y - d.source.y,
+                dr =  Math.sqrt(dx * dx + dy * dy) ;
+//                dr = 0;
             return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
         });
-    */
+//    */
 
     path
         .attr("x1", function(d) { return d.source.x; })
@@ -198,6 +202,8 @@ var addNodesLinks = function(json)
     $.each(json.nodes, function(i, node) {
         if (!visNodes[node.name])
         {
+            node.x = curNode.x;
+            node.y = curNode.y;
             visNodes[node.name] = node;
             nodes.push(node);
         }
@@ -239,8 +245,8 @@ var update = function(json)
 
 
     // Update the paths…
-    path = chart.selectAll("line.link").data(force.links());
-    path.enter().append("svg:line")
+    path = chart.selectAll("path.link").data(force.links());
+    path.enter().append("svg:path")
         .attr("class", function(d)
         {
             return "link " + d.type;
@@ -269,12 +275,13 @@ var update = function(json)
 
     node = a.append("svg:circle")
         .attr("class", "node")
-        .attr("r", 6)
-        .on('click', function()
+        .attr("r", function(d) {return 4 + d.e_count * .25;})
+        .on('click', function(d)
         {
+            curNode = d;
             d3.json('/run/get/id/' + $(this).parent().data('id'), update);
         })
-        .on("mouseover", fade(.1, true))
+        .on("mouseover", fade(.2, true))
         .on("mouseout", normalizeNodesAndRemoveLabels());
 
     a.append("svg:text")
@@ -294,20 +301,9 @@ var update = function(json)
 //        .attr("x", 1)
 //        .attr("y", -6);
 
-//    a.append('svg:text')
-//        .attr('id', function(d) {return 'plus_'+d.name})
-//        .attr('class', 'plus')
-//        .attr('width', 20)
-//        .attr('height', 20)
-//        .attr("x", -10)
-//        .attr("y", -4)
-//        .text(function(node)
-//        {
-//            return node.e_count > node.visible_edge_count && !node.opened ? '+' : '';
-//        });
-
-
     g.exit().remove();
+    lock = true;
+    setTimeout(function() {lock = false;}, 500);
     force.start();
 };
 

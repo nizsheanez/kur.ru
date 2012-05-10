@@ -118,7 +118,7 @@ class RunController extends BaseController
     public function actionGet($id)
     {
         $nodes = Node::model()->findAllByPk($id);
-        $this->actionSearch($nodes);
+        $this->actionSearch($nodes, 0);
     }
 
 
@@ -136,7 +136,7 @@ class RunController extends BaseController
         }
     }
 
-    public function actionSearch($models = null)
+    public function actionSearch($models = null, $depth = 2)
     {
         try
         {
@@ -165,7 +165,7 @@ class RunController extends BaseController
                     'e_count'  => $n->edges_count,
                     'visible_edge_count' => 0,
                 );
-                $this->addNodes($n, $res, 0);
+                $this->addNodes($n, $res, $depth);
             }
             echo CJSON::encode($res);
         }

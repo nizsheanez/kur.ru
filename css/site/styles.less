@@ -3,6 +3,7 @@
 @import "../less/my_lib.less";
 
 @toolbarWidht: 242px;
+@opacityBlack: 0.75;
 
 body{
     overflow: hidden;
@@ -27,12 +28,16 @@ marker#licensing{
 }
 
 circle{
+    stroke-opacity: @opacityBlack;
+    fill-opacity: @opacityBlack;
     fill:         #ccc;
     stroke:       #333;
     stroke-width: 1.5px;
 }
 
 text{
+    stroke-opacity: @opacityBlack;
+    fill-opacity: @opacityBlack;
     font:           10px sans-serif;
     pointer-events: none;
 }
@@ -52,6 +57,8 @@ text{
 }
 //LINKS
 path.link, line.link{
+    stroke-opacity: @opacityBlack;
+    fill-opacity: @opacityBlack;
     fill:         none;
     stroke:       #666;
     stroke-width: 1.5px;

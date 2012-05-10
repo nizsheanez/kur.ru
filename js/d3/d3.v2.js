@@ -5200,7 +5200,7 @@ d3.layout.force = function() {
       t = o.target;
       x = t.x - s.x;
       y = t.y - s.y;
-      if (l = (x * x + y * y)) {
+    if (l = (x * x + y * y)) {
         l = alpha * strengths[i] * ((l = Math.sqrt(l)) - distances[i]) / l;
         x *= l;
         y *= l;
