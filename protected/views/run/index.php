@@ -79,14 +79,13 @@ var svg = d3.select("body").append("svg:svg")
 var opacityBlack = .75;
 var chart = svg.attr("pointer-events", "all")
     .append('svg:g')
-    /*.call(d3.behavior.zoom().on("zoom", function()
+    .call(d3.behavior.zoom().on("zoom", function()
 {
     chart.attr("transform",
         "translate(" + d3.event.translate + ")"
             + " scale(" + d3.event.scale + ")"
     );
 }))
-*/
 ;
 
 var force = d3.layout.force()
@@ -147,7 +146,7 @@ function normalizeNodesAndRemoveLabels() {
 //        chart.selectAll(".nodetext").remove();
     }
 }
-
+var lock = true;
 var fps = 0, now, lastUpdate = (new Date)*1 - 1;
 
 // The higher this value, the less the FPS will be affected by quick changes
@@ -168,6 +167,10 @@ function doFps(){
 // Use elliptical arc path segments to doubly-encode directionality.
 var tick = function()
 {
+    if (lock)
+    {
+        return;
+    }
 //    /*
     path
         .attr("d", function(d)
@@ -180,13 +183,13 @@ var tick = function()
             return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
         });
 //    */
-
+/*
     path
         .attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
-
+*/
     g.attr("transform", function(d)
     {
         return "translate(" + d.x + "," + d.y + ")";
@@ -302,8 +305,7 @@ var update = function(json)
 //        .attr("y", -6);
 
     g.exit().remove();
-    lock = true;
-    setTimeout(function() {lock = false;}, 500);
+    setTimeout(function() {force.start(); setTimeout(function() {force.start(); lock = false;}, 1500)}, 1500);
     force.start();
 };
 
