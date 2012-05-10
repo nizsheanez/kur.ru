@@ -32,7 +32,6 @@ class Node extends ActiveRecordModel
         );
     }
 
-
     public function relations()
     {
         $data = array('sinonim', 'associate', 'subclass_of', 'is_a', 'english');
@@ -41,40 +40,48 @@ class Node extends ActiveRecordModel
         {
             $name            = $d . '_edges';
             $res[$name]      = array(
-                self::HAS_MANY, 'Edge', 'node_id',
+                self::HAS_MANY, 'Edge', 'source',
                 'condition'=> $name . ".edge='{$d}'"
             );
             $name2           = $d . '_edges_in';
             $res[$name2]     = array(
-                self::HAS_MANY, 'Edge', 'target_node_id',
+                self::HAS_MANY, 'Edge', 'target',
                 'condition'=> $name2 . ".edge='{$d}'"
             );
             $res[$d]         = array(
-                self::HAS_MANY, 'Node', 'target_node_id',
+                self::HAS_MANY, 'Node', 'target',
                 'through'  => $name,
                 'condition'=> $name . ".edge='{$d}'"
             );
             $res[$d . '_in'] = array(
-                self::HAS_MANY, 'Node', 'node_id',
+                self::HAS_MANY, 'Node', 'source',
                 'through'  => $name2,
                 'condition'=> $name2 . ".edge='{$d}'"
             );
         }
         return CMap::mergeArray($res, array(
-            'edges_count'                    => array(self::STAT, 'Edge', 'node_id'),
-            'edges'                          => array(self::HAS_MANY, 'Edge', 'node_id'),
-            'in_edges'                       => array(self::HAS_MANY, 'Edge', 'target_node_id'),
+            'edges'                          => array(self::HAS_MANY, 'Edge', 'source'),
+            'in_edges'                       => array(self::HAS_MANY, 'Edge', 'target'),
             'target_nodes'                   => array(
-                self::HAS_MANY, 'Node', 'target_node_id',
+                self::HAS_MANY, 'Node', 'target',
                 'through'=> 'edges'
             ),
             'source_nodes'                   => array(
-                self::HAS_MANY, 'Node', 'node_id',
+                self::HAS_MANY, 'Node', 'source',
                 'through'=> 'in_edges'
             ),
         ));
     }
 
+    public function getAllEdges()
+    {
+        $criteria = new CDbCriteria(array(
+            'condition' => '(t.source='.$this->id.') or (t.target='.$this->id.')'
+        ));
+        $model = Edge::model();
+        $model->getDbCriteria()->mergeWith($criteria);
+        return $model->findAll();
+    }
 
     public function getAttributes()
     {
@@ -101,42 +108,45 @@ class Node extends ActiveRecordModel
         return $this;
     }
 
-
-    public function search()
-    {
-        $criteria = new CDbCriteria;
-        $criteria->compare('id', $this->id, true);
-        $criteria->compare('title', $this->title, true);
-        $criteria->compare('show_in_index', $this->show_in_index);
-        $criteria->order = 'order DESC';
-
-        return new ActiveDataProvider(get_class($this), array(
-            'criteria' => $criteria
-        ));
-    }
-
-
     public static function getListData()
     {
         return CHtml::listData(self::model()->findAll(), 'id', 'title');
     }
 
-
-    public function getAllAssociates()
+    public function getEdgesCount()
     {
-        if ($this->isNewRecord)
-        {
-            return array();
-        }
-        else
-        {
-//            return array_merge($this->associate_edges, $this->associate_edges_in);
-            $table     = $this->tableName();
-            $table_ext = 'edge';
-            return Node::model()->findAllBySql("select a1.* from $table a1, $table_ext b, $table a2
-                    where ((a1.id=b.node_id and a2.id=b.target_node_id ) or (a1.id=b.target_node_id and a2.id=b.node_id ))
-                    and (a2.id={$this->id}) and a1.id!={$this->id} and b.edge = 'associate'");
-        }
+        return 'UPDATE node SET edges_count = (select count(*) from edge b where (b.source=node.id) or (b.target=node.id))';
     }
 
+    public function scopes()
+    {
+        $alias = $this->getTableAlias();
+        return array(
+            'hasImage' => array(
+                'condition' => "$alias.logo!=NULL AND $alias.logo!=''"
+            ),
+            'ordered'  => array(
+                'order' => "$alias.order DESC"
+            )
+        );
+    }
+
+
+    public function toTriplet()
+    {
+        $result = array();
+        foreach ($this->edges as $edge)
+        {
+            $result[$edge->edge][] = trim($edge->target_node->title);
+        }
+        foreach ($this->in_edges as $edge)
+        {
+            if (in_array($edge->edge, array('associate', 'sinonim')))
+            {
+                $result[$edge->edge][] = trim($edge->source_node->title);
+            }
+        }
+
+        return $result;
+    }
 }
