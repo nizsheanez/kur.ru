@@ -9,13 +9,16 @@ Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap.css
 Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap-responsive.css');
 ?>
 
-<!--<div class="toolbar-sidebar well">-->
+<div class="toolbar-sidebar well">
+    <input type="checkbox" name="use_path" id="use_path" />
+    <label for="use_path">Искривление путей</label>
+
 <!--    <div class="nodes-holder"></div>-->
 <!--    <div class="links-holder"></div>-->
-<!--</div>-->
+</div>
 <div class="navbar navbar-fixed-top toolbar-top">
     <div class="navbar-inner">
-        <div class="container">
+        <div class="container" style="width: 100%">
             <div class="nav-collapse">
                 <ul class="nav">
                     <li>
@@ -40,7 +43,7 @@ Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap-res
 </div>
 <div class="navbar navbar-fixed-top toolbar-top bottom">
     <div class="navbar-inner">
-        <div class="container">
+        <div class="container" style="width: 100%">
             <div class="nav-collapse">
                 <ul class="nav">
                     <li>
@@ -96,28 +99,19 @@ var links = [];
 var visNodes = [];
 var visLinks = [];
 
+var $use_path = $('#use_path');
+
 // Use elliptical arc path segments to doubly-encode directionality.
 var tick = function()
 {
-    if ($('#use_path').selected())
-    {
     path
         .attr("d", function(d)
         {
             var dx = d.target.x - d.source.x,
                 dy = d.target.y - d.source.y,
-                dr = Math.sqrt(dx * dx + dy * dy);
+                dr = $use_path.prop('checked') ? Math.sqrt(dx * dx + dy * dy) : 0;
             return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
-        })
-    }
-    else
-    {
-        path
-            .attr("x1", function(d) { return d.source.x; })
-            .attr("y1", function(d) { return d.source.y; })
-            .attr("x2", function(d) { return d.target.x; })
-            .attr("y2", function(d) { return d.target.y; });
-    }
+        });
 
     g.attr("transform", function(d)
     {
@@ -210,7 +204,6 @@ var update = function(json)
     });
     */
 
-
     // Update the paths…
     path = chart.selectAll("path.link").data(force.links());
     path.enter().append("svg:path")
@@ -240,7 +233,6 @@ var update = function(json)
             return d.name
         });
     nodesShow(a);
-//    g = chart.selectAll("g").data(force.nodes());
     g.exit().remove();
 
     force.stop();
