@@ -305,7 +305,7 @@ var update = function(json)
 //        .attr("y", -6);
 
     g.exit().remove();
-    setTimeout(function() {force.start(); setTimeout(function() {force.start(); lock = false;}, 1500)}, 1500);
+    setTimeout(function() {force.start(); lock = false;}, 1500)};
     force.start();
 };
 
