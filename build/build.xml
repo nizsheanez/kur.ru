@@ -3,13 +3,15 @@
 
     <property file="properties/dev" />
     <property file="properties/doc" />
-    <tstamp />
+    <tstamp /> <!-- Sets the DSTAMP, TSTAMP and TODAY properties -->
+
 
     <target name="git">
         <property file="properties/git" />
-        <input propertyName="git.tag">Git tag: </input>
+        <exec outputProperty="git.tag.minor" dir="${deploy.dir}" command="echo $[$(git tag -l '*.*.*' | sort -V | tail -n 1 | sed 's/\(.*\)\.\(.*\)\.\(.*\)/\3/') + 1]" />
+        <exec outputProperty="git.tag.major" dir="${deploy.dir}" command="git tag -l '*.*.*' | sort -V | tail -n 1 | sed 's/\(.*\)\.\(.*\)\.\(.*\)/\1.\2/'" />
         <gitpull repository="${deploy.dir}" force="true" />
-        <gittag repository="${deploy.dir}" name="${git.tag}" />
+        <gittag repository="${deploy.dir}" name="${git.tag.major}.${git.tag.minor}" />
         <gitpush repository="${deploy.dir}" tags="true" />
    </target>
 
@@ -24,7 +26,20 @@
             verbose="false" />
     </target>
 
-    <target name="build" depends="git, rsync">
+    <target name="clear.cache">
+        <echo>Clear assets</echo>
+        <delete dir="${webroot}/assets/" />
+        <mkdir dir="${webroot}/assets/" mode="0777" />
+        <echo>Clear runtime</echo>
+        <delete dir="${app.dir}/runtime/" />
+        <mkdir dir="${app.dir}/runtime/" mode="0777" />
+    </target>
+
+    <target name="db.migrate">
+        <exec command="${php.local.bin} ${yiic} migrate" />
+    </target>
+
+    <target name="build" depends="git, rsync, clear.cache">
         <echo msg="All done." />
     </target>
 
