@@ -1,6 +1,8 @@
-app.dir="../protected/"
-webroot="../"
-basedir="../../"
+basedir = ../../
+webroot = ${basedir}/www
+app.dir = ${basedir}/www/protected
+build.dir = ${basedir}/build
+yiic = ${app.dir}/yiic.php
 
 db.host="localhost"
 db.user=""
@@ -20,6 +22,4 @@ repo.local.path=""
 build.set_version.excludes"libs/**/*.php, extensions/**/*.php, **/bootstrap/**/*.php, **/views/**/*.php, **/tests/**/*.php, **/yiic.php"
 build.set_version.includes"**/*.php, **/*.js, **/*.css"
 
-build.dir="${webroot}/build/tmp"
-yiic="${app.dir}/yiic.php"
 

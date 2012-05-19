@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="yii-cms" basedir="." default="build">
+
+    <property file="properties/dev" />
+    <property file="properties/doc" />
+    <tstamp />
+
+    <target name="rsync">
+        <taskdef name="sync" classname="phing.tasks.ext.FileSyncTask" />
+        <property file="properties/sync" />
+        <sync
+            sourcedir="${sync.source.dir}"
+            destinationdir="${sync.destination.dir}"
+            excludefile="${sync.exclude.file}"
+            listonly="false"
+            verbose="false" />
+    </target>
+
+    <target name="build" depends="rsync">
+        <echo msg="All done." />
+    </target>
+
+</project>
+
+
