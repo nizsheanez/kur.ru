@@ -1,9 +1,13 @@
-basedir = ../../
+# Directories
+basedir = /var/www/asharov.com
 webroot = ${basedir}/www
 app.dir = ${basedir}/www/protected
 build.dir = ${basedir}/build
+deploy.dir = ${basedir}/deploy
 yiic = ${app.dir}/yiic.php
 
+
+# DB
 db.host="localhost"
 db.user=""
 db.pass"=""
@@ -11,15 +15,14 @@ db.name=diplom
 
 mysql.dump=""
 
-repo.remote.path=""
-repo.local.path=""
+# GIT
+git.repository = https://nizsheanez@github.com/nizsheanez/kur.ru.git
+git.release =""
 
-version.cms=2.0.0
 
-repo.remote.path=""
-repo.local.path=""
 
+# Project prepare
 build.set_version.excludes"libs/**/*.php, extensions/**/*.php, **/bootstrap/**/*.php, **/views/**/*.php, **/tests/**/*.php, **/yiic.php"
 build.set_version.includes"**/*.php, **/*.js, **/*.css"
 
-
+version.cms=2.0.0

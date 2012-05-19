@@ -5,9 +5,17 @@
     <property file="properties/doc" />
     <tstamp />
 
+    <target name="git">
+        <property file="properties/git" />
+        <input propertyName="git.tag">Git tag: </input>
+        <gitpull repository="${deploy.dir}" force="true" />
+        <gittag repository="${deploy.dir}" name="${git.tag}" />
+        <gitpush repository="${deploy.dir}" tags="true" />
+   </target>
+
     <target name="rsync">
-        <taskdef name="sync" classname="phing.tasks.ext.FileSyncTask" />
         <property file="properties/sync" />
+        <taskdef name="sync" classname="phing.tasks.ext.FileSyncTask" />
         <sync
             sourcedir="${sync.source.dir}"
             destinationdir="${sync.destination.dir}"
@@ -16,7 +24,7 @@
             verbose="false" />
     </target>
 
-    <target name="build" depends="rsync">
+    <target name="build" depends="git, rsync">
         <echo msg="All done." />
     </target>
 

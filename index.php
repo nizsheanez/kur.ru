@@ -1,4 +1,5 @@
 <?php
+//doing
 define ('YII_DEBUG', true);
 
 // include Yii bootstrap file
