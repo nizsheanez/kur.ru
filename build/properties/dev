@@ -21,7 +21,7 @@ shell.version.next = awk -F \. {'print $1"."$2"."++$3'}
 mysql.dump=""
 
 # GIT
-git.repository = https://nizsheanez@github.com/nizsheanez/kur.ru.git
+git.repository = deployer@github.com:nizsheanez/kur.ru.git
 git.release =""
 
 
