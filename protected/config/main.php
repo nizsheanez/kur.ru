@@ -163,12 +163,13 @@ return array(
 
         'log'          => array(
             'class' => 'CLogRouter',
-            'routes'=> array( //                array(
-//                    'class'        => 'DbLogRoute',
-//                    'levels'       => 'error, warning, info',
-//                    'connectionID' => 'db',
-//                    'logTableName' => 'log',
-//                    'enabled'      => true
+            'routes'=> array(
+//                array(
+                    // направляем результаты профайлинга в ProfileLogRoute (отображается
+                    // внизу страницы)
+//                    'class'=>'CProfileLogRoute',
+//                    'levels'=>'profile',
+//                    'enabled'=>true,
 //                )
 //                array(
 //                    'class'        => 'ext.debug.db_profiler.DbProfileLogRoute',

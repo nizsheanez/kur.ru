@@ -1,10 +1,6 @@
 <?php
 class Node extends ActiveRecordModel
 {
-    const PAGE_SIZE   = 10;
-    const PHOTOS_DIR  = 'upload/producers';
-    const LOGO_HEIGHT = 84;
-
 
     public static function model($className = __CLASS__)
     {
@@ -35,7 +31,6 @@ class Node extends ActiveRecordModel
             ),
         );
     }
-
 
     public function relations()
     {
@@ -85,7 +80,7 @@ class Node extends ActiveRecordModel
         ));
         $model = Edge::model();
         $model->getDbCriteria()->mergeWith($criteria);
-        return $model->findAll();
+        return $model->with('target_node', 'source_node')->findAll();
     }
 
     public function getAttributes()
@@ -96,37 +91,12 @@ class Node extends ActiveRecordModel
         ));
     }
 
-
-    public function behaviors()
-    {
-        return CMap::mergeArray(parent::behaviors(),array(
-            'withRelated'                  => array(
-                'class'=> 'application.components.activeRecordBehaviors.WithRelatedBehavior',
-            ),
-        ));
-    }
-
     public function autocomplete($term)
     {
         $alias = $this->getTableAlias();
         $this->getDbCriteria()->compare("{$alias}.title", $term, true);
         return $this;
     }
-
-
-    public function search()
-    {
-        $criteria = new CDbCriteria;
-        $criteria->compare('id', $this->id, true);
-        $criteria->compare('title', $this->title, true);
-        $criteria->compare('show_in_index', $this->show_in_index);
-        $criteria->order = 'order DESC';
-
-        return new ActiveDataProvider(get_class($this), array(
-            'criteria' => $criteria
-        ));
-    }
-
 
     public static function getListData()
     {
@@ -138,43 +108,21 @@ class Node extends ActiveRecordModel
         return 'UPDATE node SET edges_count = (select count(*) from edge b where (b.source=node.id) or (b.target=node.id))';
     }
 
-    public function scopes()
+    public function toTriplet()
     {
-        $alias = $this->getTableAlias();
-        return array(
-            'hasImage' => array(
-                'condition' => "$alias.logo!=NULL AND $alias.logo!=''"
-            ),
-            'ordered'  => array(
-                'order' => "$alias.order DESC"
-            )
-        );
-    }
-
-
-    public function uploadFiles()
-    {
-        return array( //            'logo' => array('dir' => self::PHOTOS_DIR)
-        );
-    }
-
-
-    public function beforeSave()
-    {
-        if (parent::beforeSave())
+        $result = array();
+        foreach ($this->edges as $edge)
         {
-            return true;
+            $result[$edge->edge][] = trim($edge->target_node->title);
         }
-        return false;
-    }
-
-
-    public function beforeDelete()
-    {
-        if (parent::beforeSave())
+        foreach ($this->in_edges as $edge)
         {
-            return true;
+            if (in_array($edge->edge, array('associate', 'sinonim')))
+            {
+                $result[$edge->edge][] = trim($edge->source_node->title);
+            }
         }
-        return false;
+
+        return $result;
     }
 }

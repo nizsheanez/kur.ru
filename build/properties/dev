@@ -1,0 +1,25 @@
+app.dir="../protected/"
+webroot="../"
+basedir="../../"
+
+db.host="localhost"
+db.user=""
+db.pass"=""
+db.name=diplom
+
+mysql.dump=""
+
+repo.remote.path=""
+repo.local.path=""
+
+version.cms=2.0.0
+
+repo.remote.path=""
+repo.local.path=""
+
+build.set_version.excludes"libs/**/*.php, extensions/**/*.php, **/bootstrap/**/*.php, **/views/**/*.php, **/tests/**/*.php, **/yiic.php"
+build.set_version.includes"**/*.php, **/*.js, **/*.css"
+
+build.dir="${webroot}/build/tmp"
+yiic="${app.dir}/yiic.php"
+

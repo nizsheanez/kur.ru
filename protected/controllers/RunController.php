@@ -67,7 +67,7 @@ class RunController extends BaseController
 
     public function addNodes($n, &$res, $count = 5)
     {
-        foreach ($n->with('target_node', 'source_node')->getAllEdges() as $k)
+        foreach ($n->getAllEdges() as $k)
         {
             if (!isset($this->edges[$k->source][$k->target]) &&
                 !isset($this->edges[$k->target][$k->source])
@@ -118,7 +118,7 @@ class RunController extends BaseController
     public function actionGet($id)
     {
         $nodes = Node::model()->findAllByPk($id);
-        $this->actionSearch($nodes);
+        $this->actionSearch($nodes, 0);
     }
 
 
@@ -136,7 +136,7 @@ class RunController extends BaseController
         }
     }
 
-    public function actionSearch($models = null)
+    public function actionSearch($models = null, $depth = 1)
     {
         try
         {
@@ -165,7 +165,7 @@ class RunController extends BaseController
                     'e_count'  => $n->edges_count,
                     'visible_edge_count' => 0,
                 );
-                $this->addNodes($n, $res, 0);
+                $this->addNodes($n, $res, $depth);
             }
             echo CJSON::encode($res);
         }
@@ -181,94 +181,86 @@ class RunController extends BaseController
         $this->render('index');
     }
 
-
-    public function actionCalc()
+    public function actionSave($ids = null)
     {
-        foreach (Node::model()->findAll() as $node)
+        if ($ids === null)
         {
-            $node->a_count = $node->getAllAssociates();
-            $node->save(false);
+            $ids = array();
+            for ($i = 0; $i < 20; $i++)
+            {
+                $ids[] = rand(0, 80000);
+            }
         }
+
+        $nodes = Node::model()->in('id', $ids)->findAll();
+        $triples = array();
+        foreach ($nodes as $node)
+        {
+            $triples[trim($node->title)] = $node->toTriplet();
+        }
+
+        require Yii::getPathOfAlias('ext.arc.ARC2').'.php';
+        $ns = array(
+            'foaf' => 'http://xmlns.com/foaf/0.1/',
+            'dc' => 'http://purl.org/dc/elements/1.1/'
+        );
+        $conf = array('ns' => $ns);
+        $ser = ARC2::getRDFXMLSerializer($conf);
+        $doc = $ser->getSerializedIndex($triples);
+        dump($doc);
     }
 
-
-    public function actionUpdate()
-    {
-        $ids = Yii::app()->db->createCommand()->from('node')->where('gr IS NULL')->queryColumn(array('id'));
-        foreach ($ids as $id)
-        {
-            $node = Node::model()->findByPk($id);
-            if ($node->gr === null)
-            {
-                $node->gr = $node->id;
-                $node->save(false, array('gr'));
-            }
-            $this->recUpdate($node, 5);
-        }
-    }
-
-    public function recUpdate($node, $count = 10)
-    {
-        if ($count <= 0)
-        {
-            return;
-        }
-        foreach ($node->getAllAssociates() as $ass)
-        {
-            if ($ass->gr !== null)
-            {
-                continue;
-            }
-            $ass->gr = $node->gr;
-            $ass->save(false, array('gr'));
-            $this->recUpdate($ass, --$count);
-            unset($ass);
-        }
-    }
-
-    public function actionExperiments()
-    {
-        $cr = new CDbCriteria(array(
-            'condition' => 't.edge = "subclass_of"'
-        ));
-        $model = new Edge;
-        $model->getDbCriteria()->mergeWith($cr);
-        $models = $model->findAllRaw();
-        foreach ($models as $model)
-        {
-            if (!($n1 = Node::model()->findByPk($model['source'])))
-            {
-                continue;
-            }
-            if (!($n2 = Node::model()->findByPk($model['target'])))
-            {
-                continue;
-            }
-            if ($n1->main_gr4 != null)
-            {
-                continue;
-            }
-
-            $n1->main_gr4 = $n2->id;
-            $n1->save(false);
-            $n2->save(false);
-        }
-    }
-
-
-    public function actionEcountCalc()
+    public function actionDo()
     {
         set_time_limit(0);
-        $count = Yii::app()->db->createCommand('SELECT COUNT(*) FROM node')->queryScalar();
-        $dp = new CSqlDataProvider('select node.id, (select count(*) from edge_copy b where (b.source=node.id) or (b.target=node.id)) as e_count from node');
-        $dp->totalItemCount = $count;
-        $command = Yii::app()->db->createCommand('UPDATE node SET edges_count=:edges_count WHERE id=:id');
-        $iterator = new DataProviderIterator($dp, 10);
-
-        foreach($iterator as $data)
+        $ids = array();
+        for ($i = 0; $i < 1000; $i++)
         {
-            $command->execute(array('edges_count' => $data['e_count'], 'id' => $data['id']));
+            $ids[] = rand(0, 80000);
         }
+
+        for ( $i = 0; $i < 100; $i++)
+        {
+            $model = new Node;
+            //all nodes
+            Yii::beginProfile('Node::model()->findAllRaw()');
+            $model->findAllRaw();
+            Yii::endProfile('Node::model()->findAllRaw()');
+
+            $model = new Node;
+            //all edges
+            Yii::beginProfile('Edge::model()->findAllRaw()');
+            $model->findAllRaw();
+            Yii::endProfile('Edge::model()->findAllRaw()');
+
+            $model = new Node;
+            //related records
+            Yii::beginProfile("Node::model()->with('edges')->findByPk(11408)");
+            $model->with('edges', 'in_edges')->findByPk(11408);
+            Yii::endProfile("Node::model()->with('edges')->findByPk(11408)");
+
+            $model = new Node;
+            //save testing
+            Yii::beginProfile("Node::model()->in('id', \$ids)->findAllRaw()");
+            $model->in('id', $ids)->findAllRaw();
+            Yii::endProfile("Node::model()->in('id', \$ids)->findAllRaw()");
+
+            $model = new Node;
+            //get 5 level of nodes
+            Yii::beginProfile("Recursion");
+            $node = $model->findByPk(11408);
+            $this->nodes[$node->id] = true;
+            $res['nodes'][]         = array(
+                'name'    => $node->id,
+                'title'   => $node->title,
+                'e_count' => $node->edges_count,
+                'visible_edge_count' => 0,
+            );
+            $this->addNodes($node, $res, 5);
+            Yii::endProfile("Recursion");
+        }
+
     }
+
 }
 
