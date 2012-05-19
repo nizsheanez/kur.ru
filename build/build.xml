@@ -8,10 +8,10 @@
 
     <target name="git">
         <property file="properties/git" />
-        <exec outputProperty="git.tag.minor" dir="${deploy.dir}" command="echo $[$(git tag -l '*.*.*' | sort -V | tail -n 1 | sed 's/\(.*\)\.\(.*\)\.\(.*\)/\3/') + 1]" />
-        <exec outputProperty="git.tag.major" dir="${deploy.dir}" command="git tag -l '*.*.*' | sort -V | tail -n 1 | sed 's/\(.*\)\.\(.*\)\.\(.*\)/\1.\2/'" />
         <gitpull repository="${deploy.dir}" force="true" />
-        <gittag repository="${deploy.dir}" name="${git.tag.major}.${git.tag.minor}" />
+        <exec dir="${deploy.dir}" outputProperty="git.lasttag" command="git tag -l '*.*.*' | sort -V | tail -n 1" />
+        <exec dir="${deploy.dir}" outputProperty="git.tag" command="echo ${git.lasttag} | ${shell.version.next}" />
+        <gittag repository="${deploy.dir}" name="${git.tag}" />
         <gitpush repository="${deploy.dir}" tags="true" />
    </target>
 
