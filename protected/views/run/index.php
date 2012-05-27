@@ -5,6 +5,7 @@ Yii::app()->clientScript->registerScriptFile('/js/debug.js');
 
 Yii::app()->clientScript->registerScriptFile('/js/d3/d3.v2.js');
 
+Yii::app()->clientScript->registerScriptFile('/js/downloadFile.js');
 Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap.css');
 Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap-responsive.css');
 ?>
@@ -48,12 +49,6 @@ Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap-res
                 <ul class="nav">
                     <li>
                         <div class="btn btn-mini" id="download"><i class="icon-download"></i></div>
-                    </li>
-                    <li>
-                        <div class="btn btn-mini" id="closer"><i class="icon-plus-sign"></i></div>
-                    </li>
-                    <li>
-                        <div class="btn btn-mini" id="further"><i class="icon-minus-sign"></i></div>
                     </li>
                     <li>
                         <input type="checkbox" name="use_path" id="use_path" />
@@ -306,7 +301,7 @@ var update = function(json)
 //        .attr("y", -6);
 
     g.exit().remove();
-    setTimeout(function() {force.start(); setTimeout(function() {force.start(); lock = false;}, 1500)}, 1500);
+    setTimeout(function() {force.start(); lock = false; setTimeout(function() {force.start(); }, 1500)}, 1500);
     force.start();
 };
 
@@ -328,14 +323,19 @@ $('#search-form').submit(function()
 
 force.on("tick", tick);
 
-
-$('#closer').click(function()
+$('#download').click(function()
 {
-    chart.mousewheel();
-    return false;
-});
-$('#further').click(function()
-{
+    var res =  [];
+    for ( var i in visNodes)
+    {
+        res.push(i);
+    }
+    $.fileDownload('/run/saveFile', {
+//            preparingMessageHtml: "We are preparing your report, please wait...",
+//            failMessageHtml: "There was a problem generating your report, please try again.",
+        httpMethod: "POST",
+        data: {ids:res.join(',')}
+    });
     return false;
 });
 

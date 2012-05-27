@@ -27,7 +27,7 @@ git.release =""
 
 
 # Project prepare
-build.set_version.excludes"libs/**/*.php, extensions/**/*.php, **/bootstrap/**/*.php, **/views/**/*.php, **/tests/**/*.php, **/yiic.php"
-build.set_version.includes"**/*.php, **/*.js, **/*.css"
+build.set_version.excludes = "libs/**/*.php, extensions/**/*.php, **/bootstrap/**/*.php, **/views/**/*.php, **/tests/**/*.php, **/yiic.php"
+build.set_version.includes = "**/*.php, **/*.js, **/*.css"
 
 version.cms=2.0.0

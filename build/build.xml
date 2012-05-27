@@ -2,12 +2,10 @@
 <project name="yii-cms" basedir="." default="build">
 
     <property file="properties/dev" />
-    <property file="properties/doc" />
     <tstamp /> <!-- Sets the DSTAMP, TSTAMP and TODAY properties -->
 
 
     <target name="git">
-        <property file="properties/git" />
         <gitpull repository="${deploy.dir}" force="true" />
         <exec dir="${deploy.dir}" outputProperty="git.lasttag" command="git tag -l '*.*.*' | sort -V | tail -n 1" />
         <exec dir="${deploy.dir}" outputProperty="git.tag" command="echo ${git.lasttag} | ${shell.version.next}" />
@@ -39,10 +37,29 @@
         <exec command="php ${yiic} migrate" />
     </target>
 
-    <target name="build" depends="git, rsync, clear.cache">
+    <target name="doc">
+        <property file="properties/doc" />
+        <delete dir="${doc.dir}" />
+        <mkdir dir="${doc.dir}" mode="0777" />
+        <phpdoc2 title="API Documentation" destdir="${doc.dir}" template="responsive">
+            <fileset dir="${app.dir}" includes="**/*.php" excludes="${doc.excludes}" />
+        </phpdoc2>
+    </target>
+
+    <target name="set_version">
+        <reflexive>
+            <fileset dir="${deploy.dir}" includes="${build.set_version.includes}" excludes="${build.set_version.excludes}" />
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="@version \$(Id)\$" replace="@version ${git.tag}" />
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+    </target>
+
+    <target name="build" depends="git, rsync, clear.cache, doc, set_version">
         <echo msg="All done." />
     </target>
 
 </project>
-
 
