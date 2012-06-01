@@ -84,17 +84,29 @@ var w = $(document).width(),
 
 var svg = d3.select("body").append("svg:svg")
     .attr("width", w)
-    .attr("height", h);
+    .attr("height", h)
+    .attr("xmlns", "http://www.w3.org/2000/svg")
+    .attr("version", "1.1")
+    .attr("xmlns:xmlns:xlink", "http://www.w3.org/1999/xlink")
+    ;
+
+
 var opacityBlack = .75;
 var chart = svg.attr("pointer-events", "all")
     .append('svg:g')
-    .call(d3.behavior.zoom().on("zoom", function()
-{
-    chart.attr("transform",
-        "translate(" + d3.event.translate + ")"
-            + " scale(" + d3.event.scale + ")"
-    );
-}));
+//    .call(d3.behavior.zoom().on("zoom", function()
+//{
+//    chart.attr("transform",
+//        "translate(" + d3.event.translate + ")"
+//            + " scale(" + d3.event.scale + ")"
+//    );
+//}));
+;
+// Array Remove - By John Resig (MIT Licensed)
+removeItem = function(array, index) {
+    array.splice(index, 1);
+};
+
 var pathChart = chart.append('g');
 
 var force = d3.layout.force()
@@ -112,9 +124,13 @@ var links = [];
 var visNodes = [];
 var visLinks = [];
 
+var last_click = last_click2 = 0;
+var is_dblclick = false;
+
+
 var use_path = $('#use_path');
 
-var linkedByIndex = {};
+var linkedByIndex = [];
 
 var curNode = {x:300,y:300};
 
@@ -125,6 +141,7 @@ function isNodeConnected(a, b) {
 
 function fade(opacity, showText) {
     return function(d, i) {
+        $(d).parent().children('.cancel').css('display', 'block');
         labels = [];
         var selectedLabelData = null;
         chart.selectAll("circle").style("fill-opacity", function(o) {
@@ -210,6 +227,7 @@ var addNodesLinks = function(json)
     $.each(json.nodes, function(i, node) {
         if (!visNodes[node.name])
         {
+            node.links = [];
             node.x = curNode.x;
             node.y = curNode.y;
             visNodes[node.name] = node;
@@ -224,11 +242,11 @@ var addNodesLinks = function(json)
             linkedByIndex[link.target + ',' + link.source] = true;
             link.source = visNodes[link.source];
             link.target = visNodes[link.target];
+            link.source.links.push(link.id);
+            link.target.links.push(link.id);
             links.push(link);
         }
     });
-
-
     force
         .nodes(nodes)
         .links(links);
@@ -257,7 +275,11 @@ var update = function(json)
     path.enter().append("svg:path")
         .attr("class", function(d)
         {
-            return "link " + d.type;
+            return "link " + d.type + " t-" + d.target.name + " s-"+ d.source.name;
+        })
+        .attr("id", function(d)
+        {
+            return "link_" + d.id;
         })
         .attr("marker-end", function(d)
         {
@@ -279,8 +301,63 @@ var update = function(json)
         .attr("r", function(d) {return 4 + d.e_count * .25;})
         .on('click', function(d)
         {
-            curNode = d;
-            d3.json('/run/get/id/' + $(this).parent().data('id'), update);
+            var self = $(this);
+            last_click2 = new Date().getTime()/1000;
+            if (last_click2 - last_click < .3)
+            {
+                is_dblclick = true;
+                return false;
+            }
+            last_click = last_click2;
+            time = setTimeout(function(){
+                if (is_dblclick)
+                {
+                    is_dblclick = false;
+                    var id = self.parent().data('id');
+                    var vlinks = visNodes[id].links;
+                    delete visNodes[id];
+                    for (var i in vlinks)
+                    {
+                        var link_id = vlinks[i];
+                        var link, j;
+
+                        for (j in links)
+                        {
+                            if (links[j].id == link_id)
+                            {
+                                link = links[j];
+                            }
+                        }
+
+                        $('#link_'+ link_id).remove();
+                        if (link != undefined)
+                        {
+                            linkedByIndex[link.target + ',' + link.source] = false;
+                            linkedByIndex[link.source + ',' + link.target] = false;
+                            delete visLinks[link_id];
+                        }
+                        removeItem(links,  j);
+                    }
+
+                    for (var k in nodes)
+                    {
+                        if (nodes[k].name == id)
+                        {
+                            removeItem(nodes, k);
+                        }
+                    }
+                    self.parent().remove();
+                    force
+                        .nodes(nodes)
+                        .links(links);
+                    force.start();
+                }
+                else
+                {
+                    curNode = d;
+                    d3.json('/run/get/id/' + self.parent().data('id'), update);
+                }
+            }, 300);
         })
         .on("mouseover", fade(.2, true))
         .on("mouseout", normalizeNodesAndRemoveLabels());
@@ -293,14 +370,14 @@ var update = function(json)
             return d.title;
         });
 
-//    a.append("svg:a")
-//        .attr('width', 10)
-//        .attr('height', 10)
-//        .text("x")
+//    a.append("svg:text")
 //        .attr('class', 'cancel')
 //        .attr('id', function(d) {return 'cancel_'+d.name})
+//        .attr('xlink:xlink:href', "http://www.w3schools.com/svg/")
+//        .append('svg:text').text("x")
 //        .attr("x", 1)
-//        .attr("y", -6);
+//        .attr("y", -6)
+//    ;
 
     g.exit().remove();
     force.start();
