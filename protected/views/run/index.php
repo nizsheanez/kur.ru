@@ -5,17 +5,21 @@ Yii::app()->clientScript->registerScriptFile('/js/debug.js');
 
 Yii::app()->clientScript->registerScriptFile('/js/d3/d3.v2.js');
 
+Yii::app()->clientScript->registerScriptFile('/js/downloadFile.js');
 Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap.css');
 Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap-responsive.css');
 ?>
 
 <!--<div class="toolbar-sidebar well">-->
+<!--    <input type="checkbox" name="use_path" id="use_path" />-->
+<!--    <label for="use_path">Искривление путей</label>-->
+
 <!--    <div class="nodes-holder"></div>-->
 <!--    <div class="links-holder"></div>-->
 <!--</div>-->
 <div class="navbar navbar-fixed-top toolbar-top">
     <div class="navbar-inner">
-        <div class="container">
+        <div class="container" style="width: 100%">
             <div class="nav-collapse">
                 <ul class="nav">
                     <li>
@@ -33,38 +37,35 @@ Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap-res
                             <button type="submit" class="btn">Поиск</button>
                         </form>
                     </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="navbar navbar-fixed-top toolbar-top bottom">
-    <div class="navbar-inner">
-        <div class="container">
-            <div class="nav-collapse">
-                <ul class="nav">
-                    <li>
+                    <li style="float: right;">
                         <div class="btn btn-mini" id="download"><i class="icon-download"></i></div>
                     </li>
-                    <li>
-                        <div class="btn btn-mini" id="closer"><i class="icon-plus-sign"></i></div>
-                    </li>
-                    <li>
-                        <div class="btn btn-mini" id="further"><i class="icon-minus-sign"></i></div>
-                    </li>
-                    <li>
-                        <input type="checkbox" name="use_path" id="use_path" />
-                    </li>
-                    <li>
-                        <span id="details"></span>
-                        <span>|</span>
-                        <span id="num"></span>
-                    </li>
                 </ul>
             </div>
         </div>
     </div>
 </div>
+<!--<div class="navbar navbar-fixed-top toolbar-top bottom">-->
+<!--    <div class="navbar-inner">-->
+<!--        <div class="container" style="width: 100%">-->
+<!--            <div class="nav-collapse">-->
+<!--                <ul class="nav">-->
+<!--                    <li>-->
+<!--                        <div class="btn btn-mini" id="download"><i class="icon-download"></i></div>-->
+<!--                    </li>-->
+<!--                    <li>-->
+<!--                        <input type="checkbox" name="use_path" id="use_path" />-->
+<!--                    </li>-->
+<!--                    <li>-->
+<!--                        <span id="details"></span>-->
+<!--                        <span>|</span>-->
+<!--                        <span id="num"></span>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 <div id="chart" style=""></div>
 
 <script type="text/javascript">
@@ -147,6 +148,7 @@ function normalizeNodesAndRemoveLabels() {
     }
 }
 var lock = true;
+/*
 var fps = 0, now, lastUpdate = (new Date)*1 - 1;
 
 // The higher this value, the less the FPS will be affected by quick changes
@@ -158,11 +160,11 @@ function doFps(){
 
     var thisFrameFPS = 1000 / ((now=new Date) - lastUpdate);
     fps += (thisFrameFPS - fps) / fpsFilter;
-    details.text(fps);
+    details.text(Math.ceil(fps));
     num.text(force.nodes().length);
     lastUpdate = now * 1 - 1;
 }
-
+*/
 
 // Use elliptical arc path segments to doubly-encode directionality.
 var tick = function()
@@ -172,14 +174,12 @@ var tick = function()
         return;
     }
 //    /*
-    path
-        .attr("d", function(d)
+    path.attr("d", function(d)
         {
             var
                 dx = d.target.x - d.source.x,
                 dy = d.target.y - d.source.y,
-                dr =  Math.sqrt(dx * dx + dy * dy) ;
-//                dr = 0;
+                dr = Math.sqrt(dx * dx + dy * dy);
             return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
         });
 //    */
@@ -195,12 +195,13 @@ var tick = function()
         return "translate(" + d.x + "," + d.y + ")";
     });
 
-    doFps();
+//    doFps();
 };
 
 
 var addNodesLinks = function(json)
 {
+
     // Compute the distinct nodes from the links.
     $.each(json.nodes, function(i, node) {
         if (!visNodes[node.name])
@@ -222,6 +223,7 @@ var addNodesLinks = function(json)
             links.push(link);
         }
     });
+
 
     force
         .nodes(nodes)
@@ -246,7 +248,6 @@ var update = function(json)
     });
     */
 
-
     // Update the paths…
     path = chart.selectAll("path.link").data(force.links());
     path.enter().append("svg:path")
@@ -256,14 +257,7 @@ var update = function(json)
         })
         .attr("marker-end", function(d)
         {
-            if (d.type == 'subclass_of')
-            {
-                return "url(#suit)";
-            }
-            else
-            {
-                return '';
-            }
+            return d.type == 'subclass_of' ? "url(#suit)" : "";
         });
     path.exit().remove();
 
@@ -305,7 +299,7 @@ var update = function(json)
 //        .attr("y", -6);
 
     g.exit().remove();
-    setTimeout(function() {force.start(); lock = false;}, 1500)};
+    setTimeout(function() {force.start(); lock = false;}, 1500);
     force.start();
 };
 
@@ -327,14 +321,19 @@ $('#search-form').submit(function()
 
 force.on("tick", tick);
 
-
-$('#closer').click(function()
+$('#download').click(function()
 {
-    chart.mousewheel();
-    return false;
-});
-$('#further').click(function()
-{
+    var res =  [];
+    for ( var i in visNodes)
+    {
+        res.push(i);
+    }
+    $.fileDownload('/run/saveFile', {
+//            preparingMessageHtml: "We are preparing your report, please wait...",
+//            failMessageHtml: "There was a problem generating your report, please try again.",
+        httpMethod: "POST",
+        data: {ids:res.join(',')}
+    });
     return false;
 });
 

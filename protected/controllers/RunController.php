@@ -136,7 +136,7 @@ class RunController extends BaseController
         }
     }
 
-    public function actionSearch($models = null, $depth = 2)
+    public function actionSearch($models = null, $depth = 1)
     {
         try
         {
@@ -181,8 +181,9 @@ class RunController extends BaseController
         $this->render('index');
     }
 
-    public function actionSave($ids = null)
+    public function actionSaveFile($ids = null)
     {
+        $ids = explode(',',urldecode(Yii::app()->request->getPost('ids')));
         if ($ids === null)
         {
             $ids = array();
@@ -207,7 +208,10 @@ class RunController extends BaseController
         $conf = array('ns' => $ns);
         $ser = ARC2::getRDFXMLSerializer($conf);
         $doc = $ser->getSerializedIndex($triples);
-        dump($doc);
+        header("Pragma: no-cache"); // required
+        header('Content-type: application/force-download');
+        header('Content-Disposition: attachment; filename="result.rdf"');
+        echo $doc;
     }
 
     public function actionDo()

@@ -109,8 +109,11 @@ path.link, line.link{
     .nav-collapse{
         margin-top: -1px;
     };
+    .nav{
+        margin-right: 0;
+    }
     width:  18.7%;
-    left: 30%;
+    left: 40%;
     margin: 10px 0 0;
     input{
         height: 11px;
@@ -120,17 +123,25 @@ path.link, line.link{
         line-height: 11px;
     };
     .navbar-inner{
+        .container{
+            width:100%;
+            ul{
+                width:100%;
+            }
+        }
         .round();
         .box-shadow(0 1px 5px rgba(0, 0, 0, .55));
         #gradient > .vertical(@grayLighter, lighten(@gray, 5%));
     }
     &.bottom{
         left: 50%;
-        width:  18.7%;
+        width:  19%;
     }
 }
 .well{
     padding: 5px;
+    #gradient > .vertical(rgba(200, 200, 200, 0.9), rgba(100, 100, 100, 0.9));
+    background-color: rgba(160, 160, 160, 1);
 }
 .btn{
     .round();
@@ -145,6 +156,10 @@ form{
 }
 .navbar .btn{
     margin: 0
+}
+input[type="checkbox"]{
+    float: left;
+    margin-right: 3px;
 }
 
 //AUTOCOMPLETE
