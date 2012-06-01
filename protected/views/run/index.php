@@ -66,6 +66,14 @@ Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap-res
 <!--        </div>-->
 <!--    </div>-->
 <!--</div>-->
+<div class="demo" id="demo">
+    <p>В поле поиск введите название предметной области. Далее вы увидите подсказку.</p>
+   <svg class="demo_svg"><line class="link associate"   x1="0" x2="25" y1="0" y2="0"></line></svg><span>associate</span><br/>
+   <svg class="demo_svg"><line class="link english"     x1="0" x2="25" y1="0" y2="0"></line></svg><span>english</span><br/>
+   <svg class="demo_svg"><line class="link sinonim"     x1="0" x2="25" y1="0" y2="0"></line></svg><span>sinonim</span><br/>
+   <svg class="demo_svg"><line class="link subclass_of" x1="0" x2="25" y1="0" y2="0"></line></svg><span>subclass_of</span><br/>
+   <svg class="demo_svg"><line class="link is_a"        x1="0" x2="25" y1="0" y2="0"></line></svg><span>is_a</span><br/>
+</div>
 <div id="chart" style=""></div>
 
 <script type="text/javascript">
@@ -108,7 +116,7 @@ var use_path = $('#use_path');
 
 var linkedByIndex = {};
 
-var curNode = {x:200,y:200};
+var curNode = {x:300,y:300};
 
 
 function isNodeConnected(a, b) {
@@ -169,10 +177,6 @@ function doFps(){
 // Use elliptical arc path segments to doubly-encode directionality.
 var tick = function()
 {
-    if (lock)
-    {
-        return;
-    }
 //    /*
     path.attr("d", function(d)
     {
@@ -299,7 +303,6 @@ var update = function(json)
 //        .attr("y", -6);
 
     g.exit().remove();
-    setTimeout(function() {force.start(); lock = false;}, 1500);
     force.start();
 };
 
@@ -336,5 +339,6 @@ $('#download').click(function()
     });
     return false;
 });
+
 
 </script>
