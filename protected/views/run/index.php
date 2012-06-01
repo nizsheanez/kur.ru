@@ -86,8 +86,8 @@ var chart = svg.attr("pointer-events", "all")
         "translate(" + d3.event.translate + ")"
             + " scale(" + d3.event.scale + ")"
     );
-}))
-;
+}));
+var pathChart = chart.append('g');
 
 var force = d3.layout.force()
     .gravity(.14)
@@ -175,13 +175,13 @@ var tick = function()
     }
 //    /*
     path.attr("d", function(d)
-        {
-            var
-                dx = d.target.x - d.source.x,
-                dy = d.target.y - d.source.y,
-                dr = Math.sqrt(dx * dx + dy * dy);
-            return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
-        });
+    {
+        var
+            dx = d.target.x - d.source.x,
+            dy = d.target.y - d.source.y,
+            dr = Math.sqrt(dx * dx + dy * dy);
+        return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+    });
 //    */
 /*
     path
@@ -249,7 +249,7 @@ var update = function(json)
     */
 
     // Update the paths…
-    path = chart.selectAll("path.link").data(force.links());
+    path = pathChart.selectAll("path.link").data(force.links());
     path.enter().append("svg:path")
         .attr("class", function(d)
         {
@@ -262,7 +262,7 @@ var update = function(json)
     path.exit().remove();
 
     // Update the nodes…
-    g = chart.selectAll("g").data(force.nodes());
+    g = chart.selectAll("g.node").data(force.nodes());
     var a = g.enter().append("svg:g")
         .attr("class", "node")
         .attr("data-id", function(d)

@@ -136,7 +136,7 @@ class RunController extends BaseController
         }
     }
 
-    public function actionSearch($models = null, $depth = 1)
+    public function actionSearch($models = null, $depth = 0)
     {
         try
         {
