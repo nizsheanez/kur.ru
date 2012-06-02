@@ -65,7 +65,7 @@ class RunController extends BaseController
     }
 
 
-    public function addNodes($n, &$res, $count = 5)
+    public function addNodes($n, &$res, $count = 5, $add_nodes = true)
     {
         foreach ($n->getAllEdges() as $k)
         {
@@ -95,17 +95,23 @@ class RunController extends BaseController
             {
                 continue;
             }
-
-            $this->nodes[$node->id] = true;
-            $res['nodes'][]         = array(
-                'name'    => $node->id,
-                'title'   => $node->title,
-                'e_count' => $node->edges_count,
-                'visible_edge_count' => 0,
-            );
+            if ($add_nodes)
+            {
+                $this->nodes[$node->id] = true;
+                $res['nodes'][]         = array(
+                    'name'    => $node->id,
+                    'title'   => $node->title,
+                    'e_count' => $node->edges_count,
+                    'visible_edge_count' => 0,
+                );
+            }
             if ($count && $node)
             {
                 $this->addNodes($node, $res, $count - 1);
+            }
+            elseif ($add_nodes)
+            {
+                $this->addNodes($node, $res, 0, false);
             }
         }
     }

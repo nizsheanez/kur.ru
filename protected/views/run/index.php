@@ -68,6 +68,7 @@ Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap-res
 <!--</div>-->
 <div class="demo" id="demo">
     <p>В поле поиск введите название предметной области. Далее вы увидите подсказку.</p>
+    <p>Клик - раскрыть узел.</br>Двойной клик - уладить узел</p>
    <svg class="demo_svg"><line class="link associate"   x1="0" x2="25" y1="0" y2="0"></line></svg><span>associate</span><br/>
    <svg class="demo_svg"><line class="link english"     x1="0" x2="25" y1="0" y2="0"></line></svg><span>english</span><br/>
    <svg class="demo_svg"><line class="link sinonim"     x1="0" x2="25" y1="0" y2="0"></line></svg><span>sinonim</span><br/>
@@ -94,14 +95,14 @@ var svg = d3.select("body").append("svg:svg")
 var opacityBlack = .75;
 var chart = svg.attr("pointer-events", "all")
     .append('svg:g')
-//    .call(d3.behavior.zoom().on("zoom", function()
-//{
-//    chart.attr("transform",
-//        "translate(" + d3.event.translate + ")"
-//            + " scale(" + d3.event.scale + ")"
-//    );
-//}));
-;
+    .call(d3.behavior.zoom().on("zoom", function()
+{
+    chart.attr("transform",
+        "translate(" + d3.event.translate + ")"
+            + " scale(" + d3.event.scale + ")"
+    );
+}));
+//;
 // Array Remove - By John Resig (MIT Licensed)
 removeItem = function(array, index) {
     array.splice(index, 1);
@@ -236,7 +237,7 @@ var addNodesLinks = function(json)
     });
 
     $.each(json.links, function(i, link) {
-        if (!visLinks[link.id])
+        if (!visLinks[link.id] && visNodes[link.source] && visNodes[link.target])
         {
             visLinks[link.id] = link;
             linkedByIndex[link.target + ',' + link.source] = true;
@@ -326,6 +327,7 @@ var update = function(json)
                             if (links[j].id == link_id)
                             {
                                 link = links[j];
+                                removeItem(links,  j);
                             }
                         }
 
@@ -336,7 +338,6 @@ var update = function(json)
                             linkedByIndex[link.source + ',' + link.target] = false;
                             delete visLinks[link_id];
                         }
-                        removeItem(links,  j);
                     }
 
                     for (var k in nodes)

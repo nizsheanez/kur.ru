@@ -4742,7 +4742,7 @@ d3.behavior.zoom = function() {
         .on("mousewheel.zoom", mousewheel)
         .on("mousemove.zoom", mousemove)
         .on("DOMMouseScroll.zoom", mousewheel)
-        .on("dblclick.zoom", dblclick)
+//        .on("dblclick.zoom", dblclick)
         .on("touchstart.zoom", touchstart)
         .on("touchmove.zoom", touchmove)
         .on("touchend.zoom", touchstart);
