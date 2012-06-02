@@ -68,7 +68,7 @@ Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap-res
 <!--</div>-->
 <div class="demo" id="demo">
     <p>В поле поиск введите название предметной области. Далее вы увидите подсказку.</p>
-    <p>Клик - раскрыть узел.</br>Двойной клик - уладить узел</p>
+    <p>Клик - раскрыть узел.</br>Двойной клик - удалить узел</p>
    <svg class="demo_svg"><line class="link associate"   x1="0" x2="25" y1="0" y2="0"></line></svg><span>associate</span><br/>
    <svg class="demo_svg"><line class="link english"     x1="0" x2="25" y1="0" y2="0"></line></svg><span>english</span><br/>
    <svg class="demo_svg"><line class="link sinonim"     x1="0" x2="25" y1="0" y2="0"></line></svg><span>sinonim</span><br/>
