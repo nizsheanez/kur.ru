@@ -24,7 +24,7 @@ class SquareData extends ActiveRecordModel
     {
         return array(
             array(
-                'title, value, type', 'safe'
+                'value', 'safe'
             ),
         );
     }
@@ -36,19 +36,10 @@ class SquareData extends ActiveRecordModel
             'square' => array(
                 self::BELONGS_TO, 'Square', 'square_id'
             ),
+            'metric' => array(
+                self::BELONGS_TO, 'Metric', 'metric_id'
+            ),
         );
     }
 
-    public function search()
-    {
-        $criteria = new CDbCriteria;
-        $criteria->compare('id', $this->id, true);
-        $criteria->compare('title', $this->title, true);
-        $criteria->compare('show_in_index', $this->show_in_index);
-        $criteria->order = 'order DESC';
-
-        return new ActiveDataProvider(get_class($this), array(
-            'criteria' => $criteria
-        ));
-    }
 }

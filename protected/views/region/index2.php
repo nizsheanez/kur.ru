@@ -65,10 +65,18 @@
                 var xy = shape.coordinates[j];
                 paths.push(new google.maps.LatLng(xy[0], xy[1]));
             }
-            var norma = 10;
-            var max = 40;
-            n = shape.properties.unemploye - norma;
-            n = 100 / (max - norma) * n;
+
+            var area = google.maps.geometry.spherical.computeArea(paths);
+            var density = shape.properties.peoples / area;
+
+            currentMetric = 'detsad';
+            var metric = json.metrics[currentMetric];
+            alert(density);
+            alert(shape.properties[currentMetric] / density);
+            n = shape.properties[currentMetric] / density - metric.norma;
+
+            n = 100 / (metric.critical - metric.norma) * n;
+
             if (n < 0)
             {
                 n = 1;
@@ -77,9 +85,12 @@
             {
                 n = 100;
             }
+
             var color = hexFromRGB((255 * n) / 100, (200 * (100 - n)) / 100, 0);
             var polygon = new google.maps.Polygon({
                 properties: shape.properties,
+                area: area,
+                density: density,
                 paths: paths,
                 strokeColor: color,
                 strokeOpacity: 0.4,
@@ -101,7 +112,7 @@
                 this.setOptions({
                     editable: true
                 });
-                infoBubble.setContent('<div class="phoneytext">' + this.properties.unemploye + '%</div>');
+                infoBubble.setContent('<div class="phoneytext">' + this.properties[currentMetric] + '%</div>');
                 infoBubble.setPosition(getCenter(this));
                 infoBubble.open(map);
             });
