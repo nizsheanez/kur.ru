@@ -26,7 +26,7 @@
     var infoBubble = new InfoBubble({
         map: map,
         shadowStyle: 1,
-        disableAnimation:true,
+        disableAnimation: true,
         padding: 0,
         backgroundColor: 'rgb(57,57,57)',
         borderRadius: 4,
@@ -35,7 +35,7 @@
         disableAutoPan: true,
         hideCloseButton: true,
         backgroundClassName: 'phoney',
-        maxWidth:210
+        maxWidth: 210
     });
 
     function hexFromRGB(r, g, b)
@@ -94,14 +94,14 @@
                 this.setOptions({
                     editable: false
                 });
-                //                infoBubble.close();
+                infoBubble.close();
             });
             google.maps.event.addListener(polygon, 'mouseover', function()
             {
                 this.setOptions({
                     editable: true
                 });
-                infoBubble.setContent('<div class="phoneytext">'+this.properties.unemploye+'%</div>');
+                infoBubble.setContent('<div class="phoneytext">' + this.properties.unemploye + '%</div>');
                 infoBubble.setPosition(getCenter(this));
                 infoBubble.open(map);
             });
