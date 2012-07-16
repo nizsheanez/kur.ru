@@ -35,5 +35,4 @@
             globalData: <?= Square::getJson() ?>
         });
     });
-
 </script>

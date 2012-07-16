@@ -155,6 +155,4 @@ $.widget("geo.metricMap", {
             polygon.setMap(this.map);
         }
     }
-
-
 });

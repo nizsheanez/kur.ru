@@ -18,7 +18,8 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 --
 -- Структура таблицы `metrics`
 --
-
+use diplom;
+drop table IF EXISTS  `metrics`;
 CREATE TABLE IF NOT EXISTS `metrics` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
@@ -48,7 +49,7 @@ INSERT INTO `metrics` (`id`, `title`, `name`, `formula`, `norma`, `critical`, `t
 --
 -- Структура таблицы `polygons`
 --
-
+drop table IF EXISTS  `polygons`;
 CREATE TABLE IF NOT EXISTS `polygons` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `square_id` int(11) DEFAULT NULL,
@@ -96,7 +97,7 @@ INSERT INTO `polygons` (`id`, `square_id`, `lat`, `lng`) VALUES
 --
 -- Структура таблицы `squares`
 --
-
+drop table IF EXISTS  `squares`;
 CREATE TABLE IF NOT EXISTS `squares` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
@@ -119,7 +120,7 @@ INSERT INTO `squares` (`id`, `name`) VALUES
 --
 -- Структура таблицы `square_data`
 --
-
+drop table IF EXISTS  `square_data`;
 CREATE TABLE IF NOT EXISTS `square_data` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `square_id` int(11) unsigned DEFAULT NULL,
