@@ -19,6 +19,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- Структура таблицы `metrics`
 --
 use diplom;
+SET NAMES utf8;
 drop table IF EXISTS  `metrics`;
 CREATE TABLE IF NOT EXISTS `metrics` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
