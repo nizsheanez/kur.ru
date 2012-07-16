@@ -160,6 +160,9 @@ return array(
             'itemChildTable'  => 'auth_items_childs',
             'defaultRoles'    => array('guest')
         ),
+        'bootstrap'=>array(
+            'class'=>'application.components.bootstrap.components.Bootstrap'
+        ),
 
         'log'          => array(
             'class' => 'CLogRouter',

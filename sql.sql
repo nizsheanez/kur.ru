@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `metrics` (
   `critical` decimal(12,4) DEFAULT NULL,
   `type` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=cp1251 AUTO_INCREMENT=8 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
 
 --
 -- Дамп данных таблицы `metrics`
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `polygons` (
   `lat` decimal(16,10) DEFAULT NULL,
   `lng` decimal(16,10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=cp1251 AUTO_INCREMENT=132 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=132 ;
 
 --
 -- Дамп данных таблицы `polygons`
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `squares` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=cp1251 AUTO_INCREMENT=6 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
 --
 -- Дамп данных таблицы `squares`
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS `square_data` (
   `metric_id` int(255) DEFAULT NULL,
   `value` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=cp1251 AUTO_INCREMENT=12 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=12 ;
 
 --
 -- Дамп данных таблицы `square_data`

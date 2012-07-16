@@ -55,4 +55,24 @@ class Square extends ActiveRecordModel
         }
         return array_merge($base, $data);
     }
+
+    public static function getJson()
+    {
+        $res = array('type' => "FeatureCollection");
+        foreach (Square::model()->with(array('data', 'polygons', 'data.metric'))->findAll() as $square)
+        {
+            $tmp               = array();
+            $tmp['type']       = "Polygon";
+            $tmp['properties'] = $square->properties;
+
+            foreach ($square->polygons as $polygon)
+            {
+                $tmp['coordinates'][] = $polygon->coordinates;
+            }
+            $res['features'][] = $tmp;
+        }
+        $res['metrics'] = CHtml::listData(Metric::model()->findAll(), 'name', 'attributes');
+
+        return CJSON::encode($res);
+    }
 }

@@ -5,11 +5,19 @@
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&libraries=drawing,geometry,places"></script>
     <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobubble/src/infobubble.js"></script>
     <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?1.29.1"></script>
-    <?php Yii::app()->clientScript->registerCoreScript('jquery'); ?>
-    <?php Yii::app()->clientScript->registerScriptFile('/js/geoJson.js'); ?>
-    <?php Yii::app()->clientScript->registerScriptFile('/js/changeColor.js'); ?>
-    <?php Yii::app()->clientScript->registerScriptFile('/js/lib.js'); ?>
-    <?php Yii::app()->clientScript->registerScriptFile('/js/tooltip.js'); ?>
+    <?php
+    $cs = Yii::app()->clientScript;
+    Yii::app()->bootstrap->registerScripts();
+    $cs->registerCoreScript('jquery');
+    $cs->registerCoreScript('jquery.ui');
+    $cs->registerCoreScript('bbq');
+    $cs->registerScriptFile('/js/geoJson.js');
+    $cs->registerScriptFile('/js/changeColor.js');
+    $cs->registerScriptFile('/js/lib.js');
+    $cs->registerScriptFile('/js/tooltip.js');
+    $cs->registerCssFile(Yii::app()->assetManager->publish(Yii::getPathOfAlias('webroot.css.site.regions').'.less'));
+
+    ?>
     <style type="text/css">
 
         html, body, #map{

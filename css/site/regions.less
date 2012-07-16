@@ -1,0 +1,29 @@
+@import "../less/variables.less";
+@import "../less/mixins.less";
+@import "../less/my_lib.less";
+
+body{
+    overflow: hidden;
+}
+
+#map{
+    margin: 26px 0 0 0;
+
+}
+
+//bootstrap fix for google map
+img {
+    max-width: none;
+}
+label {
+    width: auto; display:inline;
+}
+
+
+//fix bootstrap
+.navbar .nav > li > a{
+    line-height: 5px;
+}
+.navbar-inner {
+    min-height: 10px;
+}
