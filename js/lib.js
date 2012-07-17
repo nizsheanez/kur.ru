@@ -101,24 +101,12 @@ $.widget("geo.metricMap", {
             var metric = polygon.properties[this.currentMetric];
             var density = polygon.density;
 
-            if (metric != undefined) {
-                if (this.currentMetric == 'garbagecontainer')
-                {
-                    n = (function () {
-                        extract(polygon.properties);
-                        with(this) {
-                            var res = eval($('#formula').val());
-                        }
-                        return res;
-                    })();
-                    polygon.bubbleText = Math.ceil(n) + '%';
+            if (metric != undefined && $('#formula').val() != '') {
+                with(this) {
+                    extract(polygon.properties);
+                    n = eval($('#formula').val());
                 }
-                else
-                {
-                    n = metric / density - 0;
-                    n = 100 / (metricData.critical - metricData.norma) * n;
-                }
-
+                polygon.bubbleText = Math.ceil(n) + '%';
 
                 n -= 100;
                 if (n < -100) {
