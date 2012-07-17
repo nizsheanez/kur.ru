@@ -88,7 +88,10 @@ $.widget("geo.metricMap", {
             if (metric != undefined) {
                 if (this.currentMetric == 'garbagecontainer')
                 {
-                    n = 100 * (metric * 1.1 * 365) / (polygon.properties['peoples'] * 1.4);
+                    var W = (metric * 1.1 * 365);
+                    var V = (polygon.properties['peoples'] * 1.4);
+                    n = 100 * (W - V) / V ;
+                    polygon.bubbleText = Math.ceil(n) + '%';
                 }
                 else
                 {
@@ -96,15 +99,14 @@ $.widget("geo.metricMap", {
                     n = 100 / (metricData.critical - metricData.norma) * n;
                 }
 
-                n -= 100;
-                if (n < 0) {
-                    n = 1;
-                }
-                if (n > 100) {
+                if (n < -100) {
+                    n = -100;
+                } else if (n > 100) {
                     n = 100;
                 }
-                if (n > 0)
-                    color = this._hexFromRGB((255 * n) / 100, (255 * (100 - n)) / 100, 0);
+
+                if (n < 0)
+                    color = this._hexFromRGB((255 * (-n)) / 100, (255 * (100 - (-n))) / 100, 0);
                 else
                     color = this._hexFromRGB(0, (255 * (100 - n)) / 100, (255 * n) / 100);
 
@@ -152,7 +154,7 @@ $.widget("geo.metricMap", {
                 this.setOptions({
                     editable: true
                 });
-                that.infoBubble.setContent('<div class="phoneytext">' + (this.properties[that.currentMetric] != undefined ? this.properties[that.currentMetric] + '%' : 'Нет данных') + '</div>');
+                that.infoBubble.setContent('<div class="phoneytext">' + (this.bubbleText) + '</div>');
                 that.infoBubble.setPosition(getCenter(this));
                 that.infoBubble.open(this.map);
             });
