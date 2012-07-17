@@ -1,5 +1,5 @@
 <?php
-class Metric extends ActiveRecordModel
+class Metric extends ActiveRecord
 {
 
     public static function model($className = __CLASS__)

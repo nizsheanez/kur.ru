@@ -3,6 +3,9 @@ class Form extends CForm
 {
     public $back_button_show;
     public $add_elements_from_behaviors = false;
+    public $inputElementClass = 'FormInputElement';
+    public $buttonElementClass = 'FormButtonElement';
+
 
     public $attributes = array(
         'enctype' => 'multipart/form-data', //eternal stupid error
@@ -221,13 +224,13 @@ class Form extends CForm
             return false;
         }';
         echo CHtml::link($title, '#' . $options['id'], CMap::mergeArray(array('data-toggle'=> 'modal'), $options['linkOptions']));
-        Yii::app()->controller->beginWidget('BootModal', array(
+        Yii::app()->controller->beginWidget('application.components.bootstrap.widgets.BootModal', array(
             'htmlOptions' => array(
                 'id' => $options['id']
             )
         ));
         Yii::app()->controller->renderPartial('//layouts/_modalForm', $options);
-        Yii::app()->controller->endWidget('BootModal');
+        Yii::app()->controller->endWidget();
 
         return ob_get_clean();
     }

@@ -1,6 +1,6 @@
-<?php
+<?
  
-class TimestampBehavior extends CActiveRecordBehavior
+class TimestampBehavior extends ActiveRecordBehavior
 {
     public function beforeSave($event)
     {

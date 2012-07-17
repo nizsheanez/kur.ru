@@ -2,7 +2,7 @@
 /**
  * Debug функция, использемая только для отладки
  *
- * @param $var
+ * @param     $var
  * @param int $skipCount
  * @param int $depth
  */
@@ -11,7 +11,8 @@ function dump($var, $skipCount = 0, $depth = 2)
     static $startSkipCount = 0;
     static $localSkipCount = 0;
 
-    if ($startSkipCount == 0) {
+    if ($startSkipCount == 0)
+    {
         $startSkipCount = $localSkipCount = $skipCount;
     }
     else
@@ -57,11 +58,15 @@ return array(
     'language'   => 'ru',
     'basePath'   => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
     'name'       => '',
-    'preload'    => array('log'),
 
     'import'     => array(
-        'application.components.*', 'application.components.activeRecordBehaviors.*', 'application.models.*',
+        'application.components.*',
+        'application.components.activeRecordBehaviors.*',
+        'application.models.*',
+        'application.components.formElements.*',
+        'application.components.bootstrap.widgets.*',
     ),
+    'preload'      => array('log', 'bootstrap'),
     'components' => array(
         'db'           => array(
             'connectionString' => 'mysql:host=localhost;dbname=diplom',
@@ -69,7 +74,7 @@ return array(
             'username'         => 'root',
             'password'         => '',
             'charset'          => 'utf8',
-            'initSQLs'=>array('set names utf8'),
+            'initSQLs'         => array('set names utf8'),
             'enableProfiling'  => true,
         ),
         'fileBalancer' => array(
@@ -113,23 +118,29 @@ return array(
             'class'       => 'AssetManager',
             'parsers'     => array(
                 'sass' => array( // key == the type of file to parse
-                    'class'   => 'ext.assetManager.Sass', // path alias to the parser
-                    'output'  => 'css', // the file type it is parsed to
+                    'class'   => 'ext.assetManager.Sass',
+                    // path alias to the parser
+                    'output'  => 'css',
+                    // the file type it is parsed to
                     'options' => array(
                         'syntax' => 'sass'
                     )
                 ),
                 'scss' => array( // key == the type of file to parse
-                    'class'   => 'ext.assetManager.Sass', // path alias to the parser
-                    'output'  => 'css', // the file type it is parsed to
+                    'class'   => 'ext.assetManager.Sass',
+                    // path alias to the parser
+                    'output'  => 'css',
+                    // the file type it is parsed to
                     'options' => array(
                         'syntax' => 'scss',
                         'style'  => 'compressed'
                     )
                 ),
                 'less' => array( // key == the type of file to parse
-                    'class'   => 'ext.assetManager.Less', // path alias to the parser
-                    'output'  => 'css', // the file type it is parsed to
+                    'class'   => 'ext.assetManager.Less',
+                    // path alias to the parser
+                    'output'  => 'css',
+                    // the file type it is parsed to
                     'options' => array()
                 ),
             ),
@@ -161,16 +172,15 @@ return array(
             'itemChildTable'  => 'auth_items_childs',
             'defaultRoles'    => array('guest')
         ),
-        'bootstrap'=>array(
-            'class'=>'application.components.bootstrap.components.Bootstrap'
+        'bootstrap'    => array(
+            'class'=> 'application.components.bootstrap.components.Bootstrap'
         ),
 
         'log'          => array(
             'class' => 'CLogRouter',
-            'routes'=> array(
-//                array(
-                    // направляем результаты профайлинга в ProfileLogRoute (отображается
-                    // внизу страницы)
+            'routes'=> array(//                array(
+                // направляем результаты профайлинга в ProfileLogRoute (отображается
+                // внизу страницы)
 //                    'class'=>'CProfileLogRoute',
 //                    'levels'=>'profile',
 //                    'enabled'=>true,
@@ -184,8 +194,6 @@ return array(
 //                ),
             ),
         ),
-
-        'preload'      => array('log'),
     ),
     'params'     => array(
         'save_site_actions' => false

@@ -1,82 +1,98 @@
-<?php
+<?
 
-class UploadFileBehavior extends CActiveRecordBehavior
+class UploadFileBehavior extends ActiveRecordBehavior
 {
+    private $_params = array(
+        'hash_store' => true
+    );
+
+
     public function beforeSave($event)
     {
         $model = $this->getOwner();
-
-        if (method_exists($model, "uploadFiles"))
+        if (!method_exists($model, "uploadFiles"))
         {
-            $upload_files = $model->uploadFiles();
+            return false;
+        }
 
-            foreach ($upload_files as $param => $data)
+        $upload_files = $model->uploadFiles();
+
+        foreach ($upload_files as $attr => $params)
+        {
+            $params = array_merge($this->_params, $params);
+
+            $upload = CUploadedFile::getInstance($model, $attr);
+
+            if ($upload)
             {
-                $model->$param = CUploadedFile::getInstance($model, $param);
-                if ($model->$param)
+                $extension = pathinfo($upload->name, PATHINFO_EXTENSION);
+
+                if ($params['hash_store'])
                 {
-                    $extension = pathinfo($model->$param->name, PATHINFO_EXTENSION);
-                    $file_name = md5(rand(1, 200) . $model->$param->name . time()) . "." . strtolower($extension);
-
-                    $file_dir = $_SERVER["DOCUMENT_ROOT"] . $data["dir"];
-                    if (substr($file_dir, -1) !== '/')
-                    {
-                        $file_dir.= '/';
-                    }
-
-                    if (!file_exists($file_dir))
-                    {
-                        mkdir($file_dir);
-                        chmod($file_dir, 0777);
-                    }
-
-                    $file_path  = $file_dir . $file_name;
-                    $file_saved = $model->$param->saveAs($file_path);
-
-                    if ($file_saved)
-                    {
-                        chmod($file_path, 0777);
-
-                        if ($file_saved && $model->id)
-                        {
-                            $object = $model->findByPk($model->id);
-                            if ($object->$param)
-                            {
-                                FileSystem::deleteFileWithSimilarNames($file_dir, $object->$param);
-                            }
-                        }
-
-                        $model->$param = $file_name;
-                    }
+                    $file_name = md5(rand(1, 200) . $upload->name . time()) . "." . strtolower($extension);
                 }
                 else
                 {
-                	if (!$model->isNewRecord)
-                	{	
-                		$model->$param = $model->model()->findByPk($model->primaryKey)->$param;
-                	}
+                    $file_name = $upload->name;
                 }
-                CUploadedFile::removeInstance($model, $param);
+
+                $file_dir = $_SERVER["DOCUMENT_ROOT"] . $params["dir"];
+                if (substr($file_dir, -1) !== '/')
+                {
+                    $file_dir.= '/';
+                }
+
+                if (!file_exists($file_dir))
+                {
+                    mkdir($file_dir);
+                    chmod($file_dir, 0777);
+                }
+
+                $file_path  = $file_dir . $file_name;
+                $file_saved = $upload->saveAs($file_path);
+
+                if ($file_saved)
+                {
+                    chmod($file_path, 0777);
+
+                    if ($file_saved && $model->id)
+                    {
+                        $object = $model->findByPk($model->id);
+                        if ($object->$attr)
+                        {
+                            FileSystemHelper::deleteFileWithSimilarNames($file_dir, $object->$attr);
+                        }
+                    }
+
+                    $model->$attr = $file_name;
+                }
+            }
+            else
+            {
+                if (!$model->isNewRecord)
+                {
+                    $model->$attr = $model->model()->findByPk($model->primaryKey)->$attr;
+                }
             }
         }
     }
 
 
-    public function beforeDelete()
+    public function beforeDelete($event)
     {
         $model = $this->getOwner();
 
     	if (method_exists($model, "uploadFiles"))
     	{
     		$files = $model->uploadFiles();
-    		foreach ($files as $param => $data)
+    		foreach ($files as $attr => $params)
     		{
-    			if (!$model->$param)
+    			if (!$model->$attr)
     			{
     				continue;
     			}
 
-    			$dir = $data["dir"];
+    			$dir = $params["dir"];
 
 	    		if (substr($dir, 0, strlen($_SERVER['DOCUMENT_ROOT'])) != $_SERVER['DOCUMENT_ROOT'])
 				{
@@ -88,7 +104,7 @@ class UploadFileBehavior extends CActiveRecordBehavior
 					$dir.= '/';
 				}
 
-				FileSystem::deleteFileWithSimilarNames($dir, $model->$param);
+				FileSystemHelper::deleteFileWithSimilarNames($dir, $model->$attr);
     		}
     	}
     }

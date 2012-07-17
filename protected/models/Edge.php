@@ -1,5 +1,5 @@
 <?php
-class Edge extends ActiveRecordModel
+class Edge extends ActiveRecord
 {
 
     public static function model($className = __CLASS__)

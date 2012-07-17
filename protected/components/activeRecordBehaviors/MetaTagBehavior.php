@@ -1,11 +1,12 @@
-<?php
+<?
 
-class MetaTagBehavior extends CActiveRecordBehavior
+class MetaTagBehavior extends ActiveRecordBehavior
 {
+    private static $_meta_tags;
+
     public function afterSave($event)
     {
         $attributes = Yii::app()->request->getParam('MetaTag');
-
         if ($attributes)
         {
             $meta_tag = MetaTag::model()->findByAttributes(array(
@@ -40,10 +41,54 @@ class MetaTagBehavior extends CActiveRecordBehavior
     }
 
 
-    public function relations()
+    public function metaTags()
     {
-        return array(
-            'meta_tags' => array(self::HAS_MANYs)
-        );
+        $key = get_class($this->owner) . '_' . $this->owner->primaryKey;
+        if (!isset(self::$_meta_tags[$key]))
+        {
+            $meta_tags = array(
+                "title"       => "",
+                "description" => "",
+                "keywords"    => ""
+            );
+
+            $meta_data = MetaTag::model()->findByAttributes(array(
+                'object_id' => $this->owner->primaryKey,
+                'model_id'  => get_class($this->owner)
+            ));
+
+            if ($meta_data)
+            {
+                $meta_tags["title"]       = $meta_data->title;
+                $meta_tags["description"] = $meta_data->description;
+                $meta_tags["keywords"]    = $meta_data->keywords;
+            }
+
+            self::$_meta_tags[$key] = $meta_tags;
+        }
+
+        return self::$_meta_tags[$key];
+    }
+
+    public function beforeFormInit($event)
+    {
+        if (!$event->sender->add_elements_from_behaviors)
+        {
+            return true;
+        }
+
+        $elements = $event->sender->getElements();
+        $elements['meta_tags'] = array('type'=>'meta_tags');
+        $event->sender->setElements($elements);
     }
 }
+
+
+
+
+
+
+
+
+
+

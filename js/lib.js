@@ -57,23 +57,23 @@ $.widget("geo.metricMap", {
             $.bbq.pushState(state);
             return false;
         });
-        $('#formula_test').click(function() {
-            that.colorize(that.polygons, that.options.globalData);
-        });
         $('#formula_save').click(function() {
             var btn = $(this);
-            btn.text('Wait');
+            btn.text('......');
             $.post('/region/saveFormula', {
                 metric : that.currentMetric,
                 formula : $('#formula').val()
             }, function() {
                 that.colorize(that.polygons, that.options.globalData);
-                btn.text('Save');
+                btn.text('Сохранить');
             });
+            $('#metric_form').modal('hide');
+            return false;
         });
+
         $(window).bind('hashchange', function (e) {
             var url = $.param.fragment();
-            that.currentMetric = $.bbq.getState('metric', true) || 'people';
+            that.currentMetric = $.bbq.getState('metric', true) || 'peoples';
             $('#formula').val(that.options.globalData.metrics[that.currentMetric].formula);
             that.colorize(that.polygons, that.options.globalData);
         });
@@ -168,6 +168,9 @@ $.widget("geo.metricMap", {
                 that.infoBubble.setContent('<div class="phoneytext">' + (this.bubbleText) + '</div>');
                 that.infoBubble.setPosition(getCenter(this));
                 that.infoBubble.open(this.map);
+            });
+            google.maps.event.addListener(polygon, 'click', function () {
+
             });
             google.maps.event.addListener(polygon.getPath(), 'set_at', (function (polygon) {
                 return function (number, elem) {

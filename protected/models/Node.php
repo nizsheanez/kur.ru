@@ -1,5 +1,5 @@
 <?php
-class Node extends ActiveRecordModel
+class Node extends ActiveRecord
 {
 
     public static function model($className = __CLASS__)

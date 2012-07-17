@@ -1,5 +1,5 @@
 <?php
-class Polygon extends ActiveRecordModel
+class Polygon extends ActiveRecord
 {
 
     public static function model($className = __CLASS__)

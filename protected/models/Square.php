@@ -1,5 +1,5 @@
 <?php
-class Square extends ActiveRecordModel
+class Square extends ActiveRecord
 {
 
     public static function model($className = __CLASS__)
