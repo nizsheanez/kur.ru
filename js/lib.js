@@ -57,8 +57,19 @@ $.widget("geo.metricMap", {
             $.bbq.pushState(state);
             return false;
         });
-        $('#formula').change(function() {
+        $('#formula_test').click(function() {
             that.colorize(that.polygons, that.options.globalData);
+        });
+        $('#formula_save').click(function() {
+            var btn = $(this);
+            btn.text('Wait');
+            $.post('/region/saveFormula', {
+                metric : that.currentMetric,
+                formula : $('#formula').val()
+            }, function() {
+                that.colorize(that.polygons, that.options.globalData);
+                btn.text('Save');
+            });
         });
         $(window).bind('hashchange', function (e) {
             var url = $.param.fragment();

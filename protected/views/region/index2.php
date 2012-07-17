@@ -10,8 +10,9 @@
                 ?>
             </ul>
             <br/>
-            <input id="formula" type="text" style="float:left; width: 95%; height: 10px; font-size: 10px; line-height: 10px; font: monospace;"/>
-            <button style="float: right; width: 4%; height: 21px;">Ok</button>
+            <input id="formula" type="text" style="float:left; width: 91%; height: 10px; font-size: 10px; line-height: 10px; font: monospace;"/>
+            <button id="formula_test" style="float: right; width: 4%; height: 21px;">Test</button>
+            <button id="formula_save" style="float: right; width: 4%; height: 21px;">Save</button>
         </div>
     </div>
 </div>
