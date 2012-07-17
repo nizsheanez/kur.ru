@@ -49,7 +49,6 @@ $.widget("geo.metricMap", {
         });
 
         that.drawPolygons(that.options.globalData);
-        that.colorize(that.polygons, that.options.globalData);
 
         $('#navigation a').click(function () {
             var state = {},
@@ -81,23 +80,34 @@ $.widget("geo.metricMap", {
         return hex.join("").toUpperCase();
     },
     colorize: function (polygons, json) {
-        var metric = json.metrics[this.currentMetric];
+        var metricData = json.metrics[this.currentMetric];
         var color;
         for (var i in polygons) {
             var polygon = polygons[i];
-            var squareMetric = polygon.properties[this.currentMetric];
-            if (squareMetric != undefined) {
-                n = polygon.properties[this.currentMetric] / polygon.density - metric.norma;
-                n = 100 / (metric.critical - metric.norma) * n;
+            var metric = polygon.properties[this.currentMetric];
+            if (metric != undefined) {
+                if (this.currentMetric == 'garbagecontainer')
+                {
+                    n = 100 * (metric * 1.1 * 365) / (polygon.properties['peoples'] * 1.4);
+                }
+                else
+                {
+                    n = metric / polygon.density - metricData.norma;
+                    n = 100 / (metricData.critical - metricData.norma) * n;
+                }
 
+                n -= 100;
                 if (n < 0) {
                     n = 1;
                 }
                 if (n > 100) {
                     n = 100;
                 }
+                if (n > 0)
+                    color = this._hexFromRGB((255 * n) / 100, (255 * (100 - n)) / 100, 0);
+                else
+                    color = this._hexFromRGB(0, (255 * (100 - n)) / 100, (255 * n) / 100);
 
-                color = this._hexFromRGB((255 * n) / 100, (200 * (100 - n)) / 100, 0);
             } else {
                 color = this._hexFromRGB(0, 0, 0);
             }
