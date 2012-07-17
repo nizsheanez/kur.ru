@@ -9,6 +9,9 @@
                 }
                 ?>
             </ul>
+            <br/>
+            <input id="formula" type="text" style="float:left; width: 95%; height: 10px; font-size: 10px; line-height: 10px; font: monospace;"/>
+            <button style="float: right; width: 4%; height: 21px;">Ok</button>
         </div>
     </div>
 </div>
