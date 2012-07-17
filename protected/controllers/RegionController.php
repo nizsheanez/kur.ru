@@ -97,5 +97,15 @@ class RegionController extends BaseController
             }
         }
     }
+
+    public function actionSaveFormula()
+    {
+        $model = Metric::model()->findByAttributes(array('name' => $_POST['metric']));
+        if ($model)
+        {
+            $model->formula = $_POST['formula'];
+            $model->save();
+        }
+    }
 }
 

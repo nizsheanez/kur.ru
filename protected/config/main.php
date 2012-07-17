@@ -69,6 +69,7 @@ return array(
             'username'         => 'root',
             'password'         => '',
             'charset'          => 'utf8',
+            'initSQLs'=>array('set names utf8'),
             'enableProfiling'  => true,
         ),
         'fileBalancer' => array(

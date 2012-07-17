@@ -49,7 +49,6 @@ $.widget("geo.metricMap", {
         });
 
         that.drawPolygons(that.options.globalData);
-        that.colorize(that.polygons, that.options.globalData);
 
         $('#navigation a').click(function () {
             var state = {},
@@ -58,10 +57,24 @@ $.widget("geo.metricMap", {
             $.bbq.pushState(state);
             return false;
         });
-
+        $('#formula_test').click(function() {
+            that.colorize(that.polygons, that.options.globalData);
+        });
+        $('#formula_save').click(function() {
+            var btn = $(this);
+            btn.text('Wait');
+            $.post('/region/saveFormula', {
+                metric : that.currentMetric,
+                formula : $('#formula').val()
+            }, function() {
+                that.colorize(that.polygons, that.options.globalData);
+                btn.text('Save');
+            });
+        });
         $(window).bind('hashchange', function (e) {
             var url = $.param.fragment();
             that.currentMetric = $.bbq.getState('metric', true) || 'people';
+            $('#formula').val(that.options.globalData.metrics[that.currentMetric].formula);
             that.colorize(that.polygons, that.options.globalData);
         });
 
@@ -81,23 +94,32 @@ $.widget("geo.metricMap", {
         return hex.join("").toUpperCase();
     },
     colorize: function (polygons, json) {
-        var metric = json.metrics[this.currentMetric];
+        var metricData = json.metrics[this.currentMetric];
         var color;
         for (var i in polygons) {
             var polygon = polygons[i];
-            var squareMetric = polygon.properties[this.currentMetric];
-            if (squareMetric != undefined) {
-                n = polygon.properties[this.currentMetric] / polygon.density - metric.norma;
-                n = 100 / (metric.critical - metric.norma) * n;
+            var metric = polygon.properties[this.currentMetric];
+            var density = polygon.density;
 
-                if (n < 0) {
-                    n = 1;
+            if (metric != undefined && $('#formula').val() != '') {
+                with(this) {
+                    extract(polygon.properties);
+                    n = eval($('#formula').val());
                 }
-                if (n > 100) {
+                polygon.bubbleText = Math.ceil(n) + '%';
+
+                n -= 100;
+                if (n < -100) {
+                    n = -100;
+                } else if (n > 100) {
                     n = 100;
                 }
 
-                color = this._hexFromRGB((255 * n) / 100, (200 * (100 - n)) / 100, 0);
+                if (n < 0)
+                    color = this._hexFromRGB((255 * (-n)) / 100, (255 * (100 - (-n))) / 100, 0);
+                else
+                    color = this._hexFromRGB(0, (255 * (100 - n)) / 100, (255 * n) / 100);
+
             } else {
                 color = this._hexFromRGB(0, 0, 0);
             }
@@ -122,12 +144,13 @@ $.widget("geo.metricMap", {
 
             var polygon = new google.maps.Polygon({
                 properties: shape.properties,
+                formula: shape.formula,
                 area: area,
                 density: density,
                 paths: paths,
-                strokeOpacity: 0.4,
+                strokeOpacity: 0.3,
                 strokeWeight: 1,
-                fillOpacity: 0.4,
+                fillOpacity: 0.3,
                 clickable: true,
                 editable: false
             });
@@ -142,7 +165,7 @@ $.widget("geo.metricMap", {
                 this.setOptions({
                     editable: true
                 });
-                that.infoBubble.setContent('<div class="phoneytext">' + (this.properties[that.currentMetric] != undefined ? this.properties[that.currentMetric] + '%' : 'Нет данных') + '</div>');
+                that.infoBubble.setContent('<div class="phoneytext">' + (this.bubbleText) + '</div>');
                 that.infoBubble.setPosition(getCenter(this));
                 that.infoBubble.open(this.map);
             });
@@ -156,3 +179,93 @@ $.widget("geo.metricMap", {
         }
     }
 });
+
+
+function extract (arr, type, prefix) {
+    // Imports variables into symbol table from an array
+    //
+    // version: 1109.2015
+    // discuss at: http://phpjs.org/functions/extract
+    // +   original by: Brett Zamir (http://brett-zamir.me)
+    // %        note 1: Only works by extracting into global context (whether called in the global scope or
+    // %        note 1: within a function); also, the EXTR_REFS flag I believe can't be made to work
+    // *     example 1: size = 'large';
+    // *     example 1: var_array = {'color' : 'blue', 'size' : 'medium', 'shape' : 'sphere'};
+    // *     example 1: extract(var_array, 'EXTR_PREFIX_SAME', 'wddx');
+    // *     example 1: color+'-'+size+'-'+shape+'-'+wddx_size;
+    // *     returns 1: 'blue-large-sphere-medium'
+    if (Object.prototype.toString.call(arr) === '[object Array]' &&
+        (type !== 'EXTR_PREFIX_ALL' && type !== 'EXTR_PREFIX_INVALID')) {
+        return 0;
+    }
+    var targetObj = this.window;
+    if (this.php_js && this.php_js.ini && this.php_js.ini['phpjs.extractTargetObj'] && this.php_js.ini['phpjs.extractTargetObj'].local_value) { // Allow designated object to be used instead of window
+        targetObj = this.php_js.ini['phpjs.extractTargetObj'].local_value;
+    }
+    var chng = 0;
+
+    for (var i in arr) {
+        var validIdent = /^[_a-zA-Z$][\w|$]*$/; // TODO: Refine regexp to allow JS 1.5+ Unicode identifiers
+        var prefixed = prefix + '_' + i;
+        try {
+            switch (type) {
+                case 'EXTR_PREFIX_SAME' || 2:
+                    if (targetObj[i] !== undefined) {
+                        if (prefixed.match(validIdent) !== null) {
+                            targetObj[prefixed] = arr[i];
+                            ++chng;
+                        }
+                    } else {
+                        targetObj[i] = arr[i];
+                        ++chng;
+                    }
+                    break;
+                case 'EXTR_SKIP' || 1:
+                    if (targetObj[i] === undefined) {
+                        targetObj[i] = arr[i];
+                        ++chng;
+                    }
+                    break;
+                case 'EXTR_PREFIX_ALL' || 3:
+                    if (prefixed.match(validIdent) !== null) {
+                        targetObj[prefixed] = arr[i];
+                        ++chng;
+                    }
+                    break;
+                case 'EXTR_PREFIX_INVALID' || 4:
+                    if (i.match(validIdent) !== null) {
+                        if (prefixed.match(validIdent) !== null) {
+                            targetObj[prefixed] = arr[i];
+                            ++chng;
+                        }
+                    } else {
+                        targetObj[i] = arr[i];
+                        ++chng;
+                    }
+                    break;
+                case 'EXTR_IF_EXISTS' || 6:
+                    if (targetObj[i] !== undefined) {
+                        targetObj[i] = arr[i];
+                        ++chng;
+                    }
+                    break;
+                case 'EXTR_PREFIX_IF_EXISTS' || 5:
+                    if (targetObj[i] !== undefined && prefixed.match(validIdent) !== null) {
+                        targetObj[prefixed] = arr[i];
+                        ++chng;
+                    }
+                    break;
+                case 'EXTR_REFS' || 256:
+                    throw 'The EXTR_REFS type will not work in JavaScript';
+                case 'EXTR_OVERWRITE' || 0:
+                // Fall-through
+                default:
+                    targetObj[i] = arr[i];
+                    ++chng;
+                    break;
+            }
+        } catch (e) { // Just won't increment for problem assignments
+        }
+    }
+    return chng;
+}
