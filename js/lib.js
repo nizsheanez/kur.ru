@@ -257,9 +257,9 @@ $.widget("geo.metricMap", {
         var items = that[$.bbq.getState('type')];
 
         var formula = $('#formula').val(),
-            formula_min = $('#formula_min').val(),
-            formula_norma = $('#formula_norma').val(),
-            formula_max = $('#formula_max').val();
+            formula_min = $('#formula_min').val() + ';',
+            formula_norma = $('#formula_norma').val() + ';',
+            formula_max = $('#formula_max').val() + ';';
 
         for (var i in items)
         {
@@ -275,10 +275,12 @@ $.widget("geo.metricMap", {
                     var b = eval(formula_norma);
                     var c = eval(formula_max);
                 }
+
                 if (V == Infinity || a == Infinity || b == Infinity || c == Infinity ||
                     V == undefined || a == undefined || b == undefined || c == undefined)
                 {
                     n = undefined;
+                    color = this._hexFromRGB(0, 0, 0);
                 }
                 else
                 {
@@ -302,18 +304,18 @@ $.widget("geo.metricMap", {
                         n = 100 * V / b;
                     }
 
-                    polygon.bubbleText = Math.ceil(n) + '%';
+                    polygon.bubbleText = Math.ceil(n);
                     n -= 100;
                     n = (n > 100) ? 100 : (n < -100 ? -100 : n);
-                }
 
-                if (n < 0)
-                {
-                    color = this._hexFromRGB((255 * (-n)) / 100, (255 * (100 - (-n))) / 100, 0);
-                }
-                else
-                {
-                    color = this._hexFromRGB(0, (255 * (100 - n)) / 100, (255 * n) / 100);
+                    if (n < 0)
+                    {
+                        color = this._hexFromRGB((255 * (-n)) / 100, (255 * (100 - (-n))) / 100, 0);
+                    }
+                    else
+                    {
+                        color = this._hexFromRGB(0, (255 * (100 - n)) / 100, (255 * n) / 100);
+                    }
                 }
             }
             else
