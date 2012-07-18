@@ -86,10 +86,14 @@
     </div>
     <div class="modal-body">
         <form class="form-vertical">
-            <textarea id="formula" class="input-xlarge" rows="4" style="font: monospace;"></textarea>
-            <textarea id="formula_min" class="input-xlarge" rows="4" style="font: monospace;"></textarea>
-            <textarea id="formula_norma" class="input-xlarge" rows="4" style="font: monospace;"></textarea>
-            <textarea id="formula_max" class="input-xlarge" rows="4" style="font: monospace;"></textarea>
+            Формула:            <br/>
+            <textarea id="formula" class="input-xlarge" rows="4" style="font: monospace;"></textarea><br/>
+            Минимум:<br/>
+            <textarea id="formula_min" class="input-xlarge" rows="4" style="font: monospace;"></textarea><br/>
+            Норма:<br/>
+            <textarea id="formula_norma" class="input-xlarge" rows="4" style="font: monospace;"></textarea><br/>
+            Максимум:<br/>
+            <textarea id="formula_max" class="input-xlarge" rows="4" style="font: monospace;"></textarea><br/>
         </form>
         <div style="">
             <?php
