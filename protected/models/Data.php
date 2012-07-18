@@ -1,5 +1,5 @@
 <?php
-class SquareData extends ActiveRecord
+class Data extends ActiveRecord
 {
 
     public static function model($className = __CLASS__)
@@ -10,13 +10,13 @@ class SquareData extends ActiveRecord
 
     public function tableName()
     {
-        return 'square_data';
+        return 'data';
     }
 
 
     public function name()
     {
-        return 'Модель SquareData';
+        return 'Модель Data';
     }
 
 
@@ -33,8 +33,8 @@ class SquareData extends ActiveRecord
     public function relations()
     {
         return array(
-            'square' => array(
-                self::BELONGS_TO, 'Square', 'square_id'
+            'sector' => array(
+                self::BELONGS_TO, 'Sector', 'sector_id'
             ),
             'metric' => array(
                 self::BELONGS_TO, 'Metric', 'metric_id'

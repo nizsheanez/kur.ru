@@ -1,5 +1,5 @@
 <?php
-class Square extends ActiveRecord
+class Sector extends ActiveRecord
 {
 
     public static function model($className = __CLASS__)
@@ -10,13 +10,13 @@ class Square extends ActiveRecord
 
     public function tableName()
     {
-        return 'squares';
+        return 'sectors';
     }
 
 
     public function name()
     {
-        return 'Модель Square';
+        return 'Модель Sector';
     }
 
 
@@ -34,10 +34,10 @@ class Square extends ActiveRecord
     {
         return array(
             'polygons' => array(
-                self::HAS_MANY, 'Polygon', 'square_id'
+                self::HAS_MANY, 'Polygon', 'sector_id'
             ),
             'data' => array(
-                self::HAS_MANY, 'SquareData', 'square_id'
+                self::HAS_MANY, 'Data', 'sector_id'
             ),
         );
     }
@@ -46,7 +46,7 @@ class Square extends ActiveRecord
     {
         $base = array (
             'id' => $this->id,
-            'name' => $this->name
+            'name' => $this->title
         );
         $data = array();
         foreach ($this->data as $item)
@@ -59,17 +59,17 @@ class Square extends ActiveRecord
     public static function getJson()
     {
         $res = array('type' => "FeatureCollection");
-        foreach (Square::model()->with(array('data', 'polygons', 'data.metric'))->findAll() as $square)
+        foreach (Sector::model()->with(array('data', 'polygons', 'data.metric'))->findAll() as $sector)
         {
             $tmp               = array();
             $tmp['type']       = "Polygon";
-            $tmp['properties'] = $square->properties;
+            $tmp['properties'] = $sector->properties;
 
-            foreach ($square->polygons as $polygon)
+            foreach ($sector->polygons as $polygon)
             {
                 $tmp['coordinates'][] = $polygon->coordinates;
             }
-            $res['features'][$square->id] = $tmp;
+            $res['features'][$sector->id] = $tmp;
         }
         $res['metrics'] = CHtml::listData(Metric::model()->findAll(), 'name', 'attributes');
 

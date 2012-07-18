@@ -24,7 +24,7 @@ class Polygon extends ActiveRecord
     {
         return array(
             array(
-                'lat, lng, square_id', 'safe'
+                'lat, lng, sector_id', 'safe'
             ),
         );
     }
@@ -33,23 +33,10 @@ class Polygon extends ActiveRecord
     public function relations()
     {
         return array(
-            'square' => array(
-                self::BELONGS_TO, 'Square', 'square_id'
+            'sector' => array(
+                self::BELONGS_TO, 'Sector', 'sector_id'
             ),
         );
-    }
-
-    public function search()
-    {
-        $criteria = new CDbCriteria;
-        $criteria->compare('id', $this->id, true);
-        $criteria->compare('title', $this->title, true);
-        $criteria->compare('show_in_index', $this->show_in_index);
-        $criteria->order = 'order DESC';
-
-        return new ActiveDataProvider(get_class($this), array(
-            'criteria' => $criteria
-        ));
     }
 
     public function getCoordinates()

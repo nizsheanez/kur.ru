@@ -47,7 +47,7 @@
             var projection = this.getProjection();
 
             var regions = layer.append("svg:g").attr("id", "regions");
-            var squares = layer.append("svg:g").attr("id", "squares");
+            var sectors = layer.append("svg:g").attr("id", "sectors");
 
             //        d3.json("unemployment.json", function(data) {
             //          var pad = d3.format("05d"),

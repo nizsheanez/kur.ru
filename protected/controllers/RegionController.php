@@ -20,72 +20,15 @@ class RegionController extends BaseController {
         $this->render('index2');
     }
 
-
-    public function actionAddData()
-    {
-        $model = new SquareData();
-
-        $form = new Form(array(
-            'activeForm' => array(
-                'id' => 'data-form',
-            ),
-            'elements'   => array(
-                'metric_id' => array('dropdown' => CHtml::listData(Metric::model()->findAll(), 'id', 'name')),
-                'square_id' => array('dropdown' => CHtml::listData(Square::model()->findAll(), 'id', 'name')),
-            ),
-            'buttons'    => array(
-                'submit' => array(
-                    'type'  => 'submit',
-                    'value' => $this->model->isNewRecord ? 'создать' : 'сохранить'
-                )
-            )
-        ), $model);
-
-        if ($form->submitted() && $model->metric_id && $model->square_id) {
-            $this->redirect(array('addData2', 'metric_id' => $model->metric_id, 'square_id' => $model->square_id));
-        }
-        $this->render('addData', array('form' => $form));
-    }
-
-    public function actionAddData2($metric_id, $square_id)
-    {
-        $data = array('metric_id' => $metric_id, 'square_id' => $square_id);
-        $model = SquareData::model()->findByAttributes($data);
-        if (!$model) {
-            $model = new SquareData();
-            $model->attributes = $data;
-        }
-
-        $form = new Form(array(
-            'activeForm' => array(
-                'id' => 'data-form',
-            ),
-            'elements'   => array(
-                'title' => array('type' => 'text')
-            ),
-            'buttons'    => array(
-                'submit' => array(
-                    'type'  => 'submit',
-                    'value' => $this->model->isNewRecord ? 'создать' : 'сохранить'
-                )
-            )
-        ), $model);
-        if ($form->submitted()) {
-            $model->save();
-        }
-        $this->render('addData2', array('form' => $form));
-    }
-
-
     public function actionSave()
     {
-        foreach ($_POST['polygons'] as $squareId => $coordinates) {
-            foreach (Square::model()->findByPk($squareId)->polygons as $polygon) {
+        foreach ($_POST['polygons'] as $SectorId => $coordinates) {
+            foreach (Sector::model()->findByPk($SectorId)->polygons as $polygon) {
                 $polygon->delete();
             }
             foreach ($coordinates as $i => $latLng) {
                 $polygon = new Polygon();
-                $polygon->square_id = $squareId;
+                $polygon->sector_id = $SectorId;
                 $polygon->attributes = $latLng;
                 $polygon->save();
             }
@@ -107,15 +50,15 @@ class RegionController extends BaseController {
         {
             foreach ($_POST['data'] as $id => $value)
             {
-                $model = SquareData::model()->findByPk($id);
+                $model = Data::model()->findByPk($id);
                 $model->value = $value;
                 $model->save();
             }
-            echo Square::getJson();
+            echo Sector::getJson();
         }
         else
         {
-            foreach (Square::model()->findByPk($id)->data as $item)
+            foreach (Sector::model()->findByPk($id)->data as $item)
             {
                 if ($item->metric->inSubtreeOf($metric) || $item->metric->type == null)
                 {

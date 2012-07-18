@@ -135,7 +135,7 @@
     $(document).ready(function()
     {
         $('#map').metricMap({
-            globalData: <?= Square::getJson() ?>
+            globalData: <?= Sector::getJson() ?>
         });
     });
 </script>
