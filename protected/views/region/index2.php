@@ -2,14 +2,36 @@
     <div class="navbar-inner">
         <div class="container">
             <ul class="nav" id="navigation">
-                <?php
-                foreach (CHtml::listData(Metric::model()->findAll(), 'name', 'title') as $name => $title)
-                {
-                    $link = CHtml::link($title, '#' . $name);
-                    echo CHtml::tag('li', array(), $link);
-                }
-                ?>
-
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        По кварталам
+                        <b class="caret" ></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                    <?php
+                    foreach (CHtml::listData(Metric::model()->findAll('t.type=1'), 'name', 'title') as $name => $title)
+                    {
+                        $link = CHtml::link($title, '#' . $name);
+                        echo CHtml::tag('li', array(), $link);
+                    }
+                    ?>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        По секторам
+                        <i class="caret" ></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                    <?php
+                    foreach (CHtml::listData(Metric::model()->findAll('t.type=2'), 'name', 'title') as $name => $title)
+                    {
+                        $link = CHtml::link($title, '#' . $name);
+                        echo CHtml::tag('li', array(), $link);
+                    }
+                    ?>
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>
@@ -42,10 +64,25 @@
 //));
 ?>
 
+<div class="modal hide" id="data_save_form">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3>Редактирование сектора</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-vertical">
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Отмена</a>
+        <a href="#" id="data_save" class="btn btn-primary">Сохранить</a>
+    </div>
+</div>
+
 <div class="modal hide" id="metric_form">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">×</button>
-        <h3>Modal header</h3>
+        <h3>Редактирование метрики</h3>
     </div>
     <div class="modal-body">
         <form class="form-vertical">
@@ -65,8 +102,17 @@
         <a href="#" id="formula_save" class="btn btn-primary">Сохранить</a>
     </div>
 </div>
-<div id="edit_metric" style="z-index: 100; position: absolute; top: 70px; right: 10px;">
-    <a data-toggle="modal" href="#metric_form"><img src="/img/formula.png" width="32" height="32"/></a>
+<div style="z-index: 100; position: absolute; top: 100px; right: 10px; text-align: right">
+    <div>
+        <b>Обозначения:</b><br/>
+        <span class="label label-success">Норма</span><br/>
+        <span class="label label-info">Избыток</span><br/>
+        <span class="label label-important">Недостаток</span>
+    </div>
+    <br/>
+    <div id="edit_metric">
+        <a data-toggle="modal" href="#metric_form"><img src="/img/formula.png" width="32" height="32"/></a>
+    </div>
 </div>
 <div id="map"></div>
 <style>

@@ -1,7 +1,7 @@
 <?php
 
-class RegionController extends BaseController
-{
+class RegionController extends BaseController {
+
     public $layout = '//layouts/gmap';
 
 
@@ -41,8 +41,7 @@ class RegionController extends BaseController
             )
         ), $model);
 
-        if ($form->submitted() && $model->metric_id && $model->square_id)
-        {
+        if ($form->submitted() && $model->metric_id && $model->square_id) {
             $this->redirect(array('addData2', 'metric_id' => $model->metric_id, 'square_id' => $model->square_id));
         }
         $this->render('addData', array('form' => $form));
@@ -52,8 +51,7 @@ class RegionController extends BaseController
     {
         $data = array('metric_id' => $metric_id, 'square_id' => $square_id);
         $model = SquareData::model()->findByAttributes($data);
-        if (!$model)
-        {
+        if (!$model) {
             $model = new SquareData();
             $model->attributes = $data;
         }
@@ -72,8 +70,7 @@ class RegionController extends BaseController
                 )
             )
         ), $model);
-        if ($form->submitted())
-        {
+        if ($form->submitted()) {
             $model->save();
         }
         $this->render('addData2', array('form' => $form));
@@ -82,16 +79,13 @@ class RegionController extends BaseController
 
     public function actionSave()
     {
-        foreach ($_POST['polygons'] as $squareId => $coordinates)
-        {
-            foreach (Square::model()->findByPk($squareId)->polygons as $polygon)
-            {
+        foreach ($_POST['polygons'] as $squareId => $coordinates) {
+            foreach (Square::model()->findByPk($squareId)->polygons as $polygon) {
                 $polygon->delete();
             }
-            foreach ($coordinates as $i => $latLng)
-            {
-                $polygon             = new Polygon();
-                $polygon->square_id  = $squareId;
+            foreach ($coordinates as $i => $latLng) {
+                $polygon = new Polygon();
+                $polygon->square_id = $squareId;
                 $polygon->attributes = $latLng;
                 $polygon->save();
             }
@@ -101,11 +95,38 @@ class RegionController extends BaseController
     public function actionSaveFormula()
     {
         $model = Metric::model()->findByAttributes(array('name' => $_POST['metric']));
-        if ($model)
-        {
+        if ($model) {
             $model->formula = $_POST['formula'];
             $model->save();
         }
     }
+
+    public function actionSaveData($id = null, $metric = null)
+    {
+        if (isset($_POST['data']))
+        {
+            foreach ($_POST['data'] as $id => $value)
+            {
+                $model = SquareData::model()->findByPk($id);
+                $model->value = $value;
+                $model->save();
+            }
+            echo Square::getJson();
+        }
+        else
+        {
+            foreach (Square::model()->findByPk($id)->data as $item)
+            {
+                if ($item->metric->inSubtreeOf($metric) || $item->metric->type == null)
+                {
+                    echo CHtml::label($item->metric->title, 'data['.$item->id.']');
+                    echo '<br />';
+                    echo CHtml::textField('data['.$item->id.']', $item->value);
+                    echo '<br />';
+                }
+            }
+        }
+    }
 }
+
 

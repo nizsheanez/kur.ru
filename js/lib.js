@@ -3,8 +3,8 @@ function savePolygon(polygon) {
     var res = {};
     for (var i = 0; i < vertices.length; i++) {
         var xy = vertices.getAt(i);
-        res['polygons[' + polygon.properties.id + '][' + i + '][lat]'] = xy.lat();
-        res['polygons[' + polygon.properties.id + '][' + i + '][lng]'] = xy.lng();
+        res['polygons[' + polygon.id + '][' + i + '][lat]'] = xy.lat();
+        res['polygons[' + polygon.id + '][' + i + '][lng]'] = xy.lng();
     }
 
     $.post('/region/save', res);
@@ -40,7 +40,21 @@ $.widget("geo.metricMap", {
         greetings: "Hello"
     },
     _create: function () {
+
         var that = this;
+
+        google.maps.Polygon.prototype.getMetric = function(metric) {
+            return that.options.globalData.features[this.id].properties[metric];
+        };
+
+        google.maps.Polygon.prototype.getProperties = function() {
+            return that.options.globalData.features[this.id].properties;
+        };
+
+        google.maps.Polygon.prototype.setProperty = function(key, val) {
+            that.options.globalData.features[this.id].properties[key] = val;
+        };
+
         // Create the Google Map…
         that.map = new google.maps.Map(this.element[0], {
             zoom: 15,
@@ -50,13 +64,14 @@ $.widget("geo.metricMap", {
 
         that.drawPolygons(that.options.globalData);
 
-        $('#navigation a').click(function () {
+        $('#navigation ul a').click(function () {
             var state = {},
                 url = $(this).attr('href').replace(/^#/, '');
             state['metric'] = url;
             $.bbq.pushState(state);
             return false;
         });
+
         $('#formula_save').click(function() {
             var btn = $(this);
             btn.text('......');
@@ -64,18 +79,32 @@ $.widget("geo.metricMap", {
                 metric : that.currentMetric,
                 formula : $('#formula').val()
             }, function() {
-                that.colorize(that.polygons, that.options.globalData);
+                that.colorize();
                 btn.text('Сохранить');
             });
             $('#metric_form').modal('hide');
             return false;
         });
-
+        $('#form').submit(function() {
+            return false;
+        });
+        $('#data_save').click(function() {
+            var btn = $(this);
+            btn.text('......');
+            $.post('/region/saveData', $('#data_save_form form').serialize(), function(globalData) {
+                that.options.globalData = globalData;
+                that.colorize();
+                btn.text('Сохранить');
+            }, 'json');
+            $('#data_save_form').modal('hide');
+            return false;
+        });
+        $('.dropdown-toggle').dropdown();
         $(window).bind('hashchange', function (e) {
             var url = $.param.fragment();
             that.currentMetric = $.bbq.getState('metric', true) || 'peoples';
             $('#formula').val(that.options.globalData.metrics[that.currentMetric].formula);
-            that.colorize(that.polygons, that.options.globalData);
+            that.colorize();
         });
 
         $(window).trigger('hashchange');
@@ -93,17 +122,16 @@ $.widget("geo.metricMap", {
         });
         return hex.join("").toUpperCase();
     },
-    colorize: function (polygons, json) {
-        var metricData = json.metrics[this.currentMetric];
+    colorize: function () {
         var color;
-        for (var i in polygons) {
-            var polygon = polygons[i];
-            var metric = polygon.properties[this.currentMetric];
+        var that = this;
+        for (var i in that.polygons) {
+            var polygon = that.polygons[i];
+            var metric = polygon.getMetric(that.currentMetric);
             var density = polygon.density;
-
             if (metric != undefined && $('#formula').val() != '') {
                 with(this) {
-                    extract(polygon.properties);
+                    extract(polygon.getProperties());
                     n = eval($('#formula').val());
                 }
                 polygon.bubbleText = Math.ceil(n) + '%';
@@ -143,7 +171,7 @@ $.widget("geo.metricMap", {
             var density = shape.properties.peoples / area;
 
             var polygon = new google.maps.Polygon({
-                properties: shape.properties,
+                id: shape.properties.id,
                 formula: shape.formula,
                 area: area,
                 density: density,
@@ -170,7 +198,9 @@ $.widget("geo.metricMap", {
                 that.infoBubble.open(this.map);
             });
             google.maps.event.addListener(polygon, 'click', function () {
-
+                $('#data_save_form form').load('/region/saveData?id='+this.id + '&metric=' + that.currentMetric, function() {
+                    $('#data_save_form').modal('show');
+                });
             });
             google.maps.event.addListener(polygon.getPath(), 'set_at', (function (polygon) {
                 return function (number, elem) {

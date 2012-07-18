@@ -69,7 +69,7 @@ class Square extends ActiveRecord
             {
                 $tmp['coordinates'][] = $polygon->coordinates;
             }
-            $res['features'][] = $tmp;
+            $res['features'][$square->id] = $tmp;
         }
         $res['metrics'] = CHtml::listData(Metric::model()->findAll(), 'name', 'attributes');
 

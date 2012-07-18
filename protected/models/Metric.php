@@ -29,4 +29,8 @@ class Metric extends ActiveRecord
         );
     }
 
+    public function inSubtreeOf($metric)
+    {
+        return $this->name == $metric;
+    }
 }
