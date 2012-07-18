@@ -50,7 +50,7 @@ class RegionController extends BaseController {
     {
         $model = Metric::model()->findByAttributes(array('name' => $_POST['metric']));
         if ($model) {
-            $model->formula = $_POST['formula'];
+            $model->attributes = $_POST['data'];
             $model->save();
         }
     }
@@ -62,7 +62,7 @@ class RegionController extends BaseController {
             foreach ($_POST['data'] as $id => $value)
             {
                 $model = Data::model()->findByPk($id);
-                $model->value = $value;
+                $model->value = (float)$value;
                 $model->save();
             }
             echo Sector::getJson();

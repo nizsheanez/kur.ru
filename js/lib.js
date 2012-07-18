@@ -181,7 +181,12 @@ $.widget("geo.metricMap", {
             btn.text('......');
             $.post('/region/saveFormula', {
                 metric: that.currentMetric,
-                formula: $('#formula').val()
+                data: {
+                    formula: $('#formula').val(),
+                    min: $('#formula_min').val(),
+                    norma: $('#formula_norma').val(),
+                    max: $('#formula_max').val()
+                }
             }, function()
             {
                 that.colorize();
@@ -200,11 +205,11 @@ $.widget("geo.metricMap", {
             btn.text('......');
             $.post('/region/saveData', $('#data_save_form form').serialize(), function(globalData)
             {
-
-                for (var i in globalData.features)
-                {
-                    that.polygons[i].setProperties(globalData.features[i]);
-                }
+                that.options.globalData = globalData;
+                //                for (var i in globalData.features)
+                //                {
+                //                    that.polygons[i].setProperties(globalData.features[i]);
+                //                }
                 that.colorize();
                 btn.text('Сохранить');
             }, 'json');
@@ -270,30 +275,37 @@ $.widget("geo.metricMap", {
                     var b = eval(formula_norma);
                     var c = eval(formula_max);
                 }
-
-                // transfer a to zero
-                V -= a;
-                c -= a;
-                b -= a;
-                a -= a;
-
-                if (V > b)
+                if (V == Infinity || a == Infinity || b == Infinity || c == Infinity ||
+                    V == undefined || a == undefined || b == undefined || c == undefined)
                 {
-                    // transfer b to zero
-                    V -= b
-                    c -= b;
-                    b -= b;
-
-                    n = 100 + 100 * V / c;
+                    n = undefined;
                 }
                 else
                 {
-                    n = 100 * V / b;
-                }
+                    // transfer a to zero
+                    V -= a;
+                    c -= a;
+                    b -= a;
+                    a -= a;
 
-                polygon.bubbleText = Math.ceil(n) + '%';
-                n -= 100;
-                n = (n > 100) ? 100 : (n < -100 ? -100 : n);
+                    if (V > b)
+                    {
+                        // transfer b to zero
+                        V -= b
+                        c -= b;
+                        b -= b;
+
+                        n = 100 + 100 * V / c;
+                    }
+                    else
+                    {
+                        n = 100 * V / b;
+                    }
+
+                    polygon.bubbleText = Math.ceil(n) + '%';
+                    n -= 100;
+                    n = (n > 100) ? 100 : (n < -100 ? -100 : n);
+                }
 
                 if (n < 0)
                 {

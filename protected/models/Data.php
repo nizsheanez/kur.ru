@@ -24,7 +24,7 @@ class Data extends ActiveRecord
     {
         return array(
             array(
-                'value', 'safe'
+                'value, metric_id, sector_id', 'safe'
             ),
         );
     }

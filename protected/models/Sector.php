@@ -61,20 +61,9 @@ class Sector extends ActiveRecord
             'square_id' => (int)$this->square_id
         );
         $ext  = array();
-        $data = $this->data;
-        if (empty($data))
+        foreach ($this->data as $item)
         {
-            foreach (Metric::model()->findAll() as $metric)
-            {
-                $ext[$metric->name] = null;
-            }
-        }
-        else
-        {
-            foreach ($data as $item)
-            {
-                $ext[$item->metric->name] = (float)$item->value;
-            }
+            $ext[$item->metric->name] = (float)$item->value;
         }
         return array_merge($base, $ext);
     }

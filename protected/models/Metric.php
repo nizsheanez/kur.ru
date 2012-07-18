@@ -24,7 +24,7 @@ class Metric extends ActiveRecord
     {
         return array(
             array(
-                'title, name, type', 'safe'
+                'title, name, type, formula, min, norma, max', 'safe'
             ),
         );
     }
