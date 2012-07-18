@@ -87,6 +87,9 @@
     <div class="modal-body">
         <form class="form-vertical">
             <textarea id="formula" class="input-xlarge" rows="4" style="font: monospace;"></textarea>
+            <textarea id="formula_min" class="input-xlarge" rows="4" style="font: monospace;"></textarea>
+            <textarea id="formula_norma" class="input-xlarge" rows="4" style="font: monospace;"></textarea>
+            <textarea id="formula_max" class="input-xlarge" rows="4" style="font: monospace;"></textarea>
         </form>
         <div style="">
             <?php

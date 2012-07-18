@@ -24,7 +24,8 @@ class Sector extends ActiveRecord
     {
         return array(
             array(
-                'name', 'safe'
+                'name',
+                'safe'
             ),
         );
     }
@@ -34,36 +35,60 @@ class Sector extends ActiveRecord
     {
         return array(
             'polygons' => array(
-                self::HAS_MANY, 'Polygon', 'sector_id'
+                self::HAS_MANY,
+                'Polygon',
+                'sector_id'
             ),
-            'square' => array(
-                self::BELONGS_TO, 'Square', 'square_id'
+            'square'   => array(
+                self::BELONGS_TO,
+                'Square',
+                'square_id'
             ),
-            'data' => array(
-                self::HAS_MANY, 'Data', 'sector_id'
+            'data'     => array(
+                self::HAS_MANY,
+                'Data',
+                'sector_id'
             ),
         );
     }
 
+
     public function getProperties()
     {
-        $base = array (
-            'id' => (int)$this->id,
-            'name' => $this->title,
+        $base = array(
+            'id'        => (int)$this->id,
+            'name'      => $this->title,
             'square_id' => (int)$this->square_id
         );
-        $data = array();
-        foreach ($this->data as $item)
+        $ext  = array();
+        $data = $this->data;
+        if (empty($data))
         {
-            $data[$item->metric->name] = (float)$item->value;
+            foreach (Metric::model()->findAll() as $metric)
+            {
+                $ext[$metric->name] = null;
+            }
         }
-        return array_merge($base, $data);
+        else
+        {
+            foreach ($data as $item)
+            {
+                $ext[$item->metric->name] = (float)$item->value;
+            }
+        }
+        return array_merge($base, $ext);
     }
+
 
     public static function getJson()
     {
         $res = array('type' => "FeatureCollection");
-        foreach (Sector::model()->with(array('data', 'polygons', 'data.metric'))->findAll() as $sector)
+        foreach (
+            Sector::model()->with(array(
+                'data',
+                'polygons',
+                'data.metric'
+            ))->findAll() as $sector)
         {
             $tmp               = array();
             $tmp['type']       = "Polygon";

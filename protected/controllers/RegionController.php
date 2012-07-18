@@ -22,13 +22,24 @@ class RegionController extends BaseController {
 
     public function actionSave()
     {
-        foreach ($_POST['polygons'] as $SectorId => $coordinates) {
-            foreach (Sector::model()->findByPk($SectorId)->polygons as $polygon) {
-                $polygon->delete();
+        foreach ($_POST['polygons'] as $sectorId => $coordinates) {
+            $sector = Sector::model()->findByPk($sectorId);
+            if ($sector)
+            {
+                foreach ($sector->polygons as $polygon) {
+                    $polygon->delete();
+                }
+            }
+            else
+            {
+                $sector = new Sector();
+                $sector->title = $_POST['title'];
+                $sector->square_id = $_POST['square_id'];
+                $sector->save();
             }
             foreach ($coordinates as $i => $latLng) {
                 $polygon = new Polygon();
-                $polygon->sector_id = $SectorId;
+                $polygon->sector_id = $sector->id;
                 $polygon->attributes = $latLng;
                 $polygon->save();
             }

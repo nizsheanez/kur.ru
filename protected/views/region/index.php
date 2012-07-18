@@ -1,5 +1,21 @@
 <div id="map"></div>
-<div id="btn" style="border:1px solid #333; position: fixed; top: 0; height: 10px; width: 100%">Send</div>
+<div class="modal hide" id="new_sector_modal">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3>Редактирование метрики</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-vertical">
+            <input id="new_sector_title" />
+            <?= CHtml::dropDownList('square_id', 1, CHtml::listData(Square::model()->findAll(), 'id', 'title'), array('id' => 'new_sector_square_id')) ?>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Отмена</a>
+        <a href="#" id="new_sector_save" class="btn btn-primary">Сохранить</a>
+    </div>
+</div>
+
 <script type="text/javascript">
 
     // Create the Google Map…
@@ -12,9 +28,9 @@
     var drawingManager = new google.maps.drawing.DrawingManager({
         drawingControl: true,
         drawingControlOptions: {
-            drawingModes: [google.maps.drawing.OverlayType.MARKER, google.maps.drawing.OverlayType.POLYGON]
+            drawingModes: [google.maps.drawing.OverlayType.POLYGON]
         },
-        drawingMode: google.maps.drawing.OverlayType.MARKER,
+        drawingMode: google.maps.drawing.OverlayType.POLYGON,
         polygonOptions: {
             fillColor: '#ffffff',
             fillOpacity: 1,
@@ -25,70 +41,16 @@
     });
     drawingManager.setMap(map);
 
-    google.maps.event.addListener(drawingManager, 'polygoncomplete', savePolygon);
-
-    google.maps.event.addListener(drawingManager, 'markercomplete', function(marker)
-    {
-        console.log(marker.getPosition().toString())
+    google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
+        $('#new_sector_modal').modal('show');
+        $('#new_sector_save').click(function() {
+            savePolygon(polygon, function() {
+                $('#new_sector_modal').modal('hide');
+                $('#new_sector_modal form').reset();
+            });
+            return false;
+        });
     });
 
-    // Load the station data. When the data comes back, create an overlay.
-    var overlay = new google.maps.OverlayView();
-
-    // Add the container when the overlay is added to the map.
-    overlay.onAdd = function()
-    {
-        var layer = d3.select(this.getPanes().overlayLayer).append("div")
-            .attr("class", "stations");
-
-        // We could use a single SVG, but what size would it have?
-        overlay.draw = function()
-        {
-            var projection = this.getProjection();
-
-            var regions = layer.append("svg:g").attr("id", "regions");
-            var sectors = layer.append("svg:g").attr("id", "sectors");
-
-            //        d3.json("unemployment.json", function(data) {
-            //          var pad = d3.format("05d"),
-            //              quantize = d3.scale.quantile().domain([0, 15]).range(d3.range(9));
-            <!---->
-            //          d3.json("us-counties.json", function(json) {
-            //            counties.selectAll("path")
-            //                .data(json.features)
-            //              .enter().append("svg:path")
-            //                .attr("class", function(d) { return "q" + quantize(data[pad(d.id)]) + "-9"; })
-            //                .attr("d", path)
-            //              .append("svg:title")
-            //                .text(function(d) { return d.properties.name + ": " + data[pad(d.id)] + "%"; });
-            //          });
-            //        });
-            var polygon = new google.maps.Polygon({
-                paths: [],
-                strokeColor: "#FF0000",
-                strokeOpacity: 0.8,
-                strokeWeight: 3,
-                fillColor: "#FF0000",
-                fillOpacity: 0.35
-            });
-            google.maps.event.addListener(map, 'click', function(e)
-            {
-                polygon.paths.push(e.latLng);
-            });
-
-            $('#btn').click(function()
-            {
-                $.post('/region/save', polygon.paths);
-            });
-
-
-
-        };
-
-    };
-
-
-    // Bind our overlay to the map…
-    overlay.setMap(map);
 
 </script>
