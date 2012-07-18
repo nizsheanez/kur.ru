@@ -50,8 +50,22 @@ function Composite() {
 
     this.getProperties = function() {
         var leaf = that.polygons.pop();
-        var res = leaf.getProperties();
+        var props = leaf.getProperties();
         that.polygons.push(leaf);
+
+        var res = {};
+        for (var j in props)
+        {
+            res[j] = 0;
+        }
+
+        for (var i in that.polygons)
+        {
+            for (var j in props)
+            {
+                res[j] += that.polygons[i].getProperty(j)
+            }
+        }
         return res;
     };
 }
@@ -71,8 +85,8 @@ $.widget("geo.metricMap", {
         maxWidth: 210
     }),
     map: {},
-    polygons: [],
-    squares: [],
+    polygons: new Array(),
+    squares: new Array(),
     currentMetric: 'peoples',
     options: {
         globalData: {},
@@ -83,6 +97,15 @@ $.widget("geo.metricMap", {
         var that = this;
 
         google.maps.Polygon.prototype.getProperty = function (name) {
+            if (name == 'area')
+            {
+                return google.maps.geometry.spherical.computeArea(this.getPaths());
+            }
+            if (name == 'density')
+            {
+                return this.getProperty('peoples') / this.getArea();
+            }
+
             return that.options.globalData.features[this.id].properties[name];
         };
 
@@ -221,14 +244,9 @@ $.widget("geo.metricMap", {
                 paths.push(new google.maps.LatLng(xy[0], xy[1]));
             }
 
-            var area = google.maps.geometry.spherical.computeArea(paths);
-            var density = shape.properties.peoples / area;
-
             var polygon = new google.maps.Polygon({
                 id: shape.properties.id,
                 formula: shape.formula,
-                area: area,
-                density: density,
                 paths: paths,
                 strokeOpacity: 0.3,
                 strokeWeight: 1,

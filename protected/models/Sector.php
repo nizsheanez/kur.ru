@@ -48,14 +48,14 @@ class Sector extends ActiveRecord
     public function getProperties()
     {
         $base = array (
-            'id' => $this->id,
+            'id' => (int)$this->id,
             'name' => $this->title,
-            'square_id' => $this->square_id
+            'square_id' => (int)$this->square_id
         );
         $data = array();
         foreach ($this->data as $item)
         {
-            $data[$item->metric->name] = $item->value;
+            $data[$item->metric->name] = (float)$item->value;
         }
         return array_merge($base, $data);
     }
