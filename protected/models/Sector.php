@@ -36,6 +36,9 @@ class Sector extends ActiveRecord
             'polygons' => array(
                 self::HAS_MANY, 'Polygon', 'sector_id'
             ),
+            'square' => array(
+                self::BELONGS_TO, 'Square', 'square_id'
+            ),
             'data' => array(
                 self::HAS_MANY, 'Data', 'sector_id'
             ),
@@ -46,7 +49,8 @@ class Sector extends ActiveRecord
     {
         $base = array (
             'id' => $this->id,
-            'name' => $this->title
+            'name' => $this->title,
+            'square_id' => $this->square_id
         );
         $data = array();
         foreach ($this->data as $item)

@@ -58,14 +58,17 @@ class RegionController extends BaseController {
         }
         else
         {
-            foreach (Sector::model()->findByPk($id)->data as $item)
+            $metricModel = Metric::model()->findByAttributes(array('name' => $metric));
+            if ($metricModel->type == '1')
             {
-                if ($item->metric->inSubtreeOf($metric) || $item->metric->type == null)
+                echo $this->renderPartial('dataForm', array('sector' => Sector::model()->findByPk($id), 'metric' => $metric));
+            }
+            elseif ($metricModel->type = '2')
+            {
+                foreach (Sector::model()->findByPk($id)->square->sectors as $sector)
                 {
-                    echo CHtml::label($item->metric->title, 'data['.$item->id.']');
-                    echo '<br />';
-                    echo CHtml::textField('data['.$item->id.']', $item->value);
-                    echo '<br />';
+                    echo CHtml::tag('h3', array(), $sector->title);
+                    echo $this->renderPartial('dataForm', array('sector' => $sector, 'metric' => $metric));
                 }
             }
         }
