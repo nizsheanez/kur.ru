@@ -304,7 +304,7 @@ $.widget("geo.metricMap", {
                         n = 100 * V / b;
                     }
 
-                    polygon.bubbleText = Math.ceil(n);
+                    polygon.bubbleText = Math.ceil(n) + '%';
                     n -= 100;
                     n = (n > 100) ? 100 : (n < -100 ? -100 : n);
 
