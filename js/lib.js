@@ -15,7 +15,7 @@ function savePolygon(polygon, callback)
         res.title = $('#new_sector_title').val();
         res.square_id = $('#new_sector_square_id').val();
     }
-    $.post('/region/save', res, callback);
+    $.post('/regions/save/polygons', res, callback);
 }
 
 function getCenter(polygon)
@@ -179,7 +179,7 @@ $.widget("geo.metricMap", {
         {
             var btn = $(this);
             btn.text('......');
-            $.post('/region/saveFormula', {
+            $.post('/regions/save/formula', {
                 metric: that.currentMetric,
                 data: {
                     formula: $('#formula').val(),
@@ -203,7 +203,7 @@ $.widget("geo.metricMap", {
         {
             var btn = $(this);
             btn.text('......');
-            $.post('/region/saveData', $('#data_save_form form').serialize(), function(globalData)
+            $.post('/regions/save/data', $('#data_save_form form').serialize(), function(globalData)
             {
                 that.options.globalData = globalData;
                 //                for (var i in globalData.features)
@@ -373,7 +373,7 @@ $.widget("geo.metricMap", {
             });
             google.maps.event.addListener(polygon, 'click', function()
             {
-                $('#data_save_form form').load('/region/saveData?id=' + this.id + '&metric=' + that.currentMetric,
+                $('#data_save_form form').load('/regions/save/data?id=' + this.id + '&metric=' + that.currentMetric,
                     function()
                     {
                         $('#data_save_form').modal('show');

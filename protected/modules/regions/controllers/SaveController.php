@@ -1,26 +1,13 @@
 <?php
-
-class RegionController extends BaseController {
-
-    public $layout = '//layouts/gmap';
-
+class SaveController extends BaseController {
 
     public static function actionsTitles()
     {
         return array(
-            "index"          => "Управление товарами",
-            "save"           => "Управление товарами",
-            "get"            => "Управление товарами",
         );
     }
 
-
-    public function actionIndex()
-    {
-        $this->render('index2');
-    }
-
-    public function actionSave()
+    public function actionPolygons()
     {
         foreach ($_POST['polygons'] as $sectorId => $coordinates) {
             $sector = Sector::model()->findByPk($sectorId);
@@ -46,7 +33,7 @@ class RegionController extends BaseController {
         }
     }
 
-    public function actionSaveFormula()
+    public function actionMetric()
     {
         $model = Metric::model()->findByAttributes(array('name' => $_POST['metric']));
         if ($model) {
@@ -55,7 +42,7 @@ class RegionController extends BaseController {
         }
     }
 
-    public function actionSaveData($id = null, $metric = null)
+    public function actionData($id = null, $metric = null)
     {
         if (isset($_POST['data']))
         {
