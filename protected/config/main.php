@@ -55,19 +55,26 @@ function stop($data = '')
 
 
 return array(
-    'language'   => 'ru',
-    'basePath'   => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
-    'name'       => '',
+    'language'     => 'ru',
+    'basePath'     => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
+    'name'         => '',
 
-    'import'     => array(
+    'import'       => array(
         'application.components.*',
         'application.components.activeRecordBehaviors.*',
         'application.models.*',
         'application.components.formElements.*',
         'application.components.bootstrap.widgets.*',
     ),
-    'preload'      => array('log', 'bootstrap'),
-    'components' => array(
+    'preload'      => array(
+        'log',
+        'bootstrap'
+    ),
+    'modules'      => array(
+        'dipl',
+        'regions'
+    ),
+    'components'   => array(
         'db'           => array(
             'connectionString' => 'mysql:host=localhost;dbname=diplom',
             'emulatePrepare'   => true,
@@ -100,9 +107,6 @@ return array(
         'user'         => array(
             'allowAutoLogin' => true,
             'class'          => 'WebUser'
-        ),
-        'metaTags'     => array(
-            'class' => 'application.modules.main.components.MetaTags'
         ),
         'image'        => array(
             'class'  => 'application.extensions.image.CImageComponent',
@@ -151,17 +155,17 @@ return array(
             'urlFormat'      => 'path',
             'showScriptName' => false,
             'rules'          => array(
-                '<controller:\w+>/<id:\d+>'                  => '<controller>/view',
-                '<controller:\w+>/<action:\w+>/<id:\d+>'     => '<controller>/<action>',
-                '<controller:\w+>/<action:\w+>'              => '<controller>/<action>',
-                '<controller:\w+>/<id:\d+>'                  => '<controller>/view',
-                '<controller:\w+>/<action:\w+>/<id:\d+>'     => '<controller>/<action>',
-                '<controller:\w+>/<action:\w+>'              => '<controller>/<action>',
+                '<controller:\w+>/<id:\d+>'                               => '<controller>/view',
+                '<controller:\w+>/<action:\w+>/<id:\d+>'                  => '<controller>/<action>',
+                '<controller:\w+>/<action:\w+>'                           => '<controller>/<action>',
+                '<module:\w+>/<controller:\w+>/<id:\d+>'                  => '<module>/<controller>/view',
+                '<module:\w+>/<controller:\w+>/<action:\w+>/<id:\d+>'     => '<module>/<controller>/<action>',
+                '<module:\w+>/<controller:\w+>/<action:\w+>'              => '<module>/<controller>/<action>',
             ),
         ),
 
         'errorHandler' => array(
-            'errorAction' => 'main/error',
+            'errorAction' => '/dipl/main/error',
         ),
 
         'authManager'  => array(
@@ -178,7 +182,7 @@ return array(
 
         'log'          => array(
             'class' => 'CLogRouter',
-            'routes'=> array(//                array(
+            'routes'=> array( //                array(
                 // направляем результаты профайлинга в ProfileLogRoute (отображается
                 // внизу страницы)
 //                    'class'=>'CProfileLogRoute',
@@ -195,7 +199,7 @@ return array(
             ),
         ),
     ),
-    'params'     => array(
+    'params'       => array(
         'save_site_actions' => false
     )
 );

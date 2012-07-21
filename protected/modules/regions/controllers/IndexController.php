@@ -1,16 +1,10 @@
 <?php
 
-class RegionController extends BaseController {
-
-    public $layout = 'gmap';
-
+class IndexController extends BaseController {
 
     public static function actionsTitles()
     {
         return array(
-            "index"          => "Управление товарами",
-            "save"           => "Управление товарами",
-            "get"            => "Управление товарами",
         );
     }
 
