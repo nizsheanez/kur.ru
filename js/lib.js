@@ -55,7 +55,7 @@ function Composite()
                 res[j] += (prop == null) ? undefined : prop;
             }
         }
-        res.area = that.getProperty('area');
+        //        res.area = that.getProperty('area');
         return res;
     };
 }
@@ -96,7 +96,6 @@ $.widget("geo.metricMap", {
         });
 
         that.drawPolygons(that.options.globalData);
-        that.squares[1] = new Composite();
 
         $('#navigation ul a').click(function()
         {
@@ -112,13 +111,13 @@ $.widget("geo.metricMap", {
         {
             var btn = $(this);
             btn.text('......');
-            $.post('/regions/save/formula', {
+            $.post('/regions/save/metric', {
                 metric: that.currentMetric,
                 data: {
-                    formula: $('#formula').val(),
-                    min: $('#formula_min').val(),
-                    norma: $('#formula_norma').val(),
-                    max: $('#formula_max').val()
+                    formula: $('#metric_formula').val(),
+                    min: $('#metric_min').val(),
+                    norma: $('#metric_norma').val(),
+                    max: $('#metric_max').val()
                 }
             }, function()
             {
@@ -151,10 +150,10 @@ $.widget("geo.metricMap", {
             var url = $.param.fragment();
             that.currentMetric = $.bbq.getState('metric', true) || 'peoples';
             var metric = that.options.globalData.metrics[that.currentMetric];
-            $('#formula').val(metric.formula);
-            $('#formula_min').val(metric.min);
-            $('#formula_norma').val(metric.norma);
-            $('#formula_max').val(metric.max);
+            $('#metric_formula').val(metric.formula);
+            $('#metric_min').val(metric.min);
+            $('#metric_norma').val(metric.norma);
+            $('#metric_max').val(metric.max);
 
             $('#navigation .active').removeClass('active');
             $('#navigation a[href=#' + that.currentMetric + ']').parent().addClass('active').parent().parent().addClass('active');
@@ -167,17 +166,18 @@ $.widget("geo.metricMap", {
     _initPolygonObject: function()
     {
         var that = this;
+        google.maps.Polygon.prototype.__defineGetter__('area', function()
+        {
+            return google.maps.geometry.spherical.computeArea(this.getPaths());
+        });
+
+        google.maps.Polygon.prototype.__defineGetter__('density', function()
+        {
+            return this.getProperty('peoples') / this.area;
+        });
+
         google.maps.Polygon.prototype.getProperty = function(name)
         {
-            if (name == 'area')
-            {
-                return google.maps.geometry.spherical.computeArea(this.getPaths());
-            }
-            if (name == 'density')
-            {
-                return this.getProperty('peoples') / this.getArea();
-            }
-
             return that.options.globalData.features[this.id].properties[name];
         };
 
@@ -252,28 +252,31 @@ $.widget("geo.metricMap", {
         var that = this;
         var items = that[$.bbq.getState('type')];
 
-        var formula = $('#formula').val(),
-            formula_min = $('#formula_min').val() + ';',
-            formula_norma = $('#formula_norma').val() + ';',
-            formula_max = $('#formula_max').val() + ';';
+        var m = {
+            formula: $('#metric_formula').val(),
+            min: $('#metric_min').val() + ';',
+            norma: $('#metric_norma').val() + ';',
+            max: $('#metric_max').val() + ';'
+        };
 
         for (var i in items)
         {
             var polygon = items[i];
             var metric = polygon.getProperty(that.currentMetric);
-            if (metric != undefined && formula != '')
+            if (metric != undefined && m.formula != '')
             {
-                with (this)
+                var _V, _a, _b, _c;
+                with (polygon)
                 {
                     extract(polygon.getProperties());
-                    var V = eval(formula);
-                    var a = eval(formula_min);
-                    var b = eval(formula_norma);
-                    var c = eval(formula_max);
+                    _V = eval(m.formula);
+                    _a = eval(m.min);
+                    _b = eval(m.norma);
+                    _c = eval(m.max);
                 }
 
-                if (V == Infinity || a == Infinity || b == Infinity || c == Infinity ||
-                    V == undefined || a == undefined || b == undefined || c == undefined)
+                if (_V == Infinity || _a == Infinity || _b == Infinity || _c == Infinity ||
+                    _V == undefined || _a == undefined || _b == undefined || _c == undefined)
                 {
                     n = undefined;
                     color = this._hexFromRGB(0, 0, 0);
@@ -281,23 +284,23 @@ $.widget("geo.metricMap", {
                 else
                 {
                     // transfer a to zero
-                    V -= a;
-                    c -= a;
-                    b -= a;
-                    a -= a;
+                    _V -= _a;
+                    _c -= _a;
+                    _b -= _a;
+                    _a -= _a;
 
-                    if (V > b)
+                    if (_V > _b)
                     {
                         // transfer b to zero
-                        V -= b
-                        c -= b;
-                        b -= b;
+                        _V -= _b
+                        _c -= _b;
+                        _b -= _b;
 
-                        n = 100 + 100 * V / c;
+                        n = 100 + 100 * _V / _c;
                     }
                     else
                     {
-                        n = 100 * V / b;
+                        n = 100 * _V / _b;
                     }
 
                     polygon.bubbleText = Math.ceil(n) + '%';
@@ -347,7 +350,12 @@ $.widget("geo.metricMap", {
             });
 
             that.polygons[polygon.id] = polygon;
-            that.squares[polygon.getProperty('square_id')].add(that.polygons[i]);
+            var squareId = polygon.getProperty('square_id');
+            if (that.squares[squareId] == undefined)
+            {
+                that.squares[squareId] = new Composite();
+            }
+            that.squares[squareId].add(that.polygons[i]);
 
             google.maps.event.addListener(polygon, 'mouseout', function()
             {

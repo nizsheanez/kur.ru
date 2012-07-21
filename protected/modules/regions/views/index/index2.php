@@ -28,13 +28,13 @@
     <div class="modal-body">
         <form class="form-vertical">
             Формула: <br/>
-            <textarea id="formula" class="input-xlarge" rows="4" style="font: monospace;"></textarea><br/>
+            <textarea id="metric_formula" class="input-xlarge" rows="4" style="font: monospace;"></textarea><br/>
             Минимум:<br/>
-            <textarea id="formula_min" class="input-xlarge" rows="4" style="font: monospace;"></textarea><br/>
+            <textarea id="metric_min" class="input-xlarge" rows="4" style="font: monospace;"></textarea><br/>
             Норма:<br/>
-            <textarea id="formula_norma" class="input-xlarge" rows="4" style="font: monospace;"></textarea><br/>
+            <textarea id="metric_norma" class="input-xlarge" rows="4" style="font: monospace;"></textarea><br/>
             Максимум:<br/>
-            <textarea id="formula_max" class="input-xlarge" rows="4" style="font: monospace;"></textarea><br/>
+            <textarea id="metric_max" class="input-xlarge" rows="4" style="font: monospace;"></textarea><br/>
         </form>
         <div>
             <?php
