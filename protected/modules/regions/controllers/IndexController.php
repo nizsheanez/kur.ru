@@ -2,6 +2,8 @@
 
 class IndexController extends BaseController {
 
+    public $layout = 'gmap';
+
     public static function actionsTitles()
     {
         return array(

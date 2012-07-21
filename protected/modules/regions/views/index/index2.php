@@ -1,76 +1,17 @@
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
-            <ul class="nav" id="navigation">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        По секторам
-                        <i class="caret" ></i>
-                    </a>
-                    <ul class="dropdown-menu" data-type="polygons">
-                        <?php
-                        foreach (CHtml::listData(Metric::model()->findAll('t.type=1'), 'name', 'title') as $name => $title)
-                        {
-                            $link = CHtml::link($title, '#' . $name);
-                            echo CHtml::tag('li', array(), $link);
-                        }
-                        ?>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        По кварталам
-                        <b class="caret" ></b>
-                    </a>
-                    <ul class="dropdown-menu" data-type="squares">
-                    <?php
-                    foreach (CHtml::listData(Metric::model()->findAll('t.type=2'), 'name', 'title') as $name => $title)
-                    {
-                        $link = CHtml::link($title, '#' . $name);
-                        echo CHtml::tag('li', array(), $link);
-                    }
-                    ?>
-                    </ul>
-                </li>
-            </ul>
+            <? $this->renderPartial('_topMenu') ?>
         </div>
     </div>
 </div>
-<?php
-//$form = new Form(array(
-//    'action'               => '/region/saveMetric',
-//    'activeForm'           => array(
-//        'id'            => 'metric_form'
-//    ),
-//    'elements'             => array(
-//        'formula'     => array(
-//            'type' => 'text'
-//        ),
-//    ),
-//    'buttons'              => array(
-//        'submit' => array(
-//            'type'  => 'submit',
-//            'value' => 'сохранить',
-//        )
-//    )
-//), new Metric());
-//echo $form->toModalWindow('
-//    <div id="edit_metric" style="z-index: 100; position: absolute; top: 70px; right: 10px;">
-//        <a data-toggle="modal" href="#metric_form"><img src="/img/formula.png" width="32" height="32"/></a>
-//    </div>', array(
-//    'modalTitle' => 'Настройки метрики',
-//    'callback' => 'function ($form, data) {
-//            }'
-//));
-?>
-
 <div class="modal hide" id="data_save_form">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">×</button>
         <h3>Редактирование сектора</h3>
     </div>
     <div class="modal-body">
-        <form class="form-vertical">
+        <form action="" class="form-vertical">
         </form>
     </div>
     <div class="modal-footer">
@@ -86,7 +27,7 @@
     </div>
     <div class="modal-body">
         <form class="form-vertical">
-            Формула:            <br/>
+            Формула: <br/>
             <textarea id="formula" class="input-xlarge" rows="4" style="font: monospace;"></textarea><br/>
             Минимум:<br/>
             <textarea id="formula_min" class="input-xlarge" rows="4" style="font: monospace;"></textarea><br/>
@@ -95,7 +36,7 @@
             Максимум:<br/>
             <textarea id="formula_max" class="input-xlarge" rows="4" style="font: monospace;"></textarea><br/>
         </form>
-        <div style="">
+        <div>
             <?php
             foreach (Metric::model()->findAll() as $item)
             {
@@ -117,6 +58,7 @@
         <span class="label label-important">Недостаток</span>
     </div>
     <br/>
+
     <div id="edit_metric">
         <a data-toggle="modal" href="#metric_form"><img src="/img/formula.png" width="32" height="32"/></a>
     </div>

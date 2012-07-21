@@ -2,6 +2,13 @@
 @import "../less/mixins.less";
 @import "../less/my_lib.less";
 
+html, body, #map{
+    width:   100%;
+    height:  100%;
+    margin:  0;
+    padding: 0;
+}
+
 @toolbarWidht: 242px;
 @opacityBlack: 0.75;
 
@@ -29,15 +36,15 @@ marker#licensing{
 
 circle{
     stroke-opacity: @opacityBlack;
-    fill-opacity: @opacityBlack;
-    fill:         #ccc;
-    stroke:       #333;
-    stroke-width: 1.5px;
+    fill-opacity:   @opacityBlack;
+    fill:           #ccc;
+    stroke:         #333;
+    stroke-width:   1.5px;
 }
 
 text{
     stroke-opacity: @opacityBlack;
-    fill-opacity: @opacityBlack;
+    fill-opacity:   @opacityBlack;
     font:           10px sans-serif;
     pointer-events: none;
 }
@@ -55,17 +62,16 @@ text{
         font-weight: bolder;
         fill:        @red;
     }
-    fill: none;
-    cursor:      pointer;
-//    display:     none;
+    fill:   none;
+    cursor: pointer; //    display:     none;
 }
 //LINKS
 .link, .link{
     stroke-opacity: @opacityBlack;
-    fill-opacity: @opacityBlack;
-    fill:         none;
-    stroke:       #666;
-    stroke-width: 1.5px;
+    fill-opacity:   @opacityBlack;
+    fill:           none;
+    stroke:         #666;
+    stroke-width:   1.5px;
 
     &.associate{
         stroke-dasharray: 0, 2 1;
@@ -84,7 +90,7 @@ text{
 }
 
 //TOOLBAR
-.toolbar-place(@height: 40%, @width: @toolbarWidht - 20){
+.toolbar-place(@height: 40%, @width: @toolbarWidht -20){
     .center-block();
     .round();
     .size(@height, @width);
@@ -112,25 +118,28 @@ text{
 .toolbar-top{
     .nav-collapse{
         margin-top: -1px;
-    };
+    }
+;
     .nav{
         margin-right: 0;
     }
     width:  22%;
-    left: 36%;
+    left:   36%;
     margin: 10px 0 0;
     input{
         height: 11px;
-    };
+    }
+;
     button{
-        height: 20px;
+        height:      20px;
         line-height: 11px;
-    };
+    }
+;
     .navbar-inner{
         .container{
-            width:100%;
+            width: 100%;
             ul{
-                width:100%;
+                width: 100%;
             }
         }
         .round();
@@ -138,12 +147,12 @@ text{
         #gradient > .vertical(@grayLighter, lighten(@gray, 5%));
     }
     &.bottom{
-        left: 50%;
-        width:  19%;
+        left:  50%;
+        width: 19%;
     }
 }
 .well{
-    padding: 5px;
+    padding:          5px;
     #gradient > .vertical(rgba(200, 200, 200, 0.9), rgba(100, 100, 100, 0.9));
     background-color: rgba(160, 160, 160, 1);
 }
@@ -162,7 +171,7 @@ form{
     margin: 0
 }
 input[type="checkbox"]{
-    float: left;
+    float:        left;
     margin-right: 3px;
 }
 
