@@ -1,6 +1,9 @@
 <?php
 class Metric extends ActiveRecord
 {
+    const LFT   = 'lft';
+    const RGT   = 'rgt';
+    const DEPTH = 'depth';
 
     public static function model($className = __CLASS__)
     {
