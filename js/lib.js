@@ -77,6 +77,7 @@
             backgroundClassName: 'phoney',
             maxWidth: 210
         }),
+        bounds: new Array(),
         map: {},
         polygons: new Array(),
         squares: new Array(),
@@ -179,6 +180,18 @@
         _initPolygonObject: function()
         {
             var that = this;
+            google.maps.Polygon.prototype.getBounds = function() {
+                var bounds = new google.maps.LatLngBounds();
+
+                this.getPaths().forEach(function(path) {
+                    path.forEach(function(point) {
+                        bounds.extend(point);
+                    });
+                });
+
+                return bounds;
+            };
+
             google.maps.Polygon.prototype.__defineGetter__('area', function()
             {
                 return google.maps.geometry.spherical.computeArea(this.getPaths());
@@ -271,7 +284,7 @@
                 norma: $('#metric_norma').val() + ';',
                 max: $('#metric_max').val() + ';'
             };
-
+/*
             for (var i in items)
             {
                 var polygon = items[i];
@@ -337,6 +350,7 @@
 
                 polygon.setColor(color);
             }
+                */
         },
         drawPolygons: function(json)
         {
@@ -367,8 +381,10 @@
                 if (that.squares[squareId] == undefined)
                 {
                     that.squares[squareId] = new Composite();
+                    that.bounds[squareId] = new google.maps.LatLngBounds();
                 }
                 that.squares[squareId].add(that.polygons[i]);
+                that.bounds[squareId].union(that.polygons[i].getBounds());
 
                 google.maps.event.addListener(polygon, 'mouseout', function()
                 {
@@ -407,7 +423,7 @@
                 };
                 google.maps.event.addListener(polygon.getPath(), 'set_at', polygonSave(polygon));
                 google.maps.event.addListener(polygon.getPath(), 'insert_at', polygonSave(polygon));
-                polygon.setMap(this.map);
+//                polygon.setMap(this.map);
             }
         }
     })
