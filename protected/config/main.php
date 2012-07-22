@@ -11,6 +11,7 @@ return array(
         'application.components.formElements.*',
         'application.components.bootstrap.widgets.*',
         'application.components.interfaces.*',
+        'application.components.helpers.*',
         'application.components.Form',
         'application.components.validators.*',
         'application.components.zii.*',

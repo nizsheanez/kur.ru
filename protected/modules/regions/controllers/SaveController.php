@@ -1,6 +1,7 @@
 <?php
 class SaveController extends Controller
 {
+    public $layout = 'gmap';
 
     public static function actionsTitles()
     {
@@ -109,12 +110,19 @@ class SaveController extends Controller
             foreach ($nestedSortableFields as $key => $field)
             {
                 $update_data = CHtml::listData($data, 'item_id', $key);
+                if ($key == Metric::DEPTH)
+                {
+                    foreach ($update_data as $key => $val)
+                    {
+                        $update_data[$key]++;
+                    }
+                }
                 $update[]    = "{$field} = " . SqlHelper::arrToCase('id', $update_data);
             }
 
             //обновляем всю таблицу, кроме рута
             $condition = Metric::DEPTH . " > 1";
-            $command   = Yii::app()->db->commandBuilder->createSqlCommand(
+            $command   = Yii::app()->db->createCommand(
                 "UPDATE `{$model->tableName()}` SET " . implode(', ', $update) . " WHERE {$condition}");
             $command->execute();
             echo Sector::getJson();

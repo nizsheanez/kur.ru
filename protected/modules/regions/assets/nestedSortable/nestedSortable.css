@@ -10,28 +10,28 @@
     border-color: transparent;
 }
 
-ol{
+ul{
     margin:       0;
     padding:      0;
     padding-left: 30px;
 }
 
-ol.sortable, ol.sortable ol{
+ul.ui-sortable, ul.ui-sortable ul{
     margin:          0 0 0 25px;
     padding:         0;
     list-style-type: none;
 }
 
-ol.sortable{
-    margin: 4em 0;
+ul.ui-sortable{
+    margin: 0;
 }
 
-.sortable li{
+.ui-sortable li{
     margin:  5px 0 0 0;
     padding: 0;
 }
 
-.sortable li div{
+.ui-sortable li div{
     border:                1px solid #d4d4d4;
     -webkit-border-radius: 3px;
     -moz-border-radius:    3px;
