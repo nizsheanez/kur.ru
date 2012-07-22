@@ -1,5 +1,5 @@
 <?php
-class SaveController extends BaseController
+class SaveController extends Controller
 {
 
     public static function actionsTitles()
@@ -113,17 +113,14 @@ class SaveController extends BaseController
             }
 
             //обновляем всю таблицу, кроме рута
-            $condition = Category::DEPTH . " > 1";
+            $condition = Metric::DEPTH . " > 1";
             $command   = Yii::app()->db->commandBuilder->createSqlCommand(
                 "UPDATE `{$model->tableName()}` SET " . implode(', ', $update) . " WHERE {$condition}");
             $command->execute();
-            echo CJSON::encode(array(
-                'status'  => 'ok',
-                'redirect'=> $this->url('manage')
-            ));
+            echo Sector::getJson();
             Yii::app()->end();
         }
-        $this->renderPartial('sorting');
+        $this->render('sortMetrics');
     }
 }
 

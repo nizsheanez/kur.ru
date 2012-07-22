@@ -2,14 +2,12 @@
     <?php echo $tree ?>
 </div>
 
-<input id="sortable_tree_submit" class="submit mid" type="submit"/>
-
 <script>
     $(document).ready(function()
     {
         var id = '<?php echo $this->id ?>';
         var tree = $('#' + id + ' > ul');
-        $('#sortable_tree_submit').click(function()
+        $('#metric_sortable_save').click(function()
         {
             var data = tree.nestedSortable('toArray');
             $.post('/regions/save/sortMetrics',
@@ -33,6 +31,5 @@
         });
 
     })
-    ;
 
 </script>

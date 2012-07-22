@@ -1,0 +1,6 @@
+<?
+ 
+class TreeView extends CTreeView
+{
+   
+}

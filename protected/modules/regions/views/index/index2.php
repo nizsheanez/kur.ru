@@ -19,7 +19,20 @@
         <a href="#" id="data_save" class="btn btn-primary">Сохранить</a>
     </div>
 </div>
-
+<div class="modal hide" id="metric_sortable_form">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3>Сортировка метрик</h3>
+    </div>
+    <div class="modal-body">
+        <form action="" class="form-vertical">
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Отмена</a>
+        <a href="#" id="metric_sortable_save" class="btn btn-primary">Сохранить</a>
+    </div>
+</div>
 <div class="modal hide" id="metric_form">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">×</button>

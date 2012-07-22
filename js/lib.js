@@ -127,7 +127,14 @@ $.widget("geo.metricMap", {
             $('#metric_form').modal('hide');
             return false;
         });
-        $('#form').submit(function()
+        $('#metrics-sortable-toggle').click(function()
+        {
+            $('#metric_sortable_form form').load('/regions/save/sortMetrics', function()
+            {
+                $('#metric_sortable_form').modal('show');
+            });
+        });
+        $('form').submit(function()
         {
             return false;
         });

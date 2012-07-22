@@ -1,0 +1,5 @@
+<?
+class DetailView extends BootDetailView
+{
+
+}

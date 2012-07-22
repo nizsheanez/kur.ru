@@ -115,7 +115,7 @@ class AppManager
 
             $reflection = new ReflectionClass($class);
 
-            if (!in_array($reflection->getParentClass()->name, array('BaseController', 'AdminController')))
+            if (!in_array($reflection->getParentClass()->name, array('Controller', 'AdminController')))
             {
                 continue;
             }

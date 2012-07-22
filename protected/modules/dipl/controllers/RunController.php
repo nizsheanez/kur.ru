@@ -1,6 +1,6 @@
 <?php
 
-class RunController extends BaseController
+class RunController extends Controller
 {
     public static function actionsTitles()
     {

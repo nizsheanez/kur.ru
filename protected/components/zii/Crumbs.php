@@ -1,0 +1,6 @@
+<?
+class Crumbs extends BootCrumb
+{
+
+}
+

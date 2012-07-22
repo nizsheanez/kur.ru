@@ -8,9 +8,17 @@ return array(
     'import'       => array(
         'application.components.*',
         'application.components.activeRecordBehaviors.*',
-        'application.models.*',
         'application.components.formElements.*',
         'application.components.bootstrap.widgets.*',
+        'application.components.interfaces.*',
+        'application.components.Form',
+        'application.components.validators.*',
+        'application.components.zii.*',
+        "application.components.zii.gridColumns.*",
+        'application.components.baseWidgets.*',
+        'application.components.bootstrap.widgets.*',
+        'application.components.activeRecordBehaviors.*',
+        'application.extensions.yiidebugtb.*',
     ),
     'preload'      => array(
         'log',
@@ -137,6 +145,9 @@ return array(
         ),
     ),
     'params'       => array(
-        'save_site_actions' => false
+        'save_site_actions'           => false,
+        'multilanguage_support'       => false,
+        'collect_routes_from_modules' => false,
+        'themes_enabled'              => false
     )
 );

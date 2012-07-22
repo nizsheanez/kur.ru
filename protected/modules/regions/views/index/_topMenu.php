@@ -38,7 +38,7 @@
         </a>
         <ul class="dropdown-menu" data-type="squares">
             <?php
-            $link = CHtml::link('Сортировка метрик', '#', array('id' => 'metrics-sortable'));
+            $link = CHtml::link('Сортировка метрик', '#', array('id' => 'metrics-sortable-toggle'));
             echo CHtml::tag('li', array(), $link);
             ?>
         </ul>

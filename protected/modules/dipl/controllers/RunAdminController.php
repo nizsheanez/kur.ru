@@ -1,5 +1,5 @@
 <?php
-class RunAdminController extends BaseController
+class RunAdminController extends Controller
 {
     public static function actionsTitles()
     {
