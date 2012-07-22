@@ -1,3 +1,6 @@
+<?php
+Yii::app()->clientScript->registerScriptFile('/js/lib.js');
+?>
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">

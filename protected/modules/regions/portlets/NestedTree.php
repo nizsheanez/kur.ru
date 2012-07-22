@@ -41,7 +41,7 @@ class NestedTree extends Portlet
 
     public function registerScripts()
     {
-        $plugins = $this->assets.'/js/plugins/';
+        $plugins = $this->assets.'/';
         $cs      = Yii::app()->clientScript;
 
         if ($this->sortable)
