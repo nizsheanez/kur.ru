@@ -1,82 +1,35 @@
 <?php
-/**
- * Debug функция, использемая только для отладки
- *
- * @param     $var
- * @param int $skipCount
- * @param int $depth
- */
-function dump($var, $skipCount = 0, $depth = 2)
-{
-    static $startSkipCount = 0;
-    static $localSkipCount = 0;
-
-    if ($startSkipCount == 0)
-    {
-        $startSkipCount = $localSkipCount = $skipCount;
-    }
-    else
-    {
-        $localSkipCount--;
-    }
-
-    if ($localSkipCount == 0)
-    {
-        $startSkipCount = 0;
-
-        echo '<pre>';
-        CVarDumper::dump($var, $depth, true);
-        echo '</pre>';
-
-        exit();
-    }
-}
-
-/**
- * Выводит текст и завершает приложение (применяется в ajax-действиях)
- *
- * @param string|array $text текст|массив для вывода
- */
-function stop($data = '')
-{
-    if (is_array($data))
-    {
-        echo '<pre>';
-        print_r($data);
-        echo '</pre>';
-    }
-    else
-    {
-        echo $data;
-    }
-
-    exit();
-}
-
 
 return array(
-    'language'   => 'ru',
-    'basePath'   => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
-    'name'       => '',
+    'language'     => 'ru',
+    'basePath'     => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
+    'name'         => '',
 
-    'import'     => array(
+    'import'       => array(
         'application.components.*',
         'application.components.activeRecordBehaviors.*',
-        'application.models.*',
         'application.components.formElements.*',
         'application.components.bootstrap.widgets.*',
+        'application.components.interfaces.*',
+        'application.components.helpers.*',
+        'application.components.Form',
+        'application.components.validators.*',
+        'application.components.zii.*',
+        "application.components.zii.gridColumns.*",
+        'application.components.baseWidgets.*',
+        'application.components.bootstrap.widgets.*',
+        'application.components.activeRecordBehaviors.*',
+        'application.extensions.yiidebugtb.*',
     ),
-    'preload'      => array('log', 'bootstrap'),
-    'components' => array(
-        'db'           => array(
-            'connectionString' => 'mysql:host=localhost;dbname=diplom',
-            'emulatePrepare'   => true,
-            'username'         => 'root',
-            'password'         => '',
-            'charset'          => 'utf8',
-            'initSQLs'         => array('set names utf8'),
-            'enableProfiling'  => true,
-        ),
+    'preload'      => array(
+        'log',
+        'bootstrap'
+    ),
+    'modules'      => array(
+        'dipl',
+        'regions'
+    ),
+    'components'   => array(
         'fileBalancer' => array(
             'class'=> 'application.components.FileBalancer'
         ),
@@ -100,9 +53,6 @@ return array(
         'user'         => array(
             'allowAutoLogin' => true,
             'class'          => 'WebUser'
-        ),
-        'metaTags'     => array(
-            'class' => 'application.modules.main.components.MetaTags'
         ),
         'image'        => array(
             'class'  => 'application.extensions.image.CImageComponent',
@@ -151,17 +101,17 @@ return array(
             'urlFormat'      => 'path',
             'showScriptName' => false,
             'rules'          => array(
-                '<controller:\w+>/<id:\d+>'                  => '<controller>/view',
-                '<controller:\w+>/<action:\w+>/<id:\d+>'     => '<controller>/<action>',
-                '<controller:\w+>/<action:\w+>'              => '<controller>/<action>',
-                '<controller:\w+>/<id:\d+>'                  => '<controller>/view',
-                '<controller:\w+>/<action:\w+>/<id:\d+>'     => '<controller>/<action>',
-                '<controller:\w+>/<action:\w+>'              => '<controller>/<action>',
+                '<controller:\w+>/<id:\d+>'                               => '<controller>/view',
+                '<controller:\w+>/<action:\w+>/<id:\d+>'                  => '<controller>/<action>',
+                '<controller:\w+>/<action:\w+>'                           => '<controller>/<action>',
+                '<module:\w+>/<controller:\w+>/<id:\d+>'                  => '<module>/<controller>/view',
+                '<module:\w+>/<controller:\w+>/<action:\w+>/<id:\d+>'     => '<module>/<controller>/<action>',
+                '<module:\w+>/<controller:\w+>/<action:\w+>'              => '<module>/<controller>/<action>',
             ),
         ),
 
         'errorHandler' => array(
-            'errorAction' => 'main/error',
+            'errorAction' => '/dipl/main/error',
         ),
 
         'authManager'  => array(
@@ -178,7 +128,7 @@ return array(
 
         'log'          => array(
             'class' => 'CLogRouter',
-            'routes'=> array(//                array(
+            'routes'=> array( //                array(
                 // направляем результаты профайлинга в ProfileLogRoute (отображается
                 // внизу страницы)
 //                    'class'=>'CProfileLogRoute',
@@ -195,7 +145,10 @@ return array(
             ),
         ),
     ),
-    'params'     => array(
-        'save_site_actions' => false
+    'params'       => array(
+        'save_site_actions'           => false,
+        'multilanguage_support'       => false,
+        'collect_routes_from_modules' => false,
+        'themes_enabled'              => false
     )
 );

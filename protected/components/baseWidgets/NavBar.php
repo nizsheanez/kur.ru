@@ -1,0 +1,5 @@
+<?
+class NavBar extends BootNavbar
+{
+
+}
