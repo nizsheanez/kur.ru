@@ -4,7 +4,6 @@
     <property file="properties/dev" />
     <tstamp /> <!-- Sets the DSTAMP, TSTAMP and TODAY properties -->
 
-
     <target name="git">
         <gitpull repository="${deploy.dir}" force="true" />
         <exec dir="${deploy.dir}" outputProperty="git.lasttag" command="git tag -l '*.*.*' | sort -V | tail -n 1" />

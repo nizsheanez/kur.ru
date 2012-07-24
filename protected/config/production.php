@@ -2,10 +2,10 @@
 return CMap::mergeArray(require('main.php'), array(
     'components' => array(
         'db' => array(
-            'connectionString' => 'mysql:host=localhost;dbname=diplom',
+            'connectionString' => 'mysql:host=localhost;dbname={{mysql.db.name}}',
             'emulatePrepare'   => true,
-            'username'         => 'asharov',
-            'password'         => 'asharov',
+            'username'         => 'mysql.user',
+            'password'         => 'mysql.pass',
             'charset'          => 'utf8',
             'enableProfiling'  => true,
         ),
