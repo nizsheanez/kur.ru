@@ -34,13 +34,8 @@ require_once(dirname(__FILE__).'/yii.php');
 require_once LIBRARIES_PATH . 'functions.php';
 require_once LIBRARIES_PATH . 'debug.php';
 
-if ($_SERVER['HTTP_HOST']=='localhost')
-{
-    defined('YII_DEBUG') || define('YII_DEBUG', true);
-    $env = YII_DEBUG ? 'development' : 'production';
-}
-defined('CONFIG') || define('CONFIG', $env);
-
+defined('YII_DEBUG') || define('YII_DEBUG', true);
+$env = YII_DEBUG ? 'development' : 'production';
 $config = $_SERVER['DOCUMENT_ROOT'].'/protected/config/console.php';
 
 if(isset($config))
