@@ -1,4 +1,4 @@
-<?
+<?php
 
 defined('DS')              || define('DS', DIRECTORY_SEPARATOR);
 defined('APP_PATH')        || define('APP_PATH', $_SERVER['DOCUMENT_ROOT'] . 'protected' . DS);
