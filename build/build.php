@@ -26,3 +26,4 @@ function git($deploy_dir)
         git tag $git_tag && git push --tags
     ');
 }
+

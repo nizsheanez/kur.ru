@@ -25,7 +25,11 @@ require_once LIBRARIES_PATH . 'yii' . DS . 'yii.php';
 require_once LIBRARIES_PATH . 'functions.php';
 require_once LIBRARIES_PATH . 'debug.php';
 
-$env = YII_DEBUG ? 'development' : 'production';
+if ($_SERVER['HTTP_HOST']=='localhost')
+{
+    defined('YII_DEBUG') || define('YII_DEBUG', true);
+    $env = YII_DEBUG ? 'development' : 'production';
+}
 defined('ENV') || define('ENV', $env);
 defined('CONFIG') || define('CONFIG', $env);
 
