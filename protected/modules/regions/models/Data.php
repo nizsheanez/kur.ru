@@ -19,12 +19,6 @@ class Data extends ActiveRecord
         return 'Модель Data';
     }
 
-    public function behaviors()
-    {
-        return array_merge_recursive(parent::behaviors(), array(
-            'class' => 'application.components.activeRecordBehaviors.NestedSetBehavior'
-        ));
-    }
 
     public function rules()
     {

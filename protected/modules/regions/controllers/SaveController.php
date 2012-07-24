@@ -57,7 +57,7 @@ class SaveController extends Controller
             foreach ($_POST['data'] as $id => $value)
             {
                 $model        = Data::model()->findByPk($id);
-                $model->value = (float)$value;
+                $model->value = is_numeric($value) ? (int)$value : null;
                 $model->save();
             }
             echo Sector::getJson();
