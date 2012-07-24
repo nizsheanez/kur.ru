@@ -295,6 +295,8 @@
                     with (polygon)
                     {
                         extract(polygon.getProperties());
+                        alert(metric);
+                        alert(peoples);
                         _V = eval(m.formula);
                         _a = eval(m.min);
                         _b = eval(m.norma);

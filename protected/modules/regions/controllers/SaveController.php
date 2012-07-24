@@ -45,7 +45,7 @@ class SaveController extends Controller
         if ($model)
         {
             $model->attributes = $_POST['data'];
-            $model->save();
+            $model->saveNode();
         }
     }
 
