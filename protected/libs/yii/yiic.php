@@ -36,6 +36,8 @@ require_once LIBRARIES_PATH . 'debug.php';
 
 defined('YII_DEBUG') || define('YII_DEBUG', true);
 $env = YII_DEBUG ? 'development' : 'production';
+defined('CONFIG') || define('CONFIG', $env);
+
 $config = $_SERVER['DOCUMENT_ROOT'].'/protected/config/console.php';
 
 if(isset($config))
