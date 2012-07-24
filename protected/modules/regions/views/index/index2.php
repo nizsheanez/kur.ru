@@ -66,7 +66,7 @@ Yii::app()->clientScript->registerScriptFile('/js/lib.js');
         <a href="#" id="formula_save" class="btn btn-primary">Сохранить</a>
     </div>
 </div>
-<div style="z-index: 100; position: absolute; top: 100px; right: 10px; text-align: right">
+<div style="z-index: 100; position: absolute; top: 100px; right: 10px; text-align: right" class="right-toolbar">
     <div>
         <b>Обозначения:</b><br/>
         <span class="label label-success">Норма</span><br/>

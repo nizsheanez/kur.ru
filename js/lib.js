@@ -176,6 +176,8 @@
             });
 
             $(window).trigger('hashchange');
+
+            $('body').html('<div id="sdf"></div><script>$("#sdf").append($("<div>"))</script>');
         },
         _initPolygonObject: function()
         {
