@@ -49,7 +49,16 @@ class Metric extends ActiveRecord
 
     public function inSubtreeOf($metric)
     {
-        return $this->name == $metric;
+        $ancestors = $this->ancestors()->findAll();
+        $ancestors[] = $this;
+        foreach ($ancestors as $item)
+        {
+            if ($item->name == $metric)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
 
