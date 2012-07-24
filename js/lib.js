@@ -300,7 +300,7 @@
                         _b = eval(m.norma);
                         _c = eval(m.max);
                     }
-                    polygon.bubbleText = 'Формула: ' + m.formula + ' = ' + _V;
+                    polygon.bubbleText = 'Формула: ' + m.formula + ' = ' + Math.round(_V * 100) / 100;
 
                     if (_V == Infinity || _a == Infinity || _b == Infinity || _c == Infinity ||
                         _V == undefined || _a == undefined || _b == undefined || _c == undefined)
