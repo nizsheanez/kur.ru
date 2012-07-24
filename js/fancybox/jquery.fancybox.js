@@ -1024,7 +1024,8 @@
 						width = width - 10;
 					}
 
-					inner.width(width - padding2).height(height - padding2);
+					inner.width(width - padding2)
+                    inner.height(height - padding2);
 					wrap.width(width);
 
 					height_ = wrap.height();
