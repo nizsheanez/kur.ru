@@ -28,8 +28,12 @@ require_once LIBRARIES_PATH . 'debug.php';
 if ($_SERVER['HTTP_HOST']=='localhost')
 {
     defined('YII_DEBUG') || define('YII_DEBUG', true);
-    $env = YII_DEBUG ? 'development' : 'production';
 }
+else
+{
+    defined('YII_DEBUG') || define('YII_DEBUG', false);
+}
+$env = YII_DEBUG ? 'development' : 'production';
 defined('ENV') || define('ENV', $env);
 defined('CONFIG') || define('CONFIG', $env);
 
