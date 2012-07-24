@@ -75,7 +75,7 @@
             disableAutoPan: true,
             hideCloseButton: true,
             backgroundClassName: 'phoney',
-            maxWidth: 210
+            maxWidth: 300
         }),
         bounds: new Array(),
         map: {},
@@ -300,6 +300,7 @@
                         _b = eval(m.norma);
                         _c = eval(m.max);
                     }
+                    polygon.bubbleText = 'Формула: ' + m.formula + ' = ' + _V;
 
                     if (_V == Infinity || _a == Infinity || _b == Infinity || _c == Infinity ||
                         _V == undefined || _a == undefined || _b == undefined || _c == undefined)
@@ -329,7 +330,8 @@
                             n = 100 * _V / _b;
                         }
 
-                        polygon.bubbleText = Math.ceil(n) + '%';
+
+                        polygon.bubbleText += '<br/>Проценты: ' + Math.ceil(n) + '%';
                         n -= 100;
                         n = (n > 100) ? 100 : (n < -100 ? -100 : n);
 
@@ -397,12 +399,19 @@
                     this.setOptions({
                         editable: true
                     });
-                    that.infoBubble.setContent('<div class="phoneytext">' + (this.bubbleText) + '</div>');
-                    that.infoBubble.setPosition(this.getCenter());
                     if ($.bbq.getState('type') == 'polygons')
                     {
-                        that.infoBubble.open(this.map);
+                        that.infoBubble.setContent('<div class="phoneytext">' + (this.bubbleText) + '</div>');
                     }
+                    else
+                    {
+                        that.infoBubble.setContent('<div class="phoneytext">' + (that.squares[polygon.getProperty('square_id')].bubbleText) + '</div>');
+                    }
+                    that.infoBubble.setPosition(this.getCenter());
+//                    if ($.bbq.getState('type') == 'polygons')
+//                    {
+                        that.infoBubble.open(this.map);
+//                    }
                 });
                 google.maps.event.addListener(polygon, 'click', function()
                 {
