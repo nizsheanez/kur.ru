@@ -284,7 +284,7 @@
                 norma: $('#metric_norma').val() + ';',
                 max: $('#metric_max').val() + ';'
             };
-/*
+
             for (var i in items)
             {
                 var polygon = items[i];
@@ -350,7 +350,6 @@
 
                 polygon.setColor(color);
             }
-                */
         },
         drawPolygons: function(json)
         {
