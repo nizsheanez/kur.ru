@@ -21,10 +21,6 @@ if (substr($_SERVER['DOCUMENT_ROOT'], -1) != DS)
 
 require_once $_SERVER['DOCUMENT_ROOT'] . 'protected' . DS . 'config' . DS . 'constants.php';
 
-require_once LIBRARIES_PATH . 'yii' . DS . 'yii.php';
-require_once LIBRARIES_PATH . 'functions.php';
-require_once LIBRARIES_PATH . 'debug.php';
-
 if ($_SERVER['HTTP_HOST']=='kur.ru')
 {
     defined('YII_DEBUG') || define('YII_DEBUG', true);
@@ -33,6 +29,11 @@ else
 {
     defined('YII_DEBUG') || define('YII_DEBUG', false);
 }
+
+require_once LIBRARIES_PATH . 'yii' . DS . 'yii.php';
+require_once LIBRARIES_PATH . 'functions.php';
+require_once LIBRARIES_PATH . 'debug.php';
+
 $env = YII_DEBUG ? 'development' : 'production';
 defined('ENV') || define('ENV', $env);
 defined('CONFIG') || define('CONFIG', $env);

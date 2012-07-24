@@ -210,8 +210,8 @@
             google.maps.Polygon.prototype.setColor = function(color)
             {
                 this.setOptions({
-                    strokeColor: color,
-                    fillColor: color
+                    strokeColor: '#'+color,
+                    fillColor: '#'+color
                 });
             };
 
@@ -422,7 +422,7 @@
                 };
                 google.maps.event.addListener(polygon.getPath(), 'set_at', polygonSave(polygon));
                 google.maps.event.addListener(polygon.getPath(), 'insert_at', polygonSave(polygon));
-//                polygon.setMap(this.map);
+                polygon.setMap(this.map);
             }
         }
     })
