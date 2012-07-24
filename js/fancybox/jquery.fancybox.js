@@ -997,7 +997,9 @@
 			height = Math.round(height);
 
 			//Reset dimensions
-			$(wrap.add(inner)).width('auto').height('auto');
+			var _a = $(wrap.add(inner));
+            _a.width('auto');
+            _a.height('auto');
 
 			inner.width(width - padding2).height(height - padding2);
 			wrap.width(width);
