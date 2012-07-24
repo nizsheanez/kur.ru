@@ -25,7 +25,7 @@ require_once LIBRARIES_PATH . 'yii' . DS . 'yii.php';
 require_once LIBRARIES_PATH . 'functions.php';
 require_once LIBRARIES_PATH . 'debug.php';
 
-if ($_SERVER['HTTP_HOST']=='localhost')
+if ($_SERVER['HTTP_HOST']=='kur.ru')
 {
     defined('YII_DEBUG') || define('YII_DEBUG', true);
 }
