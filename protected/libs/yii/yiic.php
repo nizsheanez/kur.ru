@@ -11,7 +11,12 @@
  * @license http://www.yiiframework.com/license/
  * @version $Id: yiic.php 2799 2011-01-01 19:31:13Z qiang.xue $
  */
-
+var_dump(ini_get('short_open_tag'));
+if (ini_get('short_open_tag') != '1')
+{
+    echo 'Please set short_open_tag directive';
+    die;
+}
 // fix for fcgi
 defined('STDIN') or define('STDIN', fopen('php://stdin', 'r'));
 
