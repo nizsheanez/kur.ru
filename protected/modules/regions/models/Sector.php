@@ -93,4 +93,25 @@ class Sector extends ActiveRecord
 
         return CJSON::encode($res);
     }
+
+
+    public function beforeSave()
+    {
+        if (parent::beforeSave())
+        {
+            if ($this->isNewRecord)
+            {
+                foreach (Metric::model()->findAll() as $metric)
+                {
+                    $data = new Data();
+                    $data->metric_id = $metric->id;
+                    $data->sector_id = $this->id;
+                    $data->save();
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

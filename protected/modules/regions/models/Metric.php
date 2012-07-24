@@ -113,4 +113,26 @@ class Metric extends ActiveRecord
     {
         return self::model()->roots()->find();
     }
+
+
+
+    public function beforeSave()
+    {
+        if (parent::beforeSave())
+        {
+            if ($this->isNewRecord)
+            {
+                foreach (Sector::model()->findAll() as $sector)
+                {
+                    $data = new Data();
+                    $data->metric_id = $this->id;
+                    $data->sector_id = $sector->id;
+                    $data->save();
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

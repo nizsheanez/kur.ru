@@ -43,5 +43,4 @@ class Data extends ActiveRecord
     }
 
 
-
 }
