@@ -114,7 +114,13 @@ class Metric extends ActiveRecord
         return self::model()->roots()->find();
     }
 
-
+    public static function getMetricWithDescendants($name)
+    {
+        $metric = Metric::model()->findByAttributes(array('name' => $name));
+        $metrics[] = $metric;
+        $metrics = $metric->descendants()->findAll();
+        return $metrics;
+    }
 
     public function beforeSave()
     {

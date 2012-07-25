@@ -1,12 +1,6 @@
 <?php
-$metric = Metric::model()->findByAttributes(array('name' => $metric));
-$metrics = $metric->descendants()->findAll();
-
-$ids = CHtml::listData($metrics, 'id', 'id');
-$ids[$metric->id] = $metric->id;
-$data = Data::model()->inCondition('metric_id', $ids)->findAllByAttributes(array(
-    'sector_id' => $sector->id,
-));
+$ids = CHtml::listData(Metric::getMetricWithDescendants($metric), 'id', 'id');
+$data = Data::model()->metrics($ids)->sectors($sector->id)->findAll();
 
 foreach ($data as $item)
 {
