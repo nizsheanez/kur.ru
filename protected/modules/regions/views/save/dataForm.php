@@ -4,7 +4,7 @@ $metrics = $metric->descendants()->findAll();
 
 $ids = CHtml::listData($metrics, 'id', 'id');
 $ids[$metric->id] = $metric->id;
-$data = Data::model()->inCondition('metric_id', CHtml::listData($metrics, 'id', 'id'))->findAllByAttributes(array(
+$data = Data::model()->inCondition('metric_id', $ids)->findAllByAttributes(array(
     'sector_id' => $sector->id,
 ));
 
