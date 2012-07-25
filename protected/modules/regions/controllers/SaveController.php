@@ -65,11 +65,12 @@ class SaveController extends Controller
         else
         {
             $metricModel = Metric::model()->findByAttributes(array('name' => $metric));
+            $metric_ids = CHtml::listData($metricModel->getMetricWithDescendants(), 'id', 'id');
             if ($metricModel->type == '1')
             {
                 echo $this->renderPartial('dataForm', array(
                     'sector' => Sector::model()->findByPk($id),
-                    'metric_ids' => CHtml::listData(Metric::getMetricWithDescendants($metric), 'id', 'id')
+                    'metric_ids' => $metric_ids
                 ));
             }
             elseif ($metricModel->type = '2')
@@ -79,7 +80,7 @@ class SaveController extends Controller
                     echo CHtml::tag('h3', array(), $sector->title);
                     echo $this->renderPartial('dataForm', array(
                         'sector' => $sector,
-                        'metric' => $metric
+                        'metric_ids' => $metric_ids
                     ));
                 }
             }
