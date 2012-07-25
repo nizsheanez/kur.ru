@@ -69,7 +69,7 @@ class SaveController extends Controller
             {
                 echo $this->renderPartial('dataForm', array(
                     'sector' => Sector::model()->findByPk($id),
-                    'metric' => $metric
+                    'metric_ids' => CHtml::listData(Metric::getMetricWithDescendants($metric), 'id', 'id')
                 ));
             }
             elseif ($metricModel->type = '2')

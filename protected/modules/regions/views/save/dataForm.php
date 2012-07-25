@@ -1,6 +1,5 @@
 <?php
-$ids = CHtml::listData(Metric::getMetricWithDescendants($metric), 'id', 'id');
-$data = Data::model()->metrics($ids)->sectors($sector->id)->findAll();
+$data = Data::model()->metrics($metric_ids)->sectors($sector->id)->findAll();
 
 foreach ($data as $item)
 {
