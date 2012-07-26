@@ -10,7 +10,7 @@ class NullValueBehavior extends ActiveRecordBehavior
 
         foreach ($model->attributes as $name => $value)
         {
-            if ($value !== 0 && !$value && $columns[$name]->allowNull)
+            if ($value !== 0 && $value !== '0' && !$value && $columns[$name]->allowNull)
             {
                 $model->$name = null;
             }
