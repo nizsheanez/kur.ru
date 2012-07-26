@@ -66,17 +66,9 @@ Yii::app()->clientScript->registerScriptFile('/js/lib.js');
         <a href="#" id="formula_save" class="btn btn-primary">Сохранить</a>
     </div>
 </div>
-<div style="z-index: 100; position: absolute; top: 100px; right: 10px; text-align: right" class="right-toolbar">
-    <div>
-        <b>Обозначения:</b><br/>
-        <span class="label label-success">Норма</span><br/>
-        <span class="label label-info">Избыток</span><br/>
-        <span class="label label-important">Недостаток</span>
-    </div>
-    <br/>
-
+<div style="z-index: 100; position: absolute; top: 100px; right: 10px; text-align: right;" class="right-toolbar">
     <div id="edit_metric">
-        <a data-toggle="modal" href="#metric_form"><img src="/img/formula.png" width="32" height="32"/></a>
+        <a data-toggle="modal" href="#metric_form"><img src="/img/formula.png" width="40" height="40"/></a>
     </div>
 </div>
 <div id="map"></div>

@@ -48,3 +48,17 @@
         </ul>
     </li>
 </ul>
+<ul class="nav pull-right nav-right">
+    <li>
+        <b>Обозначения:</b>
+    </li>
+    <li>
+        <span class="label label-success">Норма</span>
+    </li>
+    <li>
+        <span class="label label-info">Избыток</span>
+    </li>
+    <li>
+        <span class="label label-important">Недостаток</span>
+    </li>
+</ul>
