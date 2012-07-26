@@ -134,8 +134,8 @@ class Metric extends ActiveRecord
                     $data->sector_id = $sector->id;
                     $data->save();
                 }
-                return true;
             }
+            return true;
         }
         return false;
     }
