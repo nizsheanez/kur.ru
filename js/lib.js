@@ -291,19 +291,27 @@
                 var metric = polygon.getProperty(that.currentMetric);
                 if (metric != undefined && m.formula != '')
                 {
-                    var _V, _a, _b, _c;
+                    var result, _a, _b, _c;
                     with (polygon)
                     {
                         extract(polygon.getProperties());
-                        _V = eval(m.formula);
+                        result = eval(m.formula);
                         _a = eval(m.min);
                         _b = eval(m.norma);
                         _c = eval(m.max);
                     }
-                    polygon.bubbleText = 'Формула: ' + m.formula + ' = ' + Math.round(_V * 100) / 100;
+                    polygon.bubbleText = 'Формула: ' + m.formula + ' = ' + Math.round(result * 100) / 100;
+                    polygon.bubbleText+= '<br/>';
+                    polygon.bubbleText+= 'Минимум: ' + m.min + ' = ' + Math.round(_a * 100) / 100;
+                    polygon.bubbleText+= '<br/>';
+                    polygon.bubbleText+= 'Норма: ' + m.norma + ' = ' + Math.round(_b * 100) / 100;
+                    polygon.bubbleText+= '<br/>';
+                    polygon.bubbleText+= 'Максимум: ' + m.max + ' = ' + Math.round(_c * 100) / 100;
+                    polygon.bubbleText+= '<br/>';
 
-                    if (_V == Infinity || _a == Infinity || _b == Infinity || _c == Infinity ||
-                        _V == undefined || _a == undefined || _b == undefined || _c == undefined)
+
+                    if (result == Infinity || _a == Infinity || _b == Infinity || _c == Infinity ||
+                        result == undefined || _a == undefined || _b == undefined || _c == undefined)
                     {
                         n = undefined;
                         color = this._hexFromRGB(0, 0, 0);
@@ -311,23 +319,23 @@
                     else
                     {
                         // transfer a to zero
-                        _V -= _a;
+                        result -= _a;
                         _c -= _a;
                         _b -= _a;
                         _a -= _a;
 
-                        if (_V > _b)
+                        if (result > _b)
                         {
                             // transfer b to zero
-                            _V -= _b
+                            result -= _b
                             _c -= _b;
                             _b -= _b;
 
-                            n = 100 + 100 * _V / _c;
+                            n = 100 + 100 * result / _c;
                         }
                         else
                         {
-                            n = 100 * _V / _b;
+                            n = 100 * result / _b;
                         }
 
 
