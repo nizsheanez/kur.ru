@@ -63,7 +63,7 @@
         };
     }
 
-    $.widget("geo.metricMap", {
+    $.widget("geo.metricMap", $.geo.baseMetricMap, {
         infoBubble: new InfoBubble({
             shadowStyle: 1,
             disableAnimation: true,
@@ -82,12 +82,15 @@
         polygons: new Array(),
         squares: new Array(),
         currentMetric: 'peoples',
+        drawingManager: {},
         options: {
             globalData: {},
             greetings: "Hello"
         },
         _create: function()
         {
+            $.geo.baseMetricMap.prototype._create.call(this);
+            this._drawingManagerOn();
             $('.fancy').fancybox({
                 fitToView: false,
                 width: '70%',
@@ -97,19 +100,7 @@
                 openEffect: 'none',
                 closeEffect: 'none'
             });
-
             var that = this;
-
-            that._initPolygonObject();
-
-            // Create the Google Map…
-            that.map = new google.maps.Map(this.element[0], {
-                zoom: 15,
-                center: new google.maps.LatLng(51.149633, 71.466837),
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            });
-
-            that.drawPolygons(that.options.globalData);
 
             $('#navigation ul a:not(.fancy)').click(function()
             {
@@ -176,101 +167,6 @@
             });
 
             $(window).trigger('hashchange');
-        },
-        _initPolygonObject: function()
-        {
-            var that = this;
-            google.maps.Polygon.prototype.getBounds = function() {
-                var bounds = new google.maps.LatLngBounds();
-
-                this.getPaths().forEach(function(path) {
-                    path.forEach(function(point) {
-                        bounds.extend(point);
-                    });
-                });
-
-                return bounds;
-            };
-
-            google.maps.Polygon.prototype.__defineGetter__('area', function()
-            {
-                return google.maps.geometry.spherical.computeArea(this.getPaths());
-            });
-
-            google.maps.Polygon.prototype.__defineGetter__('density', function()
-            {
-                return this.getProperty('peoples') / this.area;
-            });
-
-            google.maps.Polygon.prototype.getProperty = function(name)
-            {
-                return that.options.globalData.features[this.id].properties[name];
-            };
-
-            google.maps.Polygon.prototype.setColor = function(color)
-            {
-                this.setOptions({
-                    strokeColor: '#'+color,
-                    fillColor: '#'+color
-                });
-            };
-
-            google.maps.Polygon.prototype.getProperties = function()
-            {
-                return that.options.globalData.features[this.id].properties;
-            };
-
-            google.maps.Polygon.prototype.setProperty = function(key, val)
-            {
-                that.options.globalData.features[this.id].properties[key] = val;
-            };
-            google.maps.Polygon.prototype.getCenter = function()
-            {
-                var bounds = new google.maps.LatLngBounds();
-                var coordinates = this.getPath();
-                for (i = 0; i < coordinates.length; i++)
-                {
-                    bounds.extend(coordinates.getAt(i));
-                }
-                return bounds.getCenter();
-            };
-
-            google.maps.Polygon.prototype.save = function(callback)
-            {
-                var vertices = this.getPath();
-                var res = {};
-                var id = this.id != undefined ? this.id : 0;
-
-                for (var i = 0; i < vertices.length; i++)
-                {
-                    var xy = vertices.getAt(i);
-                    res['polygons[' + id + '][' + i + '][lat]'] = xy.lat();
-                    res['polygons[' + id + '][' + i + '][lng]'] = xy.lng();
-                }
-                if (this.id == undefined)
-                {
-                    res.title = $('#new_sector_title').val();
-                    res.square_id = $('#new_sector_square_id').val();
-                }
-                $.post('/regions/save/polygons', res, callback);
-            };
-
-        },
-        _hexFromRGB: function(r, g, b)
-        {
-            var hex = [
-                Math.ceil(r).toString(16),
-                Math.ceil(g).toString(16),
-                Math.ceil(b).toString(16)
-            ];
-            $.each(hex, function(nr, val)
-            {
-                if (val.length === 1)
-                {
-                    hex[ nr ] = "0" + val;
-                }
-            });
-            return hex.join("").toUpperCase();
         },
         colorize: function()
         {
