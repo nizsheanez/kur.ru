@@ -25,7 +25,7 @@
  * to {@link CFormElement} objects.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @version $Id: CFormElementCollection.php 3054 2011-03-12 21:30:21Z qiang.xue $
+ * @version $Id$
  * @package system.web.form
  * @since 1.1
  */
@@ -59,7 +59,7 @@ class CFormElementCollection extends CMap
 	{
 		if(is_array($value))
 		{
-            if(is_string($key))
+			if(is_string($key))
 				$value['name']=$key;
 
 			if($this->_forButtons)
@@ -69,7 +69,7 @@ class CFormElementCollection extends CMap
 			}
 			else
 			{
-                if(!isset($value['type']))
+				if(!isset($value['type']))
 					$value['type']='text';
 				if($value['type']==='string')
 				{
@@ -83,7 +83,7 @@ class CFormElementCollection extends CMap
 				}
 				else
 				{
-                    $class=$this->_form->inputElementClass;
+					$class=$this->_form->inputElementClass;
 					$element=new $class($value,$this->_form);
 				}
 			}

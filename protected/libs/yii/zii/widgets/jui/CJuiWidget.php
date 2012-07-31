@@ -14,7 +14,7 @@
  *
  * @author Sebastian Thierer <sebathi@gmail.com>
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @version $Id: CJuiWidget.php 2799 2011-01-01 19:31:13Z qiang.xue $
+ * @version $Id$
  * @package zii.widgets.jui
  * @since 1.1
  */
@@ -79,7 +79,7 @@ abstract class CJuiWidget extends CWidget
 	 */
 	public function init()
 	{
-        $this->resolvePackagePath();
+		$this->resolvePackagePath();
 		$this->registerCoreScripts();
 		parent::init();
 	}
@@ -108,7 +108,7 @@ abstract class CJuiWidget extends CWidget
 	 */
 	protected function registerCoreScripts()
 	{
-        $cs=Yii::app()->getClientScript();
+		$cs=Yii::app()->getClientScript();
 		if(is_string($this->cssFile))
 			$cs->registerCssFile($this->themeUrl.'/'.$this->theme.'/'.$this->cssFile);
 		else if(is_array($this->cssFile))

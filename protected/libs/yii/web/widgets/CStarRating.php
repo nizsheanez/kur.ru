@@ -24,7 +24,7 @@
  * CStarRating allows customization of its appearance. It also supports empty rating as well as read-only rating.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @version $Id: CStarRating.php 3232 2011-05-24 09:44:12Z alexander.makarow $
+ * @version $Id$
  * @package system.web.widgets
  * @since 1.0
  */
@@ -136,7 +136,6 @@ class CStarRating extends CInputWidget
 	/**
 	 * Registers the needed CSS file.
 	 * @param string $url the CSS URL. If null, a default CSS URL will be used.
-	 * @since 1.0.2
 	 */
 	public static function registerCssFile($url=null)
 	{
@@ -194,22 +193,22 @@ class CStarRating extends CInputWidget
 			$options['readOnly']=true;
 		if($this->focus!==null)
 		{
-			if(strncmp($this->focus,'js:',3))
-				$options['focus']='js:'.$this->focus;
+			if(!($this->focus instanceof CJavaScriptExpression) && strncmp($this->focus,'js:',3))
+				$options['focus']=new CJavaScriptExpression($this->focus);
 			else
 				$options['focus']=$this->focus;
 		}
 		if($this->blur!==null)
 		{
-			if(strncmp($this->blur,'js:',3))
-				$options['blur']='js:'.$this->blur;
+			if(!($this->blur instanceof CJavaScriptExpression) && strncmp($this->blur,'js:',3))
+				$options['blur']=new CJavaScriptExpression($this->blur);
 			else
 				$options['blur']=$this->blur;
 		}
 		if($this->callback!==null)
 		{
-			if(strncmp($this->callback,'js:',3))
-				$options['callback']='js:'.$this->callback;
+			if(!($this->callback instanceof CJavaScriptExpression) && strncmp($this->callback,'js:',3))
+				$options['callback']=new CJavaScriptExpression($this->callback);
 			else
 				$options['callback']=$this->callback;
 		}

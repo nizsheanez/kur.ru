@@ -5,7 +5,7 @@
  * @link http://www.yiiframework.com/
  * @copyright Copyright &copy; 2008-2010 Yii Software LLC
  * @license http://www.yiiframework.com/license/
- * @version $Id: jquery.yiilistview.js 164 2010-04-29 21:03:33Z qiang.xue $
+ * @version $Id$
  */
 
 ;(function($) {
@@ -22,18 +22,36 @@
 	 */
 	$.fn.yiiListView = function(options) {
 		return this.each(function(){
-			var settings = $.extend({}, $.fn.yiiListView.defaults, options || {});
-			var $this = $(this);
-			var id = $this.attr('id');
+			var settings = $.extend({}, $.fn.yiiListView.defaults, options || {}),
+			$this = $(this),
+			id = $this.attr('id');
+
 			if(settings.updateSelector == undefined) {
 				settings.updateSelector = '#'+id+' .'+settings.pagerClass.replace(/\s+/g,'.')+' a, #'+id+' .'+settings.sorterClass.replace(/\s+/g,'.')+' a';
 			}
 			$.fn.yiiListView.settings[id] = settings;
 
 			if(settings.ajaxUpdate.length > 0) {
-				$(settings.updateSelector).die('click').live('click',function(){
-					$.fn.yiiListView.update(id, {url: $(this).attr('href')});
+				$(document).on('click.yiiListView', settings.updateSelector,function(){
+					// Check to see if History.js is enabled for our Browser
+					if (settings.enableHistory && window.History.enabled) {
+						// Ajaxify this link
+						var url = $(this).attr('href'),
+							params = $.deparam.querystring(url);
+
+						delete params[settings.ajaxVar];
+						window.History.pushState(null, null, $.param.querystring(url.substr(0, url.indexOf('?')), params));
+					} else {
+						$.fn.yiiListView.update(id, {url: $(this).attr('href')});
+					}
 					return false;
+				});
+			}
+
+			if (settings.enableHistory && settings.ajaxUpdate !== false && window.History.enabled) {
+				$(window).bind('statechange', function() { // Note: We are using statechange instead of popstate
+					var State = window.History.getState(); // Note: We are using History.getState() instead of event.state
+					$.fn.yiiListView.update(id, {url: State.url});
 				});
 			}
 		});
@@ -48,6 +66,7 @@
 		// updateSelector: '#id .pager a, '#id .sort a',
 		// beforeAjaxUpdate: function(id) {},
 		// afterAjaxUpdate: function(id, data) {},
+		// url: 'ajax request URL'
 	};
 
 	$.fn.yiiListView.settings = {};
@@ -68,7 +87,8 @@
 	 * @return string the URL that generates the list view content.
 	 */
 	$.fn.yiiListView.getUrl = function(id) {
-		return $('#'+id+' > div.keys').attr('title');
+		var settings = $.fn.yiiListView.settings[id];
+		return settings.url || $('#'+id+' > div.keys').attr('title');
 	};
 
 	/**
@@ -102,7 +122,7 @@
 			options.url = $.param.querystring(options.url, options.data);
 			options.data = {};
 		}
-		options.url = $.param.querystring(options.url, settings.ajaxVar+'='+id)
+		options.url = $.param.querystring(options.url, settings.ajaxVar+'='+id);
 
 		if(settings.beforeAjaxUpdate != undefined)
 			settings.beforeAjaxUpdate(id);
