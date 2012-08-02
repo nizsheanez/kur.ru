@@ -29,6 +29,7 @@ return array(
         'dipl',
         'regions',
         'users',
+        'rbac'
     ),
     'components'   => array(
         'fileBalancer' => array(
@@ -118,6 +119,10 @@ return array(
 
         'authManager'  => array(
             'class' => 'DbAuthManager',
+            'connectionID'    => 'db',
+            'itemTable'       => 'auth_items',
+            'assignmentTable' => 'auth_assignments',
+            'itemChildTable'  => 'auth_items_childs',
             'defaultRoles' => array('guest'),
         ),
         'bootstrap'    => array(

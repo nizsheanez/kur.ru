@@ -27,7 +27,9 @@ return array(
     ),
     'modules'      => array(
         'dipl',
-        'regions'
+        'regions',
+        'users',
+        'rbac'
     ),
     'components'   => array(
         'fileBalancer' => array(
@@ -52,7 +54,8 @@ return array(
         ),
         'user'         => array(
             'allowAutoLogin' => true,
-            'class'          => 'WebUser'
+            'class'          => 'WebUser',
+            'loginUrl'       => array('/users/user/login?redirect='.urlencode('/regions/index/index')),
         ),
         'image'        => array(
             'class'  => 'application.extensions.image.CImageComponent',
