@@ -91,6 +91,7 @@ class SaveController extends Controller
     public function actionDeleteSector($id)
     {
         Sector::model()->findByPk($id)->delete();
+        $this->redirect('/regions/index/index');
     }
 
     public function actionSortMetrics()

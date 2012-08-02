@@ -113,7 +113,7 @@
             });
 
             $('#sector_delete').click(function() {
-                window.location.href = '/regions/save/deleteSector?id='.$('#data_save_form').data('sector_id');
+                window.location.href = '/regions/save/deleteSector?id='+$('#data_save_form').data('sector_id');
             });
             $('#formula_save').click(function()
             {
