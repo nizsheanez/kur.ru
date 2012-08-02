@@ -3,28 +3,6 @@ class SaveController extends Controller {
 
     public $layout = 'gmap';
 
-    public function accessRules()
-    {
-        return array(
-            array(
-                'deny',
-                'actions'=> array('*'),
-                'users'  => array('?'),
-            ),
-            array(
-                'allow',
-                'actions'=> array('*'),
-                'roles'  => array('admin'),
-            ),
-        );
-    }
-
-    public function filters()
-    {
-        return array(
-            'accessControl',
-        );
-    }
 
     public static function actionsTitles()
     {

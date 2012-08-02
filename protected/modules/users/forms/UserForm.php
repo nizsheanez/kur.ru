@@ -1,6 +1,6 @@
 <?
 
-$roles = AuthItem::model()->findAllByAttributes(array('type' => CAuthItem::TYPE_ROLE));
+//$roles = AuthItem::model()->findAllByAttributes(array('type' => CAuthItem::TYPE_ROLE));
 
 return array(
     'activeForm'     => array(
@@ -23,10 +23,10 @@ return array(
             'type'  => 'dropdownlist',
             'items' => User::$status_options
         ),
-        'role'       => array(
-            'type'  => 'dropdownlist',
-            'items' => CHtml::listData($roles, 'name', 'description')
-        ),
+//        'role'       => array(
+//            'type'  => 'dropdownlist',
+//            'items' => CHtml::listData($roles, 'name', 'description')
+//        ),
         'password'   => array('type' => 'password'),
         'password_c' => array('type' => 'password'),
     ),

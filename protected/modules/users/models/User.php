@@ -1,26 +1,26 @@
 <?
 
-class User extends ActiveRecord
-{
+class User extends ActiveRecord {
+
     const PAGE_SIZE = 10;
 
     const PHOTO_PATH = 'upload/photo';
 
-    const STATUS_ACTIVE  = 'active';
-    const STATUS_NEW     = 'new';
+    const STATUS_ACTIVE = 'active';
+    const STATUS_NEW = 'new';
     const STATUS_BLOCKED = 'blocked';
 
-    const GENDER_MAN   = "man";
+    const GENDER_MAN = "man";
     const GENDER_WOMAN = "woman";
 
     const SCENARIO_CHANGE_PASSWORD_REQUEST = 'ChangePasswordRequest';
-    const SCENARIO_ACTIVATE_REQUEST        = 'ActivateRequest';
-    const SCENARIO_CHANGE_PASSWORD         = 'ChangePassword';
-    const SCENARIO_REGISTRATION            = 'Registration';
-    const SCENARIO_UPDATE                  = 'Update';
-    const SCENARIO_CREATE                  = 'Create';
-    const SCENARIO_LOGIN                   = 'Login';
-    const SCENARIO_CABINET                 = 'Cabinet';
+    const SCENARIO_ACTIVATE_REQUEST = 'ActivateRequest';
+    const SCENARIO_CHANGE_PASSWORD = 'ChangePassword';
+    const SCENARIO_REGISTRATION = 'Registration';
+    const SCENARIO_UPDATE = 'Update';
+    const SCENARIO_CREATE = 'Create';
+    const SCENARIO_LOGIN = 'Login';
+    const SCENARIO_CABINET = 'Cabinet';
 
 
     public $password_c;
@@ -50,26 +50,27 @@ class User extends ActiveRecord
     }
 
 
-    public static $status_options = array(
-        self::STATUS_ACTIVE  => "Активный",
-        self::STATUS_NEW     => "Новый",
-        self::STATUS_BLOCKED => "Заблокирован"
-    );
+    public static $status_options
+        = array(
+            self::STATUS_ACTIVE  => "Активный",
+            self::STATUS_NEW     => "Новый",
+            self::STATUS_BLOCKED => "Заблокирован"
+        );
 
 
-    public static $gender_options = array(
-        self::GENDER_MAN   => "Мужской",
-        self::GENDER_WOMAN => "Женский"
-    );
+    public static $gender_options
+        = array(
+            self::GENDER_MAN   => "Мужской",
+            self::GENDER_WOMAN => "Женский"
+        );
 
 
     public function getUserDir()
     {
-        $dir  = "upload/users/".$this->id."/";
-        $path = $_SERVER["DOCUMENT_ROOT"].$dir;
+        $dir = "upload/users/" . $this->id . "/";
+        $path = $_SERVER["DOCUMENT_ROOT"] . $dir;
 
-        if (!file_exists($path))
-        {
+        if (!file_exists($path)) {
             mkdir($path);
             chmod($path, 0777);
         }
@@ -103,32 +104,34 @@ class User extends ActiveRecord
                 )
             ),
             array(
-                'name',
+                'first_name',
                 'required',
                 'on' => array(self::SCENARIO_REGISTRATION)
             ),
             array(
-                'name',
+                'first_name',
                 'length',
-                'max' => 40
+                'max' => 40,
+                'min' => 2,
+
             ),
             array(
                 'photo', 'safe', 'on' => array(
-                    self::SCENARIO_CREATE,
-                    self::SCENARIO_REGISTRATION,
-                    self::SCENARIO_CABINET,
-                    self::SCENARIO_UPDATE
-                )
+                self::SCENARIO_CREATE,
+                self::SCENARIO_REGISTRATION,
+                self::SCENARIO_CABINET,
+                self::SCENARIO_UPDATE
+            )
             ),
             array(
-                'name',
+                'first_name',
                 'RuLatAlphaValidator'
             ),
-    //            array(
-    //                'gender',
-    //                'required',
-    //                'on' => array(self::SCENARIO_REGISTRATION)
-    //            ),
+            //            array(
+            //                'gender',
+            //                'required',
+            //                'on' => array(self::SCENARIO_REGISTRATION)
+            //            ),
             array(
                 'password_c, password',
                 'required',
@@ -189,11 +192,6 @@ class User extends ActiveRecord
             //    'on'      => self::SCENARIO_REGISTRATION
             //),
             array(
-                'name',
-                'length',
-                'min' => 2
-            ),
-            array(
                 'email',
                 'length',
                 'max' => 200
@@ -238,27 +236,27 @@ class User extends ActiveRecord
     public function relations()
     {
         return array(
-            'file_albums' => array(
-                self::HAS_MANY ,
+            'file_albums'       => array(
+                self::HAS_MANY,
                 'FileAlbum',
                 'object_id',
-                'condition' => "file_albums.model_id = '".get_class($this)."'"
+                'condition' => "file_albums.model_id = '" . get_class($this) . "'"
             ),
             'file_albums_count' => array(
-                self::STAT ,
+                self::STAT,
                 'FileAlbum',
                 'object_id',
-                'condition' => "t.model_id = '".get_class($this)."'"
+                'condition' => "t.model_id = '" . get_class($this) . "'"
             ),
-            'assignment' => array(
+            'assignment'        => array(
                 self::HAS_ONE,
                 'AuthAssignment',
                 'userid'
             ),
-            'role'       => array(
+            'role'              => array(
                 self::HAS_ONE,
                 'AuthItem',
-                array('itemname'=>'name'),
+                array('itemname'=> 'name'),
                 'through' => 'assignment'
             )
         );
@@ -295,10 +293,10 @@ class User extends ActiveRecord
     public function attributeLabels()
     {
         return array_merge(parent::attributeLabels(), array(
-                "password_c"   => "Пароль еще раз",
-                "remember_me"  => "Запомни меня",
-                "role"         => "Роль"
-            ));
+            "password_c"   => "Пароль еще раз",
+            "remember_me"  => "Запомни меня",
+            "role"         => "Роль"
+        ));
     }
 
 
@@ -315,11 +313,10 @@ class User extends ActiveRecord
             'userid' => $this->id
         ));
 
-        if (!$assigment)
-        {
+        if (!$assigment) {
             $assigment = new AuthAssignment();
             $assigment->itemname = AuthItem::ROLE_DEFAULT;
-            $assigment->userid   = $this->id;
+            $assigment->userid = $this->id;
             $assigment->save();
         }
 
@@ -336,7 +333,7 @@ class User extends ActiveRecord
     public function getPhotoLink()
     {
         $photo_src = '/img/icons/user.gif';
-        $image     =  CHtml::image($photo_src, $this->name, array('title' => $this->name, 'border' => 0));
+        $image = CHtml::image($photo_src, $this->name, array('title' => $this->name, 'border' => 0));
 
         return CHtml::link($image, $this->href, array('class' => 'user-photo-link', 'width' => '23', 'height' => '23'));
     }

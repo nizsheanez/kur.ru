@@ -27,7 +27,8 @@ return array(
     ),
     'modules'      => array(
         'dipl',
-        'regions'
+        'regions',
+        'users',
     ),
     'components'   => array(
         'fileBalancer' => array(
@@ -53,7 +54,7 @@ return array(
         'user'         => array(
             'allowAutoLogin' => true,
             'class'          => 'WebUser',
-            'loginUrl'=>array('/users/user/login'),
+            'loginUrl'       => array('/users/user/login?redirect='.urlencode('/regions/index/index')),
         ),
         'image'        => array(
             'class'  => 'application.extensions.image.CImageComponent',
@@ -116,7 +117,7 @@ return array(
         ),
 
         'authManager'  => array(
-            'class' => 'PhpAuthManager',
+            'class' => 'DbAuthManager',
             'defaultRoles' => array('guest'),
         ),
         'bootstrap'    => array(
