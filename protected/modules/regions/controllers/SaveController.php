@@ -82,11 +82,16 @@ class SaveController extends Controller
                         'sector' => $sector,
                         'metric_ids' => $metric_ids
                     ));
+                    echo Chtml::hiddenField('sector_id', $id);
                 }
             }
         }
     }
 
+    public function actionDeleteSector($id)
+    {
+        Sector::model()->findByPk($id)->delete();
+    }
 
     public function actionSortMetrics()
     {

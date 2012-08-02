@@ -112,6 +112,9 @@
                 return false;
             });
 
+            $('#sector_delete').click(function() {
+                window.location.href = '/regions/save/deleteSector?id='.$('#data_save_form').data('sector_id');
+            });
             $('#formula_save').click(function()
             {
                 var btn = $(this);
@@ -319,6 +322,7 @@
                 });
                 google.maps.event.addListener(polygon, 'click', function()
                 {
+                    $('#data_save_form').data('sector_id', this.id);
                     $('#data_save_form form').load('/regions/save/data?id=' + this.id + '&metric=' + that.currentMetric,
                         function()
                         {

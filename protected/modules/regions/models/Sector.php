@@ -114,4 +114,19 @@ class Sector extends ActiveRecord
         return false;
     }
 
+    public function beforeDelete()
+    {
+        if (parent::beforeDelete()) {
+            foreach ($this->data as $item) {
+                $item->delete();
+            }
+            foreach ($this->polygons as $item) {
+                $item->delete();
+            }
+
+            return true;
+        }
+        return false;
+    }
+
 }

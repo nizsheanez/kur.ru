@@ -19,6 +19,7 @@ Yii::app()->clientScript->registerScriptFile('/js/lib.js');
         </form>
     </div>
     <div class="modal-footer">
+        <a href="#" id="sector_delete" class="btn btn-danger pull-left">Удалить</a>
         <a href="#" class="btn" data-dismiss="modal">Отмена</a>
         <a href="#" id="data_save" class="btn btn-primary">Сохранить</a>
     </div>
@@ -79,8 +80,7 @@ Yii::app()->clientScript->registerScriptFile('/js/lib.js');
     <div class="modal-body">
         <form class="form-vertical">
             <input id="new_sector_title"/>
-            <?= CHtml::dropDownList('square_id', 1, CHtml::listData(Square::model()
-            ->findAll(), 'id', 'title'), array('id' => 'new_sector_square_id')) ?>
+            <?= CHtml::dropDownList('square_id', 1, CHtml::listData(Square::model()->findAll(), 'id', 'title'), array('id' => 'new_sector_square_id')) ?>
         </form>
     </div>
     <div class="modal-footer">

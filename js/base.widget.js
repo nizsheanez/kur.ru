@@ -109,12 +109,15 @@
                 }
             });
 
+            $('#new_sector_modal').on('hide', function() {
+                window.location.reload();
+            });
+
             google.maps.event.addListener(this.drawingManager, 'polygoncomplete', function (polygon) {
                 $('#new_sector_modal').modal('show');
-                $('#new_sector_save').click(function () {
+                $('#new_sector_save').off('click').click(function () {
                     polygon.save(function () {
                         $('#new_sector_modal').modal('hide');
-                        $('#new_sector_modal form').reset();
                     });
                     return false;
                 });
