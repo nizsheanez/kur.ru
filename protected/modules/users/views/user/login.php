@@ -1,4 +1,5 @@
 <? $this->page_title = 'Авторизация'; ?>
-
-<?= $form; ?>
+<div class="modal well">
+    <?= $form; ?>
+</div>
 

@@ -4,7 +4,7 @@ class UserController extends Controller
 {
     const ERROR_PASSWORD_RECOVER_AUTH = 'Вы не можете восстановить пароль будучи авторизованным!';
 
-    public $layout = '//layouts/middle';
+    public $layout = 'main';
 
 
     public function filters()
@@ -47,7 +47,6 @@ class UserController extends Controller
     public function actionLogin()
     {
         $model = new User(User::SCENARIO_LOGIN);
-
         $this->performAjaxValidation($model);
 
         $form = new Form('users.LoginForm', $model);
@@ -61,7 +60,7 @@ class UserController extends Controller
                 $identity = new UserIdentity($model->email, $model->password);
                 if ($identity->authenticate())
                 {
-                    $this->redirect(isset($_GET['redirect']) ? $_GET['redirect'] : '/');
+                    $this->redirect(isset($_GET['redirect']) ? urldecode($_GET['redirect']) : '/');
                 }
                 else
                 {

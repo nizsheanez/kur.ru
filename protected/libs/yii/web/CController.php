@@ -633,7 +633,7 @@ class CController extends CBaseController
 	 */
 	public function getLayoutFile($layoutName)
 	{
-		if($layoutName===false)
+        if($layoutName===false)
 			return false;
 		if(($theme=Yii::app()->getTheme())!==null && ($layoutFile=$theme->getLayoutFile($this,$layoutName))!==false)
 			return $layoutFile;
@@ -779,9 +779,10 @@ class CController extends CBaseController
 	public function render($view,$data=null,$return=false)
 	{
 		if($this->beforeRender($view))
-		{
-			$output=$this->renderPartial($view,$data,true);
-			if(($layoutFile=$this->getLayoutFile($this->layout))!==false)
+        {
+            $output=$this->renderPartial($view,$data,true);
+
+            if(($layoutFile=$this->getLayoutFile($this->layout))!==false)
 				$output=$this->renderFile($layoutFile,array('content'=>$output),true);
 
 			$this->afterRender($view,$output);
