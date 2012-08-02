@@ -4,16 +4,17 @@ class NestedTree extends Portlet
     public $model;
     public $sortable = false;
     public $id;
+    public $handleIcon;
 
     private $defaultSoringSettings = array(
         'disableNesting'      => 'no-nest',
         'forcePlaceholderSize'=> true,
         'handle'              => '.drag',
         'helper'              => 'clone',
+        'placeholder'         => 'placeholder',
         'items'               => 'li',
         'maxLevels'           => 0,
         'opacity'             => .6,
-        'placeholder'         => 'placeholder',
         'revert'              => 250,
         'tabSize'             => 25,
         'tolerance'           => 'pointer',
@@ -62,31 +63,33 @@ class NestedTree extends Portlet
 
     public function registerScripts()
     {
-        $plugins = $this->assets . '/';
+        $plugins = $this->assets . '/nestedSortable/';
         $cs      = Yii::app()->clientScript;
 
         if ($this->sortable)
         {
             $settings = CJavaScript::encode($this->sortingSettings);
-            $cs->registerScriptFile($plugins . 'nestedSortable/nestedSortable.js')->registerCssFile(
-                $plugins . 'nestedSortable/nestedSortable.css')
+            $cs->registerScriptFile($plugins . 'nestedSortable.js')->registerCssFile(
+                $plugins . 'nestedSortable.css')
                 ->registerScriptFile($plugins . 'toJson/toJson.js')
                 ->registerScript(
                 $this->id . 'NestedTreeSortable', "$('#{$this->id} > ul').nestedSortable({$settings})");
         }
+        $this->handleIcon = $plugins.'icons/hand.png';
     }
 
 
     public function renderContent()
     {
         $this->render('NestedTree', array(
-            'tree' => $this->htmlTree
+            'tree' => $this->getHtmlTree()
         ));
     }
 
     public function getHtmlTree()
     {
-        $models = $this->model->model()->getRoot()->descendants()->findAll();
+
+        $models = $this->model->model()->roots()->find()->descendants()->findAll();
 
         $depth = 0;
         $res   = '';
@@ -117,7 +120,7 @@ class NestedTree extends Portlet
                 'class'=> 'depth_' . $item->depth
             ));
             $res .= CHtml::tag('div', array(), CHtml::encode($item->title) .
-                '<img class="drag" src="/img/admin/hand.png" height="16" width="16" />');
+                '<img class="drag" src="'.$this->handleIcon.'" height="16" width="16" />');
             $depth = $item->depth;
         }
 
@@ -129,4 +132,5 @@ class NestedTree extends Portlet
 
         return $res;
     }
+
 }
