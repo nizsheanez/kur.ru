@@ -52,7 +52,8 @@ return array(
         ),
         'user'         => array(
             'allowAutoLogin' => true,
-            'class'          => 'WebUser'
+            'class'          => 'WebUser',
+            'loginUrl'=>array('/users/user/login'),
         ),
         'image'        => array(
             'class'  => 'application.extensions.image.CImageComponent',
