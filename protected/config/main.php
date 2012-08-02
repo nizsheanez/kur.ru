@@ -115,12 +115,8 @@ return array(
         ),
 
         'authManager'  => array(
-            'class'           => 'CDbAuthManager',
-            'connectionID'    => 'db',
-            'itemTable'       => 'auth_items',
-            'assignmentTable' => 'auth_assignments',
-            'itemChildTable'  => 'auth_items_childs',
-            'defaultRoles'    => array('guest')
+            'class' => 'PhpAuthManager',
+            'defaultRoles' => array('guest'),
         ),
         'bootstrap'    => array(
             'class'=> 'application.components.bootstrap.components.Bootstrap'
