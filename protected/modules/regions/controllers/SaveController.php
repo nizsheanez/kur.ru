@@ -37,7 +37,7 @@ class SaveController extends Controller {
     {
         $model = new Metric('create');
         $this->performAjaxValidation($model);
-        $form = new Form('regions.Metric', $model);
+        $form = new Form('regions.metric', $model);
         if ($form->submitted() && $model->appendTo(Metric::getRoot()))
         {
             //??? o_O
