@@ -17,7 +17,7 @@ class Form extends CForm
         'inlineErrors' => false,
         'clientOptions' => array(
             'validateOnType' => true,
-//            'validateOnSubmit' => true,
+            'validateOnSubmit' => true,
             'afterValidateAttribute' => 'js:function(form, attribute, data, hasError){
                 var cg = $("#"+attribute.inputID).closest(".control-group");
                 hasError ? cg.addClass("error") : cg.removeClass("error");

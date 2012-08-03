@@ -13,7 +13,6 @@ return array(
     'buttons'        => array(
         'submit' => array(
             'type'  => 'submit',
-//            'value' => 'Продолжить',
             'value' => 'сохранить'
         )
     )
