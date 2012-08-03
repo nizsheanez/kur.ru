@@ -33,6 +33,17 @@ class SaveController extends Controller {
         }
     }
 
+    public function actionCreateMetric()
+    {
+        $model = new Metric('create');
+        $this->performAjaxValidation($model);
+        $form = new Form('regions.metric', $model);
+        if ($form->submitted() && $model->appendTo(Metric::getRoot()))
+        {
+            //??? o_O
+        }
+        $this->redirect('/regions/index/index');
+    }
 
     public function actionMetric()
     {

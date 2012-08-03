@@ -122,6 +122,11 @@
                     return false;
                 });
             });
+
+
+//            $('#new_metric_modal').on('hide', function() {
+//                window.location.reload();
+//            });
         },
         _drawingManagerOn:function()
         {

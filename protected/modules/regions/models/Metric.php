@@ -5,6 +5,13 @@ class Metric extends ActiveRecord
     const RGT   = 'rgt';
     const DEPTH = 'depth';
 
+    const TYPE_SECTOR = 1;
+    const TYPE_SQUARE = 2;
+
+    public static $types = array(
+        self::TYPE_SECTOR => 'Сектор',
+        self::TYPE_SQUARE => 'Квартал'
+    );
 
     public static function model($className = __CLASS__)
     {
@@ -28,7 +35,12 @@ class Metric extends ActiveRecord
     {
         return array(
             array(
-                'title, name, type, formula, min, norma, max',
+                'title, name, type',
+                'required',
+                'on' => 'create'
+            ),
+            array(
+                'formula, min, norma, max',
                 'safe'
             ),
         );
@@ -46,6 +58,15 @@ class Metric extends ActiveRecord
         ));
     }
 
+
+    public function relations()
+    {
+        return array(
+            'data' => array(
+                self::HAS_MANY, 'Data', 'metric_id'
+            ),
+        );
+    }
 
     public function inSubtreeOf($metric)
     {
@@ -74,23 +95,19 @@ class Metric extends ActiveRecord
         return $metrics;
     }
 
-    public function beforeSave()
+    public function afterSave()
     {
-        if (parent::beforeSave())
+        parent::afterSave();
+        if (count($this->data) == 0)
         {
-            if ($this->isNewRecord)
+            foreach (Sector::model()->findAll() as $sector)
             {
-                foreach (Sector::model()->findAll() as $sector)
-                {
-                    $data = new Data();
-                    $data->metric_id = $this->id;
-                    $data->sector_id = $sector->id;
-                    $data->save();
-                }
+                $data = new Data();
+                $data->metric_id = $this->id;
+                $data->sector_id = $sector->id;
+                $data->save();
             }
-            return true;
         }
-        return false;
     }
 
 }

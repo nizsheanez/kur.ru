@@ -36,12 +36,17 @@
             Настройки
             <b class="caret"></b>
         </a>
-        <ul class="dropdown-menu" data-type="squares">
+        <ul class="dropdown-menu settings">
             <?php
             $link = CHtml::link('Сортировка метрик', '/regions/save/sortMetrics', array(
                 'id' => 'metrics-sortable-toggle',
                 'data-fancybox-type '=> "iframe",
                 'class'=> "fancy",
+            ));
+            echo CHtml::tag('li', array(), $link);
+            $link = CHtml::link('Добавление метрики', '#new_metric_modal', array(
+                'data-toggle'=>"modal",
+                'class' => 'no-hashe'
             ));
             echo CHtml::tag('li', array(), $link);
             ?>

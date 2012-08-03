@@ -102,7 +102,7 @@
             });
             var that = this;
 
-            $('#navigation ul a:not(.fancy)').click(function()
+            $('#navigation ul a').filter(':not(.fancy)').filter(':not(.no-hashe)').click(function()
             {
                 var state = {},
                     url = $(this).attr('href').replace(/^#/, '');
@@ -135,10 +135,10 @@
                 $('#metric_form').modal('hide');
                 return false;
             });
-            $('form').submit(function()
-            {
-                return false;
-            });
+//            $('form').submit(function()
+//            {
+//                return false;
+//            });
             $('#data_save').click(function()
             {
                 var btn = $(this);
