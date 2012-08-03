@@ -55,6 +55,12 @@ class SaveController extends Controller {
     }
 
 
+    public function actionDeleteMetric($id)
+    {
+        Metric::model()->findByPk($id)->deleteNode();
+        $this->redirect('/regions/save/sortMetrics');
+    }
+
     public function actionData($id = null, $metric = null)
     {
         if (isset($_POST['data'])) {

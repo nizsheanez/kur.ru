@@ -25,7 +25,7 @@ class NestedTree extends Portlet
         {
             ui.placeholder.height(ui.item.height());
         }",
-        'update'                => "js:function(event, ui)
+        'update'              => "js:function(event, ui)
         {
             var data = $(this).nestedSortable('toArray');
             $.post('/regions/save/sortMetrics',
@@ -120,7 +120,8 @@ class NestedTree extends Portlet
                 'class'=> 'depth_' . $item->depth
             ));
             $res .= CHtml::tag('div', array(), CHtml::encode($item->title) .
-                '<img class="drag" src="'.$this->handleIcon.'" height="16" width="16" />');
+                '<img class="drag" src="'.$this->handleIcon.'" height="16" width="16" />
+                <a class="remove" href="/regions/save/deleteMetric?id='.$item->id.'"><strong>X</strong></a>');
             $depth = $item->depth;
         }
 

@@ -1,37 +1,37 @@
-.placeholder{
+.nestedSortable .placeholder{
     border:                1px dashed #4183C4;
     -webkit-border-radius: 3px;
     -moz-border-radius:    3px;
     border-radius:         3px;
 }
 
-.mjs-nestedSortable-error{
+.nestedSortable .mjs-nestedSortable-error{
     background:   #fbe3e4;
     border-color: transparent;
 }
 
-ul{
+.nestedSortable ul{
     margin:       0;
     padding:      0;
     padding-left: 30px;
 }
 
-ul.ui-sortable, ul.ui-sortable ul{
+.nestedSortable ul.ui-sortable, ul.ui-sortable ul{
     margin:          0 0 0 25px;
     padding:         0;
     list-style-type: none;
 }
 
-ul.ui-sortable{
+.nestedSortable  ul.ui-sortable{
     margin: 0;
 }
 
-.ui-sortable li{
+.nestedSortable .ui-sortable li{
     margin:  5px 0 0 0;
     padding: 0;
 }
 
-.ui-sortable li div{
+.nestedSortable .ui-sortable li div{
     border:                1px solid #d4d4d4;
     -webkit-border-radius: 3px;
     -moz-border-radius:    3px;
@@ -49,11 +49,15 @@ ul.ui-sortable{
     filter:                progid:DXImageTransform.Microsoft.gradient(startColorstr = '#ffffff', endColorstr = '#ededed', GradientType = 0);
 }
 
-.drag{
+.nestedSortable .drag{
     cursor:   move;
     margin:   0 0 0 10px;
 }
 
+.nestedSortable .remove{
+    float: right;
+    margin: 0 10px;
+}
 /*
 .notice{
     color: #c33;
