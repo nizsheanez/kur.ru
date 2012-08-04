@@ -26,7 +26,7 @@ Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap-res
                         <form id="search-form" class="form-search">
                             <?php $this->widget('CAutoComplete', array(
                             'name'       => 'search',
-                            'url'        => array('/run/autocomplete'),
+                            'url'        => array('/dipl/run/autocomplete'),
                             'max'        => 20, //specifies the max number of items to display
                             'minChars'   => 2,
                             'delay'      => 100, //number of milliseconds before lookup occurs
@@ -356,7 +356,7 @@ var update = function(json)
                 else
                 {
                     curNode = d;
-                    d3.json('/run/get/id/' + self.parent().data('id'), update);
+                    d3.json('/dipl/run/get/id/' + self.parent().data('id'), update);
                 }
             }, 300);
         })
@@ -388,7 +388,7 @@ $('#search-form').submit(function()
 {
     var self = $(this);
     var input = self.find('input');
-    $.get('/run/search', $(this).serialize(),
+    $.get('/dipl/run/search', $(this).serialize(),
         function(data)
         {
             input.removeClass('ac_loading');
@@ -409,7 +409,7 @@ $('#download').click(function()
     {
         res.push(i);
     }
-    $.fileDownload('/run/saveFile', {
+    $.fileDownload('/dipl/run/saveFile', {
 //            preparingMessageHtml: "We are preparing your report, please wait...",
 //            failMessageHtml: "There was a problem generating your report, please try again.",
         httpMethod: "POST",

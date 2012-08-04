@@ -2,6 +2,7 @@
 
 class RunController extends Controller
 {
+	public $layout = 'main';
     public static function actionsTitles()
     {
         return array(
