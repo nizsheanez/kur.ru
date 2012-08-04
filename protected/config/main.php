@@ -23,7 +23,7 @@ return array(
     ),
     'preload'      => array(
         'log',
-        //'bootstrap'
+        'bootstrap'
     ),
     'modules'      => array(
         'dipl',
