@@ -43,4 +43,14 @@ class Data extends ActiveRecord
     }
 
 
+    public function sectors($ids)
+    {
+        return $this->inCondition('sector_id', (array)$ids);
+    }
+
+
+    public function metrics($ids)
+    {
+        return $this->inCondition('metric_id', (array)$ids);
+    }
 }

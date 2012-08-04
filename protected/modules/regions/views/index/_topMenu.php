@@ -36,7 +36,7 @@
             Настройки
             <b class="caret"></b>
         </a>
-        <ul class="dropdown-menu" data-type="squares">
+        <ul class="dropdown-menu settings">
             <?php
             $link = CHtml::link('Сортировка метрик', '/regions/save/sortMetrics', array(
                 'id' => 'metrics-sortable-toggle',
@@ -44,7 +44,26 @@
                 'class'=> "fancy",
             ));
             echo CHtml::tag('li', array(), $link);
+            $link = CHtml::link('Добавление метрики', '#new_metric_modal', array(
+                'data-toggle'=>"modal",
+                'class' => 'no-hashe'
+            ));
+            echo CHtml::tag('li', array(), $link);
             ?>
         </ul>
+    </li>
+</ul>
+<ul class="nav pull-right nav-right">
+    <li>
+        <b>Обозначения:</b>
+    </li>
+    <li>
+        <span class="label label-success">Норма</span>
+    </li>
+    <li>
+        <span class="label label-info">Избыток</span>
+    </li>
+    <li>
+        <span class="label label-important">Недостаток</span>
     </li>
 </ul>

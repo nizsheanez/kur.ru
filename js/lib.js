@@ -63,7 +63,7 @@
         };
     }
 
-    $.widget("geo.metricMap", {
+    $.widget("geo.metricMap", $.geo.baseMetricMap, {
         infoBubble: new InfoBubble({
             shadowStyle: 1,
             disableAnimation: true,
@@ -82,12 +82,15 @@
         polygons: new Array(),
         squares: new Array(),
         currentMetric: 'peoples',
+        drawingManager: {},
         options: {
             globalData: {},
             greetings: "Hello"
         },
         _create: function()
         {
+            $.geo.baseMetricMap.prototype._create.call(this);
+            this._drawingManagerOn();
             $('.fancy').fancybox({
                 fitToView: false,
                 width: '70%',
@@ -97,21 +100,9 @@
                 openEffect: 'none',
                 closeEffect: 'none'
             });
-
             var that = this;
 
-            that._initPolygonObject();
-
-            // Create the Google Map…
-            that.map = new google.maps.Map(this.element[0], {
-                zoom: 15,
-                center: new google.maps.LatLng(51.149633, 71.466837),
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            });
-
-            that.drawPolygons(that.options.globalData);
-
-            $('#navigation ul a:not(.fancy)').click(function()
+            $('#navigation ul a').filter(':not(.fancy)').filter(':not(.no-hashe)').click(function()
             {
                 var state = {},
                     url = $(this).attr('href').replace(/^#/, '');
@@ -121,6 +112,9 @@
                 return false;
             });
 
+            $('#sector_delete').click(function() {
+                window.location.href = '/regions/save/deleteSector?id='+$('#data_save_form').data('sector_id');
+            });
             $('#formula_save').click(function()
             {
                 var btn = $(this);
@@ -141,10 +135,10 @@
                 $('#metric_form').modal('hide');
                 return false;
             });
-            $('form').submit(function()
-            {
-                return false;
-            });
+//            $('form').submit(function()
+//            {
+//                return false;
+//            });
             $('#data_save').click(function()
             {
                 var btn = $(this);
@@ -177,101 +171,6 @@
 
             $(window).trigger('hashchange');
         },
-        _initPolygonObject: function()
-        {
-            var that = this;
-            google.maps.Polygon.prototype.getBounds = function() {
-                var bounds = new google.maps.LatLngBounds();
-
-                this.getPaths().forEach(function(path) {
-                    path.forEach(function(point) {
-                        bounds.extend(point);
-                    });
-                });
-
-                return bounds;
-            };
-
-            google.maps.Polygon.prototype.__defineGetter__('area', function()
-            {
-                return google.maps.geometry.spherical.computeArea(this.getPaths());
-            });
-
-            google.maps.Polygon.prototype.__defineGetter__('density', function()
-            {
-                return this.getProperty('peoples') / this.area;
-            });
-
-            google.maps.Polygon.prototype.getProperty = function(name)
-            {
-                return that.options.globalData.features[this.id].properties[name];
-            };
-
-            google.maps.Polygon.prototype.setColor = function(color)
-            {
-                this.setOptions({
-                    strokeColor: '#'+color,
-                    fillColor: '#'+color
-                });
-            };
-
-            google.maps.Polygon.prototype.getProperties = function()
-            {
-                return that.options.globalData.features[this.id].properties;
-            };
-
-            google.maps.Polygon.prototype.setProperty = function(key, val)
-            {
-                that.options.globalData.features[this.id].properties[key] = val;
-            };
-            google.maps.Polygon.prototype.getCenter = function()
-            {
-                var bounds = new google.maps.LatLngBounds();
-                var coordinates = this.getPath();
-                for (i = 0; i < coordinates.length; i++)
-                {
-                    bounds.extend(coordinates.getAt(i));
-                }
-                return bounds.getCenter();
-            };
-
-            google.maps.Polygon.prototype.save = function(callback)
-            {
-                var vertices = this.getPath();
-                var res = {};
-                var id = this.id != undefined ? this.id : 0;
-
-                for (var i = 0; i < vertices.length; i++)
-                {
-                    var xy = vertices.getAt(i);
-                    res['polygons[' + id + '][' + i + '][lat]'] = xy.lat();
-                    res['polygons[' + id + '][' + i + '][lng]'] = xy.lng();
-                }
-                if (this.id == undefined)
-                {
-                    res.title = $('#new_sector_title').val();
-                    res.square_id = $('#new_sector_square_id').val();
-                }
-                $.post('/regions/save/polygons', res, callback);
-            };
-
-        },
-        _hexFromRGB: function(r, g, b)
-        {
-            var hex = [
-                Math.ceil(r).toString(16),
-                Math.ceil(g).toString(16),
-                Math.ceil(b).toString(16)
-            ];
-            $.each(hex, function(nr, val)
-            {
-                if (val.length === 1)
-                {
-                    hex[ nr ] = "0" + val;
-                }
-            });
-            return hex.join("").toUpperCase();
-        },
         colorize: function()
         {
             var color;
@@ -291,19 +190,27 @@
                 var metric = polygon.getProperty(that.currentMetric);
                 if (metric != undefined && m.formula != '')
                 {
-                    var _V, _a, _b, _c;
+                    var result, _a, _b, _c;
                     with (polygon)
                     {
                         extract(polygon.getProperties());
-                        _V = eval(m.formula);
+                        result = eval(m.formula);
                         _a = eval(m.min);
                         _b = eval(m.norma);
                         _c = eval(m.max);
                     }
-                    polygon.bubbleText = 'Формула: ' + m.formula + ' = ' + Math.round(_V * 100) / 100;
+                    polygon.bubbleText = 'Формула: ' + m.formula + ' = ' + Math.round(result * 100) / 100;
+                    polygon.bubbleText+= '<br/>';
+                    polygon.bubbleText+= 'Минимум: ' + m.min + ' = ' + Math.round(_a * 100) / 100;
+                    polygon.bubbleText+= '<br/>';
+                    polygon.bubbleText+= 'Норма: ' + m.norma + ' = ' + Math.round(_b * 100) / 100;
+                    polygon.bubbleText+= '<br/>';
+                    polygon.bubbleText+= 'Максимум: ' + m.max + ' = ' + Math.round(_c * 100) / 100;
+                    polygon.bubbleText+= '<br/>';
 
-                    if (_V == Infinity || _a == Infinity || _b == Infinity || _c == Infinity ||
-                        _V == undefined || _a == undefined || _b == undefined || _c == undefined)
+
+                    if (result == Infinity || _a == Infinity || _b == Infinity || _c == Infinity ||
+                        result == undefined || _a == undefined || _b == undefined || _c == undefined)
                     {
                         n = undefined;
                         color = this._hexFromRGB(0, 0, 0);
@@ -311,23 +218,23 @@
                     else
                     {
                         // transfer a to zero
-                        _V -= _a;
+                        result -= _a;
                         _c -= _a;
                         _b -= _a;
                         _a -= _a;
 
-                        if (_V > _b)
+                        if (result > _b)
                         {
                             // transfer b to zero
-                            _V -= _b
+                            result -= _b
                             _c -= _b;
                             _b -= _b;
 
-                            n = 100 + 100 * _V / _c;
+                            n = 100 + 100 * result / _c;
                         }
                         else
                         {
-                            n = 100 * _V / _b;
+                            n = 100 * result / _b;
                         }
 
 
@@ -415,6 +322,7 @@
                 });
                 google.maps.event.addListener(polygon, 'click', function()
                 {
+                    $('#data_save_form').data('sector_id', this.id);
                     $('#data_save_form form').load('/regions/save/data?id=' + this.id + '&metric=' + that.currentMetric,
                         function()
                         {

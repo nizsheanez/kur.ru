@@ -14,9 +14,8 @@
  * specifying attribute default values in a dynamic way.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @version $Id: CDefaultValueValidator.php 2799 2011-01-01 19:31:13Z qiang.xue $
+ * @version $Id$
  * @package system.validators
- * @since 1.0.2
  */
 class CDefaultValueValidator extends CValidator
 {

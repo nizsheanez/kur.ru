@@ -190,14 +190,14 @@ abstract class ActiveRecord extends CActiveRecord
     }
 
 
-    public function in($row, $values, $operator = 'AND')
+    public function inCondition($row, $values, $operator = 'AND')
     {
         $this->getDbCriteria()->addInCondition($row, $values, $operator);
         return $this;
     }
 
 
-    public function notIn($row, $values, $operator = 'AND')
+    public function notInCondition($row, $values, $operator = 'AND')
     {
         $this->getDbCriteria()->addNotInCondition($row, $values, $operator);
         return $this;

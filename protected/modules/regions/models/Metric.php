@@ -5,6 +5,13 @@ class Metric extends ActiveRecord
     const RGT   = 'rgt';
     const DEPTH = 'depth';
 
+    const TYPE_SECTOR = 1;
+    const TYPE_SQUARE = 2;
+
+    public static $types = array(
+        self::TYPE_SECTOR => 'Сектор',
+        self::TYPE_SQUARE => 'Квартал'
+    );
 
     public static function model($className = __CLASS__)
     {
@@ -28,7 +35,12 @@ class Metric extends ActiveRecord
     {
         return array(
             array(
-                'title, name, type, formula, min, norma, max',
+                'title, name, type',
+                'required',
+                'on' => 'create'
+            ),
+            array(
+                'formula, min, norma, max',
                 'safe'
             ),
         );
@@ -47,6 +59,15 @@ class Metric extends ActiveRecord
     }
 
 
+    public function relations()
+    {
+        return array(
+            'data' => array(
+                self::HAS_MANY, 'Data', 'metric_id'
+            ),
+        );
+    }
+
     public function inSubtreeOf($metric)
     {
         $ancestors = $this->ancestors()->findAll();
@@ -62,77 +83,31 @@ class Metric extends ActiveRecord
     }
 
 
-    public static function getHtmlTree()
-    {
-        $models = self::getRoot()->descendants()->findAll();
-
-        $depth = 0;
-        $res   = '';
-
-        foreach ($models as $n=> $item)
-        {
-            if ($item->depth == $depth)
-            {
-                $res .= CHtml::closeTag('li') . "\n";
-            }
-            else if ($item->depth > $depth)
-            {
-                $res .= CHtml::openTag('ul', array('class' => 'depth_' . $item->depth)) . "\n";
-            }
-            else
-            {
-                $res .= CHtml::closeTag('li') . "\n";
-
-                for ($i = $depth - $item->depth; $i; $i--)
-                {
-                    $res .= CHtml::closeTag('ul') . "\n";
-                    $res .= CHtml::closeTag('li') . "\n";
-                }
-            }
-
-            $res .= CHtml::openTag('li', array(
-                'id'   => 'items_' . $item->id,
-                'class'=> 'depth_' . $item->depth
-            ));
-            $res .= CHtml::tag('div', array(), CHtml::encode($item->title) .
-                '<img class="drag" src="/img/admin/hand.png" height="16" width="16" />');
-            $depth = $item->depth;
-        }
-
-        for ($i = $depth; $i; $i--)
-        {
-            $res .= CHtml::closeTag('li') . "\n";
-            $res .= CHtml::closeTag('ul') . "\n";
-        }
-
-        return $res;
-    }
-
-
     public static function getRoot()
     {
         return self::model()->roots()->find();
     }
 
-
-
-    public function beforeSave()
+    public function getMetricWithDescendants()
     {
-        if (parent::beforeSave())
+        $metrics = $this->descendants()->findAll();
+        $metrics[] = $this;
+        return $metrics;
+    }
+
+    public function afterSave()
+    {
+        parent::afterSave();
+        if (count($this->data) == 0)
         {
-            if ($this->isNewRecord)
+            foreach (Sector::model()->findAll() as $sector)
             {
-                foreach (Sector::model()->findAll() as $sector)
-                {
-                    $data = new Data();
-                    $data->metric_id = $this->id;
-                    $data->sector_id = $sector->id;
-                    $data->save();
-                }
-                return true;
+                $data = new Data();
+                $data->metric_id = $this->id;
+                $data->sector_id = $sector->id;
+                $data->save();
             }
         }
-        return false;
     }
 
 }

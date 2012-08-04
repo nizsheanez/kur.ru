@@ -36,7 +36,7 @@ Yii::import('zii.widgets.jui.CJuiInputWidget');
  * for possible options (name-value pairs).
  *
  * @author Sebastian Thierer <sebathi@gmail.com>
- * @version $Id: CJuiDatePicker.php 3077 2011-03-14 13:23:12Z qiang.xue $
+ * @version $Id$
  * @package zii.widgets.jui
  * @since 1.1
  */
@@ -80,8 +80,6 @@ class CJuiDatePicker extends CJuiInputWidget
 			$this->htmlOptions['id']=$id;
 		if(isset($this->htmlOptions['name']))
 			$name=$this->htmlOptions['name'];
-		else
-			$this->htmlOptions['name']=$name;
 
 		if ($this->flat===false)
 		{
@@ -105,10 +103,10 @@ class CJuiDatePicker extends CJuiInputWidget
 			}
 
 			if (!isset($this->options['onSelect']))
-				$this->options['onSelect']="js:function( selectedDate ) { jQuery('#{$id}').val(selectedDate);}";
+				$this->options['onSelect']=new CJavaScriptExpression("function( selectedDate ) { jQuery('#{$id}').val(selectedDate);}");
 
-			$id = $this->htmlOptions['id'] = $this->htmlOptions['id'].'_container';
-			$this->htmlOptions['name'] = $this->htmlOptions['name'].'_container';
+			$id = $this->htmlOptions['id'] = $id.'_container';
+			$this->htmlOptions['name'] = $name.'_container';
 
 			echo CHtml::tag('div', $this->htmlOptions, '');
 		}
@@ -116,7 +114,7 @@ class CJuiDatePicker extends CJuiInputWidget
 		$options=CJavaScript::encode($this->options);
 		$js = "jQuery('#{$id}').datepicker($options);";
 
-		if (isset($this->language))
+		if ($this->language!='' && $this->language!='en')
 		{
 			$this->registerScriptFile($this->i18nScriptFile);
 			$js = "jQuery('#{$id}').datepicker(jQuery.extend({showMonthAfterYear:false}, jQuery.datepicker.regional['{$this->language}'], {$options}));";

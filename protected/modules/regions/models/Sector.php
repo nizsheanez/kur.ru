@@ -94,22 +94,32 @@ class Sector extends ActiveRecord
         return CJSON::encode($res);
     }
 
-
-    public function beforeSave()
+    public function afterSave()
     {
-        if (parent::beforeSave())
+        parent::afterSave();
+        if (count($this->data) == 0)
         {
-            if ($this->isNewRecord)
+            foreach (Metric::model()->findAll() as $metric)
             {
-                foreach (Metric::model()->findAll() as $metric)
-                {
-                    $data = new Data();
-                    $data->metric_id = $metric->id;
-                    $data->sector_id = $this->id;
-                    $data->save();
-                }
-                return true;
+                $data = new Data();
+                $data->metric_id = $metric->id;
+                $data->sector_id = $this->id;
+                $data->save();
             }
+        }
+    }
+
+    public function beforeDelete()
+    {
+        if (parent::beforeDelete()) {
+            foreach ($this->data as $item) {
+                $item->delete();
+            }
+            foreach ($this->polygons as $item) {
+                $item->delete();
+            }
+
+            return true;
         }
         return false;
     }

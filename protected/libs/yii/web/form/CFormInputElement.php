@@ -24,6 +24,11 @@
  * <li>dropdownlist: a drop-down list generated using {@link CHtml::activeDropDownList}</li>
  * <li>checkboxlist: a list of check boxes generated using {@link CHtml::activeCheckBoxList}</li>
  * <li>radiolist: a list of radio buttons generated using {@link CHtml::activeRadioButtonList}</li>
+ * <li>url: an HTML5 url input generated using {@link CHtml::activeUrlField}</li>
+ * <li>email: an HTML5 email input generated using {@link CHtml::activeEmailField}</li>
+ * <li>number: an HTML5 number input generated using {@link CHtml::activeNumberField}</li>
+ * <li>range: an HTML5 range input generated using {@link CHtml::activeRangeField}</li>
+ * <li>date: an HTML5 date input generated using {@link CHtml::activeDateField}</li>
  * </ul>
  * The {@link type} property can also be a class name or a path alias to the class. In this case,
  * the input is generated using a widget of the specified class. Note, the widget must
@@ -34,8 +39,12 @@
  * stored in {@link attributes} which will be passed as HTML attribute values to the {@link CHtml} method
  * generating the input or initial values of the widget properties.
  *
+ * @property boolean $required Whether this input is required.
+ * @property string $label The label for this input. If the label is not manually set,
+ * this method will call {@link CModel::getAttributeLabel} to determine the label.
+ *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @version $Id: CFormInputElement.php 3126 2011-03-26 12:21:13Z qiang.xue $
+ * @version $Id$
  * @package system.web.form
  * @since 1.1
  */
@@ -56,6 +65,11 @@ class CFormInputElement extends CFormElement
 		'dropdownlist'=>'activeDropDownList',
 		'checkboxlist'=>'activeCheckBoxList',
 		'radiolist'=>'activeRadioButtonList',
+		'url'=>'activeUrlField',
+		'email'=>'activeEmailField',
+		'number'=>'activeNumberField',
+		'range'=>'activeRangeField',
+		'date'=>'activeDateField'
 	);
 
 	/**
@@ -198,21 +212,21 @@ class CFormInputElement extends CFormElement
 	 */
 	public function renderInput()
 	{
-        if(isset(self::$coreTypes[$this->type]))
+		if(isset(self::$coreTypes[$this->type]))
 		{
 			$method=self::$coreTypes[$this->type];
-            if(strpos($method,'List')!==false)
+			if(strpos($method,'List')!==false)
 				return CHtml::$method($this->getParent()->getModel(), $this->name, $this->items, $this->attributes);
 			else
 				return CHtml::$method($this->getParent()->getModel(), $this->name, $this->attributes);
 		}
 		else
 		{
-            $attributes=$this->attributes;
-            $attributes['model']=$this->getParent()->getModel();
-            $attributes['attribute']=$this->name;
-            ob_start();
-            $this->getParent()->getOwner()->widget($this->type, $attributes);
+			$attributes=$this->attributes;
+			$attributes['model']=$this->getParent()->getModel();
+			$attributes['attribute']=$this->name;
+			ob_start();
+			$this->getParent()->getOwner()->widget($this->type, $attributes);
 			return ob_get_clean();
 		}
 	}
@@ -246,6 +260,6 @@ class CFormInputElement extends CFormElement
 	 */
 	protected function evaluateVisible()
 	{
-        return $this->getParent()->getModel()->isAttributeSafe($this->name);
+		return $this->getParent()->getModel()->isAttributeSafe($this->name);
 	}
 }

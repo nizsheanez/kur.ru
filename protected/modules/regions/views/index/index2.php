@@ -1,4 +1,5 @@
 <?php
+Yii::app()->clientScript->registerScriptFile('/js/base.widget.js');
 Yii::app()->clientScript->registerScriptFile('/js/lib.js');
 ?>
 <div class="navbar navbar-fixed-top">
@@ -18,22 +19,9 @@ Yii::app()->clientScript->registerScriptFile('/js/lib.js');
         </form>
     </div>
     <div class="modal-footer">
+        <a href="#" id="sector_delete" class="btn btn-danger pull-left">Удалить</a>
         <a href="#" class="btn" data-dismiss="modal">Отмена</a>
         <a href="#" id="data_save" class="btn btn-primary">Сохранить</a>
-    </div>
-</div>
-<div class="modal hide" id="metric_sortable_form">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">×</button>
-        <h3>Сортировка метрик</h3>
-    </div>
-    <div class="modal-body">
-        <form action="" class="form-vertical">
-        </form>
-    </div>
-    <div class="modal-footer">
-        <a href="#" class="btn" data-dismiss="modal">Отмена</a>
-        <a href="#" id="metric_sortable_save" class="btn btn-primary">Сохранить</a>
     </div>
 </div>
 <div class="modal hide" id="metric_form">
@@ -54,8 +42,7 @@ Yii::app()->clientScript->registerScriptFile('/js/lib.js');
         </form>
         <div>
             <?php
-            foreach (Metric::model()->findAll() as $item)
-            {
+            foreach (Metric::model()->findAll() as $item) {
                 echo '<li>' . $item->title . ' - ' . $item->name . '</li>';
             }
             ?>
@@ -66,39 +53,59 @@ Yii::app()->clientScript->registerScriptFile('/js/lib.js');
         <a href="#" id="formula_save" class="btn btn-primary">Сохранить</a>
     </div>
 </div>
-<div style="z-index: 100; position: absolute; top: 100px; right: 10px; text-align: right" class="right-toolbar">
-    <div>
-        <b>Обозначения:</b><br/>
-        <span class="label label-success">Норма</span><br/>
-        <span class="label label-info">Избыток</span><br/>
-        <span class="label label-important">Недостаток</span>
-    </div>
-    <br/>
-
+<div style="z-index: 100; position: absolute; top: 100px; right: 10px; text-align: right;" class="right-toolbar">
     <div id="edit_metric">
-        <a data-toggle="modal" href="#metric_form"><img src="/img/formula.png" width="32" height="32"/></a>
+        <a data-toggle="modal" href="#metric_form"><img src="/img/formula.png" width="40" height="40"/></a>
     </div>
 </div>
+<div class="modal hide" id="new_sector_modal">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3>Редактирование метрики</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-vertical">
+            <input id="new_sector_title"/></br>
+            <?= CHtml::dropDownList('square_id', 1, CHtml::listData(Square::model()->findAll(), 'id', 'title'), array('id' => 'new_sector_square_id')) ?>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Отмена</a>
+        <a href="#" id="new_sector_save" class="btn btn-primary">Сохранить</a>
+    </div>
+</div>
+
+<div class="modal hide" id="new_metric_modal">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3>Редактирование метрики</h3>
+    </div>
+    <div class="modal-body">
+        <?php
+        echo new Form('regions.metric', new Metric());
+        ?>
+    </div>
+</div>
+
 <div id="map"></div>
 <style>
-    .phoneytext{
+    .phoneytext {
         text-shadow: 0 -1px 0 #000;
-        color:       #fff;
+        color: #fff;
         font-family: Helvetica Neue, Helvetica, arial;
-        font-size:   12px;
+        font-size: 12px;
         line-height: 14px;
-        padding:     4px 45px 4px 15px;
+        padding: 4px 45px 4px 15px;
         font-weight: bold;
     }
 
-    .phoney{
+    .phoney {
         background: -webkit-gradient(linear, left top, left bottom, color-stop(0, rgb(112, 112, 112)), color-stop(0.51, rgb(94, 94, 94)), color-stop(0.52, rgb(57, 57, 57)));
         background: -moz-linear-gradient(center top, rgb(112, 112, 112) 0%, rgb(94, 94, 94) 51%, rgb(57, 57, 57) 52%);
     }
 </style>
 <script type="text/javascript">
-    $(document).ready(function()
-    {
+    $(document).ready(function () {
         $('#map').metricMap({
             globalData: <?= Sector::getJson() ?>
         });

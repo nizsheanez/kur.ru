@@ -10,8 +10,6 @@ abstract class Controller extends CController implements ControllerInterface
     const MSG_ERROR   = 'error';
     const MSG_INFO    = 'info';
 
-    public $layout = '//layouts/main';
-
     public $page_title;
 
     public $meta_title;
@@ -60,9 +58,12 @@ abstract class Controller extends CController implements ControllerInterface
 
     public function beforeAction($action)
     {
-        $action_name = lcfirst($action->id);
+        if (Yii::app()->user->isGuest && ($action->id != 'login'))
+        {
+            $this->redirect(array('/users/user/login', 'redirect' => urlencode($_SERVER['REQUEST_URI'])));
+        }
 
-        return true;
+        return parent::beforeAction($action);
     }
 
 
@@ -201,17 +202,6 @@ abstract class Controller extends CController implements ControllerInterface
         {
             echo $res;
         }
-    }
-
-
-    public function render($view, $params = array())
-    {
-        if (isset($_GET['popup']))
-        {
-            $this->layout = false;
-        }
-
-        return parent::render($view, $params);
     }
 
 

@@ -72,8 +72,12 @@ Yii::import('zii.widgets.grid.CCheckBoxColumn');
  *
  * Please refer to {@link columns} for more details about how to configure this property.
  *
+ * @property boolean $hasFooter Whether the table should render a footer.
+ * This is true if any of the {@link columns} has a true {@link CGridColumn::hasFooter} value.
+ * @property CFormatter $formatter The formatter instance. Defaults to the 'format' application component.
+ *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @version $Id: CGridView.php 3083 2011-03-14 18:09:55Z qiang.xue $
+ * @version $Id$
  * @package zii.widgets.grid
  * @since 1.1
  */
@@ -129,10 +133,21 @@ class CGridView extends CBaseListView
 	public $ajaxUpdate;
 	/**
 	 * @var string the jQuery selector of the HTML elements that may trigger AJAX updates when they are clicked.
-	 * If not set, the pagination links and the sorting links will trigger AJAX updates.
+	 * These tokens are recognized: {page} and {sort}. They will be replaced with the pagination and sorting links selectors.
+	 * Defaults to '{page}, {sort}', that means that the pagination links and the sorting links will trigger AJAX updates.
+	 * Tokens are available from 1.1.11
+	 *
+	 * Note: if this value is empty an exception will be thrown.
+	 *
+	 * Example (adding a custom selector to the default ones):
+	 * <pre>
+	 *  ...
+	 *  'updateSelector'=>'{page}, {sort}, #mybutton',
+	 *  ...
+	 * </pre>
 	 * @since 1.1.7
 	 */
-	public $updateSelector;
+	public $updateSelector='{page}, {sort}';
 	/**
 	 * @var string a javascript function that will be invoked if an AJAX update error occurs.
 	 *
@@ -161,6 +176,12 @@ class CGridView extends CBaseListView
 	 */
 	public $ajaxVar='ajax';
 	/**
+	 * @var mixed the URL for the AJAX requests should be sent to. {@link CHtml::normalizeUrl()} will be
+	 * called on this property. If not set, the current page URL will be used for AJAX requests.
+	 * @since 1.1.8
+	 */
+	public $ajaxUrl;
+	/**
 	 * @var string a javascript function that will be invoked before an AJAX update occurs.
 	 * The function signature is <code>function(id,options)</code> where 'id' refers to the ID of the grid view,
 	 * 'options' the AJAX request options  (see jQuery.ajax api manual).
@@ -188,7 +209,7 @@ class CGridView extends CBaseListView
 	 */
 	public $selectableRows=1;
 	/**
-	 * @var string the base script URL for all grid view resources (e.g. javascript, CSS file, images).
+	 * @var string the base script URL for all grid view resources (eg javascript, CSS file, images).
 	 * Defaults to null, meaning using the integrated grid view resources (which are published as assets).
 	 */
 	public $baseScriptUrl;
@@ -238,6 +259,7 @@ class CGridView extends CBaseListView
 	 * at the top that users can fill in to filter the data.
 	 * Note that in order to show an input field for filtering, a column must have its {@link CDataColumn::name}
 	 * property set or have {@link CDataColumn::filter} as the HTML code for the input field.
+	 * When this property is not set (null) the filtering is disabled.
 	 * @since 1.1.1
 	 */
 	public $filter;
@@ -248,7 +270,14 @@ class CGridView extends CBaseListView
 	 * @since 1.1.1
 	 */
 	public $hideHeader=false;
-
+	/**
+	 * @var boolean whether to leverage the {@link https://developer.mozilla.org/en/DOM/window.history DOM history object}.  Set this property to true
+	 * to persist state of grid across page revisits.  Note, there are two limitations for this feature:
+	 * - this feature is only compatible with browsers that support HTML5.
+	 * - expect unexpected functionality (e.g. multiple ajax calls) if there is more than one grid/list on a single page with enableHistory turned on.
+	 * @since 1.1.11
+	 */
+	public $enableHistory=false;
 	/**
 	 * Initializes the grid view.
 	 * This method will initialize required property values and instantiate {@link columns} objects.
@@ -257,6 +286,8 @@ class CGridView extends CBaseListView
 	{
 		parent::init();
 
+		if(empty($this->updateSelector))
+			throw new CException(Yii::t('zii','The property updateSelector should be defined.'));
 
 		if(!isset($this->htmlOptions['class']))
 			$this->htmlOptions['class']='grid-view';
@@ -353,24 +384,64 @@ class CGridView extends CBaseListView
 			'filterClass'=>$this->filterCssClass,
 			'tableClass'=>$this->itemsCssClass,
 			'selectableRows'=>$this->selectableRows,
+			'enableHistory'=>$this->enableHistory,
+			'updateSelector'=>$this->updateSelector
 		);
-		if($this->updateSelector!==null)
-			$options['updateSelector']=$this->updateSelector;
+		if($this->ajaxUrl!==null)
+			$options['url']=CHtml::normalizeUrl($this->ajaxUrl);
 		if($this->enablePagination)
 			$options['pageVar']=$this->dataProvider->getPagination()->pageVar;
 		if($this->beforeAjaxUpdate!==null)
-			$options['beforeAjaxUpdate']=(strpos($this->beforeAjaxUpdate,'js:')!==0 ? 'js:' : '').$this->beforeAjaxUpdate;
+		{
+			if((!$this->beforeAjaxUpdate instanceof CJavaScriptExpression) && strpos($this->beforeAjaxUpdate,'js:')!==0)
+			{
+				$options['beforeAjaxUpdate']=new CJavaScriptExpression($this->beforeAjaxUpdate);
+			}
+			else
+			{
+				$options['beforeAjaxUpdate']=$this->beforeAjaxUpdate;
+			}
+		}
 		if($this->afterAjaxUpdate!==null)
-			$options['afterAjaxUpdate']=(strpos($this->afterAjaxUpdate,'js:')!==0 ? 'js:' : '').$this->afterAjaxUpdate;
+		{
+			if((!$this->afterAjaxUpdate instanceof CJavaScriptExpression) && strpos($this->afterAjaxUpdate,'js:')!==0)
+			{
+				$options['afterAjaxUpdate']=new CJavaScriptExpression($this->afterAjaxUpdate);
+			}
+			else
+			{
+				$options['afterAjaxUpdate']=$this->afterAjaxUpdate;
+			}
+		}
 		if($this->ajaxUpdateError!==null)
-			$options['ajaxUpdateError']=(strpos($this->ajaxUpdateError,'js:')!==0 ? 'js:' : '').$this->ajaxUpdateError;
+		{
+			if((!$this->ajaxUpdateError instanceof CJavaScriptExpression) && strpos($this->ajaxUpdateError,'js:')!==0)
+			{
+				$options['ajaxUpdateError']=new CJavaScriptExpression($this->ajaxUpdateError);
+			}
+			else
+			{
+				$options['ajaxUpdateError']=$this->ajaxUpdateError;
+			}
+		}
 		if($this->selectionChanged!==null)
-			$options['selectionChanged']=(strpos($this->selectionChanged,'js:')!==0 ? 'js:' : '').$this->selectionChanged;
+		{
+			if((!$this->ajaxUpdateError instanceof CJavaScriptExpression) && strpos($this->selectionChanged,'js:')!==0)
+			{
+				$options['selectionChanged']=new CJavaScriptExpression($this->selectionChanged);
+			}
+			else
+			{
+				$options['selectionChanged']=$this->selectionChanged;
+			}
+		}
 
 		$options=CJavaScript::encode($options);
 		$cs=Yii::app()->getClientScript();
 		$cs->registerCoreScript('jquery');
 		$cs->registerCoreScript('bbq');
+		if($this->enableHistory)
+			$cs->registerCoreScript('history');
 		$cs->registerScriptFile($this->baseScriptUrl.'/jquery.yiigridview.js',CClientScript::POS_END);
 		$cs->registerScript(__CLASS__.'#'.$id,"jQuery('#$id').yiiGridView($options);");
 	}
@@ -384,8 +455,11 @@ class CGridView extends CBaseListView
 		{
 			echo "<table class=\"{$this->itemsCssClass}\">\n";
 			$this->renderTableHeader();
+			ob_start();
 			$this->renderTableBody();
+			$body=ob_get_clean();
 			$this->renderTableFooter();
+			echo $body; // TFOOT must appear before TBODY according to the standard.
 			echo "</table>";
 		}
 		else
@@ -430,12 +504,9 @@ class CGridView extends CBaseListView
 	{
 		if($this->filter!==null)
 		{
-
 			echo "<tr class=\"{$this->filterCssClass}\">\n";
 			foreach($this->columns as $column)
-            {
 				$column->renderFilterCell();
-            }
 			echo "</tr>\n";
 		}
 	}
@@ -479,7 +550,7 @@ class CGridView extends CBaseListView
 		}
 		else
 		{
-			echo '<tr><td colspan="'.count($this->columns).'">';
+			echo '<tr><td colspan="'.count($this->columns).'" class="empty">';
 			$this->renderEmptyText();
 			echo "</td></tr>\n";
 		}

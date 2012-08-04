@@ -32,7 +32,7 @@
  * is returned if {@link name} does not have an extension name.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @version $Id: CUploadedFile.php 3515 2011-12-28 12:29:24Z mdomba $
+ * @version $Id$
  * @package system.web
  * @since 1.0
  */
@@ -45,19 +45,6 @@ class CUploadedFile extends CComponent
 	private $_type;
 	private $_size;
 	private $_error;
-
-    public static function removeInstance($model, $attribute)
-    {
-        return self::removeInstanceByName(CHtml::resolveName($model, $attribute));
-    }
-
-    public static function removeInstanceByName($name)
-    {
-        if (isset(self::$_files[$name]))
-        {
-            unset(self::$_files[$name]);
-        }
-    }
 
 	/**
 	 * Returns an instance of the specified uploaded file.
@@ -204,7 +191,7 @@ class CUploadedFile extends CComponent
 	 */
 	public function saveAs($file,$deleteTempFile=true)
 	{
-        if($this->_error==UPLOAD_ERR_OK)
+		if($this->_error==UPLOAD_ERR_OK)
 		{
 			if($deleteTempFile)
 				return move_uploaded_file($this->_tempName,$file);

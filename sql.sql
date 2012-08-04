@@ -1,20 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 3.5.1
+-- version 3.3.7deb7
 -- http://www.phpmyadmin.net
 --
--- Хост: 127.0.0.1
--- Время создания: Июл 24 2012 г., 13:46
+-- Хост: localhost
+-- Время создания: Июл 31 2012 г., 09:20
 -- Версия сервера: 5.5.25
--- Версия PHP: 5.3.13
+-- Версия PHP: 5.3.14-1~dotdeb.0
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
 
 --
 -- База данных: `diplom`
@@ -81,8 +74,7 @@ INSERT INTO `data` (`id`, `sector_id`, `metric_id`, `value`) VALUES
 (45, 6, 4, '3'),
 (46, 6, 5, '67\r\n'),
 (47, 6, 6, '5700'),
-(48, 6, 7, NULL),
-(49, 1, 1, '0');
+(48, 6, 7, NULL);
 
 -- --------------------------------------------------------
 
@@ -114,7 +106,7 @@ CREATE TABLE IF NOT EXISTS `metrics` (
 INSERT INTO `metrics` (`id`, `title`, `name`, `formula`, `min`, `norma`, `max`, `type`, `lft`, `rgt`, `depth`) VALUES
 (1, 'Детские сады', 'detsad', 'peoples * 0.06 * (3 / 5) / metric', '1', '300', '450', '2', 5, 6, 5),
 (2, 'Поликлиники', 'policlinic', NULL, NULL, NULL, NULL, '2', 4, 7, 4),
-(3, 'Школы', 'school', 'peoples *  0.2/ metric', '1', '1200', '2000', '2', 3, 8, 3),
+(3, 'Школы', 'school', 'metric', 'peoples *  0.2/ 2200', 'peoples *  0.2/ 1200', 'peoples *  0.2/ 400', '2', 3, 8, 3),
 (4, 'Спорт площадки', 'sportplace', NULL, NULL, NULL, NULL, '2', 9, 10, 3),
 (5, 'Мусорные контейнеры', 'garbagecontainer', 'metric * 1.1 * 365', 'peoples * 1.4 / 2', 'peoples * 1.4', 'peoples * 1.4 * 2', '1', 2, 11, 2),
 (6, 'Население', 'peoples', NULL, NULL, NULL, NULL, NULL, 12, 13, 2),
@@ -135,7 +127,7 @@ CREATE TABLE IF NOT EXISTS `polygons` (
   `lng` decimal(16,10) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `LatLng` (`lat`,`lng`,`sector_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=582 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=624 ;
 
 --
 -- Дамп данных таблицы `polygons`
@@ -155,12 +147,12 @@ INSERT INTO `polygons` (`id`, `sector_id`, `lat`, `lng`) VALUES
 (173, 2, '51.1463755277', '71.4721585027'),
 (172, 2, '51.1540746372', '71.4666653386'),
 (171, 2, '51.1525133832', '71.4608717672'),
-(45, 3, '51.1461197660', '71.4598847142'),
-(46, 3, '51.1460389988', '71.4655495397'),
-(47, 3, '51.1457428514', '71.4696264974'),
-(48, 3, '51.1463889888', '71.4722014180'),
-(49, 3, '51.1445313195', '71.4734030477'),
-(50, 3, '51.1416504382', '71.4629317037'),
+(623, 3, '51.1460793825', '71.4599920026'),
+(622, 3, '51.1461197659', '71.4655709974'),
+(621, 3, '51.1457428514', '71.4696264974'),
+(620, 3, '51.1463889888', '71.4722014180'),
+(619, 3, '51.1445313195', '71.4734030477'),
+(618, 3, '51.1416504382', '71.4629317037'),
 (401, 5, '51.1445851661', '71.4734245053'),
 (400, 5, '51.1475735504', '71.4837885610'),
 (399, 5, '51.1518538720', '71.4806986562'),
@@ -237,7 +229,3 @@ CREATE TABLE IF NOT EXISTS `squares` (
 
 INSERT INTO `squares` (`id`, `title`) VALUES
 (1, 'Алматинский');
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

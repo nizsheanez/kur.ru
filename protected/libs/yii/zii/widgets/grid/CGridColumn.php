@@ -18,8 +18,11 @@
  * Child classes may override {@link renderHeaderCellContent}, {@link renderDataCellContent}
  * and {@link renderFooterCellContent} to customize how these cells are rendered.
  *
+ * @property boolean $hasFooter Whether this column has a footer cell.
+ * This is determined based on whether {@link footer} is set.
+ *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @version $Id: CGridColumn.php 3041 2011-03-11 20:29:55Z qiang.xue $
+ * @version $Id$
  * @package zii.widgets.grid
  * @since 1.1
  */
@@ -27,7 +30,7 @@ abstract class CGridColumn extends CComponent
 {
 	/**
 	 * @var string the ID of this column. This value should be unique among all grid view columns.
-	 * If this is set, it will be assigned one automatically.
+	 * If this is not set, it will be assigned one automatically.
 	 */
 	public $id;
 	/**
@@ -57,6 +60,10 @@ abstract class CGridColumn extends CComponent
 	 * @var array the HTML options for the data cell tags.
 	 */
 	public $htmlOptions=array();
+	/**
+	 * @var array the HTML options for the filter cell tag.
+	 */
+	public $filterHtmlOptions=array();
 	/**
 	 * @var array the HTML options for the header cell tag.
 	 */
@@ -98,8 +105,8 @@ abstract class CGridColumn extends CComponent
 	 * @since 1.1.1
 	 */
 	public function renderFilterCell()
-	{   
-		echo "<td>";
+	{
+		echo CHtml::openTag('td',$this->filterHtmlOptions);
 		$this->renderFilterCellContent();
 		echo "</td>";
 	}
@@ -185,6 +192,6 @@ abstract class CGridColumn extends CComponent
 	 */
 	protected function renderFilterCellContent()
 	{
-        echo $this->grid->blankDisplay;
+		echo $this->grid->blankDisplay;
 	}
 }

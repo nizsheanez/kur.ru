@@ -10,7 +10,7 @@
         $('#metric_sortable_save').click(function()
         {
             var data = tree.nestedSortable('toArray');
-            $.post('/regions/save/sortMetrics',
+            $.post('/content/category/sort',
                 {
                     tree:$.toJSON(data)
                 },
