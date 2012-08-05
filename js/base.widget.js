@@ -111,21 +111,25 @@
 
             $('#new_sector_modal').on('hide', function() {
                 //del polygon
+                $('#new_sector_modal').data('polygon').setMap(null);
             });
 
             google.maps.event.addListener(this.drawingManager, 'polygoncomplete', function (polygon) {
-                $('#new_sector_modal').modal('show');
-                $('#new_sector_modal form').submit(function() {
-                    polygon.save();
-                });
-//                $('#new_sector_save').off('click').click(function () {
-//                    polygon.save(function () {
-//                        $('#new_sector_modal').modal('hide');
-//                    });
-//                    return false;
-//                });
-            });
+                var vertices = polygon.getPath();
+                var res = '';
+                var id = polygon.id != undefined ? polygon.id : 0;
 
+                for (var i = 0; i < vertices.length; i++)
+                {
+                    var xy = vertices.getAt(i);
+                    res+='<input type="hidden" name="polygons[' + id + '][' + i + '][lat]" value="'+xy.lat()+'" />';
+                    res+='<input type="hidden" name="polygons[' + id + '][' + i + '][lng]" value="'+xy.lng()+'" />';
+                }
+
+                var modal = $('#new_sector_modal').modal('show').data('polygon', polygon);
+                modal.find('form').find('.additional').remove().
+                    end().append($('<div class="additional"></div>').html(res));
+            });
 
 //            $('#new_metric_modal').on('hide', function() {
 //                window.location.reload();
@@ -208,11 +212,6 @@
                     var xy = vertices.getAt(i);
                     res['polygons[' + id + '][' + i + '][lat]'] = xy.lat();
                     res['polygons[' + id + '][' + i + '][lng]'] = xy.lng();
-                }
-                if (this.id == undefined)
-                {
-                    res.title = $('#new_sector_title').val();
-                    res.square_id = $('#new_sector_square_id').val();
                 }
                 $.post('/regions/save/polygons', res, callback);
             };

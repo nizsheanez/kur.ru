@@ -66,10 +66,6 @@ Yii::app()->clientScript->registerScriptFile('/js/lib.js');
     <div class="modal-body">
         <?php echo new Form('regions.sector', new Sector()) ?>
     </div>
-    <div class="modal-footer">
-        <a href="#" class="btn" data-dismiss="modal">Отмена</a>
-        <a href="#" id="new_sector_save" class="btn btn-primary">Сохранить</a>
-    </div>
 </div>
 
 <div class="modal hide" id="new_metric_modal">
