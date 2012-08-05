@@ -164,14 +164,16 @@
                 return bounds;
             };
 
-            google.maps.Polygon.prototype.__defineGetter__('area', function()
-            {
-                return google.maps.geometry.spherical.computeArea(this.getPaths());
+            accessors.define(google.maps.Polygon, 'area', {
+                get: function () {
+                    return google.maps.geometry.spherical.computeArea(this.getPaths());
+                }
             });
 
-            google.maps.Polygon.prototype.__defineGetter__('density', function()
-            {
-                return this.getProperty('peoples') / this.area;
+            accessors.define(google.maps.Polygon, 'density', {
+                get: function () {
+                    return this.getProperty('peoples') / this.area;
+                }
             });
 
             google.maps.Polygon.prototype.getProperty = function(name)

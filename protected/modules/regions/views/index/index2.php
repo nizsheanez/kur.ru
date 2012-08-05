@@ -1,4 +1,5 @@
 <?php
+Yii::app()->clientScript->registerScriptFile('/js/accessors.js');
 Yii::app()->clientScript->registerScriptFile('/js/base.widget.js');
 Yii::app()->clientScript->registerScriptFile('/js/lib.js');
 ?>
