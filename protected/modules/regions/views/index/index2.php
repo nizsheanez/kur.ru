@@ -53,7 +53,7 @@ Yii::app()->clientScript->registerScriptFile('/js/lib.js');
         <a href="#" id="formula_save" class="btn btn-primary">Сохранить</a>
     </div>
 </div>
-<div style="z-index: 101; position: absolute; top: 120px; right: 10px; text-align: right;" class="right-toolbar">
+<div style="z-index: 101; position: absolute; top: 60px; right: 10px; text-align: right;" class="right-toolbar">
     <div id="edit_metric">
         <a data-toggle="modal" href="#metric_form"><img src="/img/formula.png" width="40" height="40"/></a>
     </div>

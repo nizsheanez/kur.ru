@@ -84,14 +84,15 @@
             that.map = new google.maps.Map(this.element[0], {
                 zoom: 15,
                 center: new google.maps.LatLng(51.149633, 71.466837),
-                mapTypeId: google.maps.MapTypeId.ROADMAP
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControl: false
             });
 
             that.drawPolygons(that.options.globalData);
             that.addDrawManager();
             $(window).trigger('hashchange');
         },
-        addDrawManager:function()
+        addDrawManager: function()
         {
             this.drawingManager = new google.maps.drawing.DrawingManager({
                 drawingControl: true,
@@ -109,12 +110,14 @@
                 }
             });
 
-            $('#new_sector_modal').on('hide', function() {
+            $('#new_sector_modal').on('hide', function()
+            {
                 //del polygon
                 $('#new_sector_modal').data('polygon').setMap(null);
             });
 
-            google.maps.event.addListener(this.drawingManager, 'polygoncomplete', function (polygon) {
+            google.maps.event.addListener(this.drawingManager, 'polygoncomplete', function(polygon)
+            {
                 var vertices = polygon.getPath();
                 var res = '';
                 var id = polygon.id != undefined ? polygon.id : 0;
@@ -122,8 +125,8 @@
                 for (var i = 0; i < vertices.length; i++)
                 {
                     var xy = vertices.getAt(i);
-                    res+='<input type="hidden" name="polygons[' + id + '][' + i + '][lat]" value="'+xy.lat()+'" />';
-                    res+='<input type="hidden" name="polygons[' + id + '][' + i + '][lng]" value="'+xy.lng()+'" />';
+                    res += '<input type="hidden" name="polygons[' + id + '][' + i + '][lat]" value="' + xy.lat() + '" />';
+                    res += '<input type="hidden" name="polygons[' + id + '][' + i + '][lng]" value="' + xy.lng() + '" />';
                 }
 
                 var modal = $('#new_sector_modal').modal('show').data('polygon', polygon);
@@ -131,26 +134,29 @@
                     end().append($('<div class="additional"></div>').html(res));
             });
 
-//            $('#new_metric_modal').on('hide', function() {
-//                window.location.reload();
-//            });
+            //            $('#new_metric_modal').on('hide', function() {
+            //                window.location.reload();
+            //            });
         },
-        _drawingManagerOn:function()
+        _drawingManagerOn: function()
         {
             this.drawingManager.setMap(this.map);
         },
-        _drawingManagerOff:function()
+        _drawingManagerOff: function()
         {
             this.drawingManager.setMap(null);
         },
         _initPolygonObject: function()
         {
             var that = this;
-            google.maps.Polygon.prototype.getBounds = function() {
+            google.maps.Polygon.prototype.getBounds = function()
+            {
                 var bounds = new google.maps.LatLngBounds();
 
-                this.getPaths().forEach(function(path) {
-                    path.forEach(function(point) {
+                this.getPaths().forEach(function(path)
+                {
+                    path.forEach(function(point)
+                    {
                         bounds.extend(point);
                     });
                 });
@@ -176,8 +182,8 @@
             google.maps.Polygon.prototype.setColor = function(color)
             {
                 this.setOptions({
-                    strokeColor: '#'+color,
-                    fillColor: '#'+color
+                    strokeColor: '#' + color,
+                    fillColor: '#' + color
                 });
             };
 

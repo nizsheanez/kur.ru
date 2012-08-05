@@ -23,10 +23,7 @@ class Sector extends ActiveRecord
     public function rules()
     {
         return array(
-            array(
-                'name',
-                'safe'
-            ),
+            array('title, square_id', 'required')
         );
     }
 
