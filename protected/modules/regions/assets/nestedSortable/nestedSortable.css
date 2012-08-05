@@ -1,3 +1,6 @@
+.nestedSortable{
+    width: 99%;
+}
 .nestedSortable .placeholder{
     border:                1px dashed #4183C4;
     -webkit-border-radius: 3px;

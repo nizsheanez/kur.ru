@@ -19,7 +19,7 @@ Yii::app()->clientScript->registerScriptFile('/js/lib.js');
         </form>
     </div>
     <div class="modal-footer">
-        <a href="#" id="sector_delete" class="btn btn-danger pull-left">Удалить</a>
+<!--        <a href="#" id="sector_delete" class="btn btn-danger pull-left">Удалить</a>-->
         <a href="#" class="btn" data-dismiss="modal">Отмена</a>
         <a href="#" id="data_save" class="btn btn-primary">Сохранить</a>
     </div>

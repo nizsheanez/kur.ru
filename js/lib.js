@@ -297,14 +297,16 @@
                 google.maps.event.addListener(polygon, 'mouseout', function()
                 {
                     this.setOptions({
-                        editable: false
+                        editable: false,
+                        zIndex: 1
                     });
                     that.infoBubble.close();
                 });
                 google.maps.event.addListener(polygon, 'mouseover', function()
                 {
                     this.setOptions({
-                        editable: true
+                        editable: true,
+                        zIndex: 100
                     });
                     if ($.bbq.getState('type') == 'polygons')
                     {
