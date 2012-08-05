@@ -110,17 +110,20 @@
             });
 
             $('#new_sector_modal').on('hide', function() {
-                window.location.reload();
+                //del polygon
             });
 
             google.maps.event.addListener(this.drawingManager, 'polygoncomplete', function (polygon) {
                 $('#new_sector_modal').modal('show');
-                $('#new_sector_save').off('click').click(function () {
-                    polygon.save(function () {
-                        $('#new_sector_modal').modal('hide');
-                    });
-                    return false;
+                $('#new_sector_modal form').submit(function() {
+                    polygon.save();
                 });
+//                $('#new_sector_save').off('click').click(function () {
+//                    polygon.save(function () {
+//                        $('#new_sector_modal').modal('hide');
+//                    });
+//                    return false;
+//                });
             });
 
 

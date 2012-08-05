@@ -12,6 +12,9 @@ class SaveController extends Controller {
 
     public function actionPolygons()
     {
+        $model = new Sector();
+        $this->performAjaxValidation($model);
+
         foreach ($_POST['polygons'] as $sectorId => $coordinates) {
             $sector = Sector::model()->findByPk($sectorId);
             if ($sector) {

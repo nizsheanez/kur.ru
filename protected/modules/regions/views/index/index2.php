@@ -53,7 +53,7 @@ Yii::app()->clientScript->registerScriptFile('/js/lib.js');
         <a href="#" id="formula_save" class="btn btn-primary">Сохранить</a>
     </div>
 </div>
-<div style="z-index: 100; position: absolute; top: 100px; right: 10px; text-align: right;" class="right-toolbar">
+<div style="z-index: 101; position: absolute; top: 120px; right: 10px; text-align: right;" class="right-toolbar">
     <div id="edit_metric">
         <a data-toggle="modal" href="#metric_form"><img src="/img/formula.png" width="40" height="40"/></a>
     </div>
@@ -61,13 +61,10 @@ Yii::app()->clientScript->registerScriptFile('/js/lib.js');
 <div class="modal hide" id="new_sector_modal">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">×</button>
-        <h3>Редактирование метрики</h3>
+        <h3>Создание сектора</h3>
     </div>
     <div class="modal-body">
-        <form class="form-vertical">
-            <input id="new_sector_title"/></br>
-            <?= CHtml::dropDownList('square_id', 1, CHtml::listData(Square::model()->findAll(), 'id', 'title'), array('id' => 'new_sector_square_id')) ?>
-        </form>
+        <?php echo new Form('regions.sector', new Sector()) ?>
     </div>
     <div class="modal-footer">
         <a href="#" class="btn" data-dismiss="modal">Отмена</a>

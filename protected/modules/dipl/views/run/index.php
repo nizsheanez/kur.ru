@@ -27,10 +27,13 @@ Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap-res
                             <?php $this->widget('CAutoComplete', array(
                             'name'       => 'search',
                             'url'        => array('/dipl/run/autocomplete'),
-                            'max'        => 20, //specifies the max number of items to display
+                            'max'        => 20,
+                            //specifies the max number of items to display
                             'minChars'   => 2,
-                            'delay'      => 100, //number of milliseconds before lookup occurs
-                            'matchCase'  => false, //match case when performing a lookup?
+                            'delay'      => 100,
+                            //number of milliseconds before lookup occurs
+                            'matchCase'  => false,
+                            //match case when performing a lookup?
                             'htmlOptions'=> array("class"=> "input-medium search-query"),
                         ));
                             ?>
@@ -68,18 +71,32 @@ Yii::app()->clientScript->registerCssFile('/css/site/bootstrap/css/bootstrap-res
 <!--</div>-->
 <div class="demo" id="demo">
     <p>В поле поиск введите название предметной области. Далее вы увидите подсказку.</p>
+
     <p>Клик - раскрыть узел.</br>Двойной клик - удалить узел</p>
-   <svg class="demo_svg"><line class="link associate"   x1="0" x2="25" y1="0" y2="0"></line></svg><span>associate</span><br/>
-   <svg class="demo_svg"><line class="link english"     x1="0" x2="25" y1="0" y2="0"></line></svg><span>english</span><br/>
-   <svg class="demo_svg"><line class="link sinonim"     x1="0" x2="25" y1="0" y2="0"></line></svg><span>sinonim</span><br/>
-   <svg class="demo_svg"><line class="link subclass_of" x1="0" x2="25" y1="0" y2="0"></line></svg><span>subclass_of</span><br/>
-   <svg class="demo_svg"><line class="link is_a"        x1="0" x2="25" y1="0" y2="0"></line></svg><span>is_a</span><br/>
+    <svg class="demo_svg">
+        <line class="link associate" x1="0" x2="25" y1="0" y2="0"></line>
+    </svg>
+    <span>associate</span><br/>
+    <svg class="demo_svg">
+        <line class="link english" x1="0" x2="25" y1="0" y2="0"></line>
+    </svg>
+    <span>english</span><br/>
+    <svg class="demo_svg">
+        <line class="link sinonim" x1="0" x2="25" y1="0" y2="0"></line>
+    </svg>
+    <span>sinonim</span><br/>
+    <svg class="demo_svg">
+        <line class="link subclass_of" x1="0" x2="25" y1="0" y2="0"></line>
+    </svg>
+    <span>subclass_of</span><br/>
+    <svg class="demo_svg">
+        <line class="link is_a" x1="0" x2="25" y1="0" y2="0"></line>
+    </svg>
+    <span>is_a</span><br/>
 </div>
 <div id="chart" style=""></div>
 
 <script type="text/javascript">
-//var fill = d3.scale.category20();
-
 var w = $(document).width(),
     h = $(document).height();
 
@@ -88,9 +105,7 @@ var svg = d3.select("body").append("svg:svg")
     .attr("height", h)
     .attr("xmlns", "http://www.w3.org/2000/svg")
     .attr("version", "1.1")
-    .attr("xmlns:xmlns:xlink", "http://www.w3.org/1999/xlink")
-    ;
-
+    .attr("xmlns:xmlns:xlink", "http://www.w3.org/1999/xlink");
 
 var opacityBlack = .75;
 var chart = svg.attr("pointer-events", "all")
@@ -102,9 +117,8 @@ var chart = svg.attr("pointer-events", "all")
             + " scale(" + d3.event.scale + ")"
     );
 }));
-//;
-// Array Remove - By John Resig (MIT Licensed)
-removeItem = function(array, index) {
+removeItem = function(array, index)
+{
     array.splice(index, 1);
 };
 
@@ -133,69 +147,62 @@ var use_path = $('#use_path');
 
 var linkedByIndex = [];
 
-var curNode = {x:300,y:300};
+var curNode = {x: 300, y: 300};
 
 
-function isNodeConnected(a, b) {
+function isNodeConnected(a, b)
+{
     return linkedByIndex[a.name + "," + b.name] || linkedByIndex[b.name + "," + a.name] || a.name == b.name;
 }
 
-function fade(opacity, showText) {
-    return function(d, i) {
+function fade(opacity, showText)
+{
+    return function(d, i)
+    {
         $(d).parent().children('.cancel').css('display', 'block');
         labels = [];
         var selectedLabelData = null;
-        chart.selectAll("circle").style("fill-opacity", function(o) {
+        chart.selectAll("circle").style("fill-opacity", function(o)
+        {
             var isNodeConnectedBool = isNodeConnected(d, o);
             var thisOpacity = isNodeConnectedBool ? 1 : opacity;
-            if (!isNodeConnectedBool) {
-                $(this).parent().children().attr('style', "stroke-opacity:"+opacity+";fill-opacity:"+opacity+";");
-            } else {
+            if (!isNodeConnectedBool)
+            {
+                $(this).parent().children().attr('style',
+                    "stroke-opacity:" + opacity + ";fill-opacity:" + opacity + ";");
+            }
+            else
+            {
                 $(this).parent().children().attr('style', "stroke-opacity:1;fill-opacity:1;");
-//                labels.push(o);
-//                if (o == d) selectedLabelData = o;
+                //                labels.push(o);
+                //                if (o == d) selectedLabelData = o;
             }
             return thisOpacity;
         });
 
-        path.style("stroke-opacity", function(o) {
+        path.style("stroke-opacity", function(o)
+        {
             return o.source === d || o.target === d ? 1 : opacity;
         });
     }
 }
 
-function normalizeNodesAndRemoveLabels() {
-    return function(d, i) {
+function normalizeNodesAndRemoveLabels()
+{
+    return function(d, i)
+    {
         selectedLabelIndex = null;
         chart.selectAll(".link").style("stroke-opacity", opacityBlack);
-        chart.selectAll("circle").style("stroke-opacity",opacityBlack).style("fill-opacity", opacityBlack);//.style("stroke-width", 1);
+        chart.selectAll("circle").style("stroke-opacity", opacityBlack).style("fill-opacity", opacityBlack);//.style("stroke-width", 1);
         chart.selectAll("text").style("stroke-opacity", opacityBlack).style("fill-opacity", opacityBlack);//.style("stroke-width", 1);
-//        chart.selectAll(".nodetext").remove();
+        //        chart.selectAll(".nodetext").remove();
     }
 }
 var lock = true;
-/*
-var fps = 0, now, lastUpdate = (new Date)*1 - 1;
-
-// The higher this value, the less the FPS will be affected by quick changes
-// Setting this to 1 will show you the FPS of the last sampled frame only
-var fpsFilter = 50;
-var details = $('#details');
-var num = $('#num');
-function doFps(){
-
-    var thisFrameFPS = 1000 / ((now=new Date) - lastUpdate);
-    fps += (thisFrameFPS - fps) / fpsFilter;
-    details.text(Math.ceil(fps));
-    num.text(force.nodes().length);
-    lastUpdate = now * 1 - 1;
-}
-*/
 
 // Use elliptical arc path segments to doubly-encode directionality.
 var tick = function()
 {
-//    /*
     path.attr("d", function(d)
     {
         var
@@ -204,20 +211,12 @@ var tick = function()
             dr = Math.sqrt(dx * dx + dy * dy);
         return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
     });
-//    */
-/*
-    path
-        .attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
-*/
+
     g.attr("transform", function(d)
     {
         return "translate(" + d.x + "," + d.y + ")";
     });
 
-//    doFps();
 };
 
 
@@ -225,7 +224,8 @@ var addNodesLinks = function(json)
 {
 
     // Compute the distinct nodes from the links.
-    $.each(json.nodes, function(i, node) {
+    $.each(json.nodes, function(i, node)
+    {
         if (!visNodes[node.name])
         {
             node.links = [];
@@ -236,7 +236,8 @@ var addNodesLinks = function(json)
         }
     });
 
-    $.each(json.links, function(i, link) {
+    $.each(json.links, function(i, link)
+    {
         if (!visLinks[link.id] && visNodes[link.source] && visNodes[link.target])
         {
             visLinks[link.id] = link;
@@ -276,7 +277,7 @@ var update = function(json)
     path.enter().append("svg:path")
         .attr("class", function(d)
         {
-            return "link " + d.type + " t-" + d.target.name + " s-"+ d.source.name;
+            return "link " + d.type + " t-" + d.target.name + " s-" + d.source.name;
         })
         .attr("id", function(d)
         {
@@ -299,18 +300,22 @@ var update = function(json)
 
     node = a.append("svg:circle")
         .attr("class", "node")
-        .attr("r", function(d) {return 4 + d.e_count * .25;})
+        .attr("r", function(d)
+        {
+            return 4 + d.e_count * .25;
+        })
         .on('click', function(d)
         {
             var self = $(this);
-            last_click2 = new Date().getTime()/1000;
+            last_click2 = new Date().getTime() / 1000;
             if (last_click2 - last_click < .3)
             {
                 is_dblclick = true;
                 return false;
             }
             last_click = last_click2;
-            time = setTimeout(function(){
+            time = setTimeout(function()
+            {
                 if (is_dblclick)
                 {
                     is_dblclick = false;
@@ -327,11 +332,11 @@ var update = function(json)
                             if (links[j].id == link_id)
                             {
                                 link = links[j];
-                                removeItem(links,  j);
+                                removeItem(links, j);
                             }
                         }
 
-                        $('#link_'+ link_id).remove();
+                        $('#link_' + link_id).remove();
                         if (link != undefined)
                         {
                             linkedByIndex[link.target + ',' + link.source] = false;
@@ -371,14 +376,6 @@ var update = function(json)
             return d.title;
         });
 
-//    a.append("svg:text")
-//        .attr('class', 'cancel')
-//        .attr('id', function(d) {return 'cancel_'+d.name})
-//        .attr('xlink:xlink:href', "http://www.w3schools.com/svg/")
-//        .append('svg:text').text("x")
-//        .attr("x", 1)
-//        .attr("y", -6)
-//    ;
 
     g.exit().remove();
     force.start();
@@ -404,16 +401,14 @@ force.on("tick", tick);
 
 $('#download').click(function()
 {
-    var res =  [];
-    for ( var i in visNodes)
+    var res = [];
+    for (var i in visNodes)
     {
         res.push(i);
     }
     $.fileDownload('/dipl/run/saveFile', {
-//            preparingMessageHtml: "We are preparing your report, please wait...",
-//            failMessageHtml: "There was a problem generating your report, please try again.",
         httpMethod: "POST",
-        data: {ids:res.join(',')}
+        data: {ids: res.join(',')}
     });
     return false;
 });
