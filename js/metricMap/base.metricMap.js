@@ -88,8 +88,7 @@
                 mapTypeControl: false
             });
 
-            that.drawPolygons(that.options.globalData);
-            that.addDrawManager();
+
             $(window).trigger('hashchange');
         },
         addDrawManager: function()

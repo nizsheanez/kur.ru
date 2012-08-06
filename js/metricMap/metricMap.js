@@ -89,8 +89,8 @@
         },
         _create: function()
         {
-            $.geo.baseMetricMap.prototype._create.call(this);
-            this._drawingManagerOn();
+            var that = this;
+            $.geo.baseMetricMap.prototype._create.call(that);
             $('.fancy').fancybox({
                 fitToView: false,
                 width: '70%',
@@ -100,7 +100,10 @@
                 openEffect: 'none',
                 closeEffect: 'none'
             });
-            var that = this;
+
+            that.drawPolygons(that.options.globalData);
+            that.addDrawManager();
+            that._drawingManagerOn();
 
             $('#navigation ul a').filter(':not(.fancy)').filter(':not(.no-hashe)').click(function()
             {
@@ -135,10 +138,6 @@
                 $('#metric_form').modal('hide');
                 return false;
             });
-//            $('form').submit(function()
-//            {
-//                return false;
-//            });
             $('#data_save').click(function()
             {
                 var btn = $(this);
