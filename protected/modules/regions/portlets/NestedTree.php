@@ -6,6 +6,9 @@ class NestedTree extends Portlet
     public $id;
     public $handleIcon;
 
+    public $sortUrl;
+    public $deleteUrl;
+
     private $defaultSoringSettings = array(
         'disableNesting'      => 'no-nest',
         'forcePlaceholderSize'=> true,
@@ -25,10 +28,19 @@ class NestedTree extends Portlet
         {
             ui.placeholder.height(ui.item.height());
         }",
-        'update'              => "js:function(event, ui)
+
+
+    );
+    public $sortingSettings = array();
+
+
+    public function init()
+    {
+        parent::init();
+        $this->defaultSoringSettings['update'] = "js:function(event, ui)
         {
             var data = $(this).nestedSortable('toArray');
-            $.post('/regions/save/sortMetrics',
+            $.post('{$this->sortUrl}',
                 {
                     tree:$.toJSON(data)
                 },
@@ -41,15 +53,7 @@ class NestedTree extends Portlet
                 },
                 'json'
             );
-        }",
-
-    );
-    public $sortingSettings = array();
-
-
-    public function init()
-    {
-        parent::init();
+        }";
         $this->initVars();
         $this->registerScripts();
     }
@@ -121,7 +125,7 @@ class NestedTree extends Portlet
             ));
             $res .= CHtml::tag('div', array(), CHtml::encode($item->title) .
                 '<img class="drag" src="'.$this->handleIcon.'" height="16" width="16" />
-                <a class="remove" href="/regions/save/deleteMetric?id='.$item->id.'"><strong>X</strong></a>');
+                <a class="remove" href="'.$this->deleteUrl.'?id='.$item->id.'"><strong>X</strong></a>');
             $depth = $item->depth;
         }
 
@@ -132,6 +136,12 @@ class NestedTree extends Portlet
         }
 
         return $res;
+    }
+
+    public static function actions() {
+        return array(
+            'sort' => 'ext.nestedUi.ActionSort'
+        );
     }
 
 }

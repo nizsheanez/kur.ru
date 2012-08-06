@@ -10,7 +10,6 @@ class SaveController extends Controller
         return array();
     }
 
-
     public function actionPolygons()
     {
         $model = new Sector();
@@ -124,48 +123,17 @@ class SaveController extends Controller
     }
 
 
-    public function actionSortMetrics()
+    public function actions()
     {
-        if (isset($_POST['tree']))
-        {
-            $model = new Metric;
-
-            $this->performAjaxValidation($model);
-
-            //при сортировке дерева параметры корня измениться не могут,
-            //поэтоtму его вообще сохранять не будем
-            $data = json_decode($_POST['tree']);
-            array_shift($data);
-
-            //получаем большие case для update
-            $update               = array();
-            $nestedSortableFields = array(
-                'depth'=> Metric::DEPTH,
-                'left' => Metric::LFT,
-                'right'=> Metric::RGT
-            );
-            foreach ($nestedSortableFields as $key => $field)
-            {
-                $update_data = CHtml::listData($data, 'item_id', $key);
-                if ($key == Metric::DEPTH)
-                {
-                    foreach ($update_data as $key => $val)
-                    {
-                        $update_data[$key]++;
-                    }
-                }
-                $update[] = "{$field} = " . SqlHelper::arrToCase('id', $update_data);
-            }
-
-            //обновляем всю таблицу, кроме рута
-            $condition = Metric::DEPTH . " > 1";
-            $command   = Yii::app()->db->createCommand(
-                "UPDATE `{$model->tableName()}` SET " . implode(', ', $update) . " WHERE {$condition}");
-            $command->execute();
-            echo Sector::getJson();
-            Yii::app()->end();
-        }
-        $this->render('sortMetrics');
+        return array(
+            'nested.' => array(
+                'class' => 'regions.portlets.NestedTree',
+                'sort' => array(
+                    'model' => Metric::model(),
+                    'forwardRoute' => '/regions/index/actualData'
+                ),
+            )
+        );
     }
 }
 

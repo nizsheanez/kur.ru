@@ -38,7 +38,7 @@
         </a>
         <ul class="dropdown-menu settings">
             <?php
-            $link = CHtml::link('Сортировка метрик', '/regions/save/sortMetrics', array(
+            $link = CHtml::link('Сортировка метрик', '/regions/save/nested.sort', array(
                 'id' => 'metrics-sortable-toggle',
                 'data-fancybox-type '=> "iframe",
                 'class'=> "fancy",

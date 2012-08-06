@@ -11,6 +11,11 @@ class IndexController extends Controller {
     }
 
 
+    public function actionActualData()
+    {
+        echo Sector::getJson();
+    }
+
     public function actionIndex()
     {
         $this->render('index2');

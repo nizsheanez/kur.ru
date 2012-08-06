@@ -140,6 +140,7 @@ class CController extends CBaseController
 	 *     'FilterClass[ +|- Action1, Action2, ...]',
 	 *     'name1'=>'value1',
 	 *     'name2'=>'value2',
+	 *     'name2'=>'value2',
 	 *     ...
 	 * )
 	 * </pre>
