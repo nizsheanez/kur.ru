@@ -1,7 +1,10 @@
 <?php
 Yii::app()->clientScript->registerScriptFile('/js/accessors.js');
-Yii::app()->clientScript->registerScriptFile('/js/base.widget.js');
-Yii::app()->clientScript->registerScriptFile('/js/lib.js');
+Yii::app()->clientScript->registerScriptFile('/js/extract.js');
+Yii::app()->clientScript->registerScriptFile('/js/lib/polygon.js');
+Yii::app()->clientScript->registerScriptFile('/js/lib/square.js');
+Yii::app()->clientScript->registerScriptFile('/js/lib/baseMetricMap.js');
+Yii::app()->clientScript->registerScriptFile('/js/lib/metricMap.js');
 ?>
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
