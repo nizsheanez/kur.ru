@@ -140,7 +140,7 @@ class NestedTree extends Portlet
 
     public static function actions() {
         return array(
-            'sort' => 'ext.nestedUi.ActionSort'
+            'sort' => 'ext.nestedUI.ActionSort'
         );
     }
 
