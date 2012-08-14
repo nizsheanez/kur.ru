@@ -112,7 +112,7 @@ class Metric extends ActiveRecord
 
     public function beforeDelete()
     {
-        if (parent::beforeDelet())
+        if (parent::beforeDelete())
         {
             foreach ($this->data as $data)
             {
