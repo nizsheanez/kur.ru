@@ -14,16 +14,6 @@
             backgroundClassName: 'phoney',
             maxWidth: 300
         }),
-        bounds: new Array(),
-        map: {},
-        polygons: new Array(),
-        squares: new Array(),
-        currentMetric: 'peoples',
-        drawingManager: {},
-        options: {
-            globalData: {},
-            greetings: "Hello"
-        },
         _create: function()
         {
             $.geo.baseMetricMap.prototype._create.call(this);
@@ -124,18 +114,31 @@
             for (var i in items)
             {
                 var polygon = items[i];
+                var namespace = {};
                 var metric = polygon.getProperty(that.currentMetric);
                 if (metric != undefined && m.formula != '')
                 {
                     var result, _a, _b, _c;
-                    with (polygon)
-                    {
-                        extract(polygon.getProperties());
-                        result = eval(m.formula);
-                        _a = eval(m.min);
-                        _b = eval(m.norma);
-                        _c = eval(m.max);
+                    $.extend(namespace, polygon.getProperties());
+
+//                    extract(polygon.getProperties());
+                    var props = polygon.getProperties();
+                    var init = 'var ';
+                    for (var i in props) {
+                        init += i+'=\''+ props[i]+'\',';
                     }
+                    init += 'metric="'+metric+'";';
+                    alert(init+m.formula);
+                    result = new Function(init+m.formula)();
+                    _a = new Function(init+m.min)();
+                    _b = new Function(init+m.norma)();
+                    _c = new Function(init+m.max)();
+
+//                    result = eval(m.formula);
+//                    _a = eval(m.min);
+//                    _b = eval(m.norma);
+//                    _c = eval(m.max);
+
                     polygon.bubbleText = 'Формула: ' + m.formula + ' = ' + Math.round(result * 100) / 100;
                     polygon.bubbleText+= '<br/>';
                     polygon.bubbleText+= 'Минимум: ' + m.min + ' = ' + Math.round(_a * 100) / 100;
