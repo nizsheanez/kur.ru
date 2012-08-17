@@ -52,6 +52,8 @@
                     editable: false
                 });
 
+                that.polygons.push(polygon);
+
                 var squareId = polygon.getProperty('square_id');
                 if (that.squares[squareId] == undefined)
                 {
